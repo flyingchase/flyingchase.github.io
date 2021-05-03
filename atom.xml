@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-05-03T12:01:13.388Z</updated>
+    <updated>2021-05-03T12:28:01.036Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,4 +10,1545 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[Mac配置指南]]></title>
+        <id>https://flyingchase.github.io/post/mac-pei-zhi-zhi-nan/</id>
+        <link href="https://flyingchase.github.io/post/mac-pei-zhi-zhi-nan/">
+        </link>
+        <updated>2021-05-03T12:26:24.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="前言">前言</h2>
+<p>升级Big sur时替换硬盘使用Time Machine只恢复一月前备份,故将配置流程记录</p>
+<p>教训:</p>
+<ul>
+<li>做好多处备份, 机械和固态多个备份, 在升级和较多本地内容变动时加强备份频率;</li>
+<li>少折腾多干活, 黑苹果不要追求太完美, 现有的版本能稳定运行即可, 多刷题多学习, 不要花时间过于折腾;</li>
+</ul>
+<h2 id=""></h2>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Linux操作命令笔记]]></title>
+        <id>https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/</id>
+        <link href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">
+        </link>
+        <updated>2021-05-03T12:25:39.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="to-do-list"><strong>TO DO LIST</strong></h1>
+<ul>
+<li>top命令</li>
+<li>ps命令</li>
+<li>netstat命令</li>
+<li>awk命令</li>
+<li>find命令</li>
+<li>grep命令</li>
+<li>wc命令</li>
+<li>sed命令</li>
+<li>head和tail命令</li>
+<li>正则表达式</li>
+<li>如何查找出现频率最高的100个IP地址</li>
+<li>linux如何统计文件中某个字符串出现的频率</li>
+<li>linux启动的第一个进程</li>
+<li>linux查看端口占用</li>
+<li>linux查看CPU和内存使用</li>
+<li>Linux查看系统负载命令</li>
+<li>Linux调试程序</li>
+<li>Linux硬链接和软连接</li>
+<li>core dump</li>
+<li>cmake和makefile</li>
+<li>Shell脚本基本语法和使用</li>
+</ul>
+<h1 id="linux网络编程">Linux网络编程</h1>
+<ul>
+<li>孤儿进程、僵尸进程和守护进程</li>
+<li>进程间通信方式signal、file、pipe、shm、sem、msg、socket</li>
+<li>线程同步机制线程：互斥量、锁机制、条件变量、信号量、读写锁</li>
+<li>fork返回值</li>
+<li>五大IO模型：阻塞I/O、非阻塞I/O、I/O复用、信号驱动I/O、异步I/O</li>
+<li>IO复用机制</li>
+<li>epoll与select/poll</li>
+<li>LT水平触发和ET边缘触发</li>
+<li>Reactor和Proactor模式</li>
+<li>反向代理、负载均衡</li>
+</ul>
+<h1 id="linux操作指令-笔记">Linux操作指令-笔记</h1>
+<h2 id="1-文件权限">1 文件权限</h2>
+<h3 id="11-ls命令">1.1 ls命令</h3>
+<p>帮助 <code>man ls</code> <code>info ls</code></p>
+<p><code>ls -al</code> ——&gt;list all include those hided</p>
+<p>e.g:</p>
+<p><code>-rwxr-xr-x 1 qlzhou staff 5797544 12 21 15:59 impl</code></p>
+<p>第一列10个字符 文件类型和权限</p>
+<p>​	1 - 代表文件 d代表文件夹</p>
+<p>​	234拥有者权限 rwx 可读可写可执行</p>
+<p>​	567 同用户组权限 r-x 可读可执行</p>
+<p>​	8910 其他用户权限 r-x 可读可执行</p>
+<pre><code>其中r w x顺序不变 不存在该权限则为- 
+</code></pre>
+<p>第二列 1代表多少文件名连接到此节点i-node</p>
+<p>第三列 qlzhou代表所有者账号</p>
+<p>第四列 表示文件所属用户组</p>
+<p>第五列 文件大小 默认单位B</p>
+<p>第六列 修改日期</p>
+<p>​	完整时间显示 <code>ls -l --full-time</code></p>
+<p>第七列 文件名 隐藏文件前含.</p>
+<h3 id="12-文件权限修改">1.2 文件权限修改</h3>
+<p>使用cp复制时会保留原有的用户权限 从而他人无法修改</p>
+<ul>
+<li>
+<p>chgrp修改所属用户组</p>
+<p>change group简写</p>
+<p>-R递归 recursive 持续修改 包括子目录下文件 目录</p>
+</li>
+<li>
+<p>Chown修改文件所有者</p>
+<p><code>chown username filename/dirname</code> 可加-R</p>
+</li>
+<li>
+<p>Chmod</p>
+</li>
+</ul>
+<h2 id="man-获得帮助"><strong>man - 获得帮助</strong></h2>
+<pre><code class="language-text">man ls        # 许多Linux自带命令可以通过man查看使用帮助
+ls --help     # 有些程序可以通过-h, --help查看使用帮助
+</code></pre>
+<h2 id="ls-显示目录内容"><strong>ls - 显示目录内容</strong></h2>
+<pre><code class="language-bash">ls                      # 显示目录内容
+ls -l                   # 以列表显示形式显示目录内容，通常在~/.bashrc文件中增加一行：alias ll='ls -l'
+                        # 以后就可以直接使用别名ll了，更方便
+ll -h                   # 以人类可读的方式显示文件大小
+ll -t                   # 以文件的修改时间排序，最新修改的在最前面
+ll -tr                  # 以文件的修改时间排序，最新修改的在最后面
+watch -n 3 -dc ls -l    # 追踪目录内容的变化，每3秒刷新一次
+</code></pre>
+<h2 id="pwd-显示当前目录"><strong>pwd - 显示当前目录</strong></h2>
+<pre><code class="language-bash">pwd                 # 显示当前目录的绝对路径
+ls `pwd`/file       # 显示文件的绝对路径
+</code></pre>
+<h2 id="cd-切换目录"><strong>cd - 切换目录</strong></h2>
+<pre><code class="language-bash">cd dir    # 切换到目录dir
+cd        # 切换到用户的HOME目录
+cd ~      # 同cd，~表示HOME目录
+cd ..     # 切换到上一级目录；一个点.表示当前目录，两个点..表示上一级目录
+cd -      # 切换到进入当前目录之前所在的目录
+</code></pre>
+<h2 id="mkdir-创建目录"><strong>mkdir - 创建目录</strong></h2>
+<pre><code class="language-bash">mkdir dir           # 创建dir目录
+mkdir -p dir1/dir2  # 递归创建目录，如dir1不存在，会先创建dir1
+</code></pre>
+<h2 id="cat-合并文件按行"><strong>cat - 合并文件（按行）</strong></h2>
+<pre><code class="language-bash">cat file              # 合并一个或多个文件至标准输出，当只有一个文件时，相当于显示所有文件内容
+cat file1 file2       # 合并file1和file2的内容，并在屏幕上输出
+cat R1.fq.gz R2.fq.gz # 可以合并gzip压缩文件，如测序数据原始reads的合并
+</code></pre>
+<h2 id="paste-合并文件按列"><strong>paste - 合并文件（按列）</strong></h2>
+<pre><code class="language-bash">paste -d ' ' file1 file2    # 按列对列的方式一行一行合并文件。默认列中间加TAB键， -d参数可以改变列之间的分隔符
+</code></pre>
+<h2 id="split-分割文件"><strong>split - 分割文件</strong></h2>
+<pre><code class="language-bash">split -d -l 10000 file chunk_   # 按行数分割文件，每个文件最多10000行，分割成的文件名为chunk_01, chunk_02。。。
+split -d -b 100m file chunk_    # 按大小分割文件，每个文件最多100m，分割成的文件名为chunk_01, chunk_02。。。
+</code></pre>
+<h2 id="cut-剪切文件"><strong>cut - 剪切文件</strong></h2>
+<pre><code class="language-bash">cut -f 1 file                   # 剪切文件的第1列
+cut -f 1,2                      # 剪切文件的第1，2列
+cut -f 3-                       # 剪切第3列及之后的所有列
+cut -d ' ' -f 1 file            # 剪切第1列，但以空格作为列与列之间的分隔符。默认以TAB作为分隔符
+grep '^&gt;' test.fa | cut -c 2-   # 得到fasta文件中的序列名称（去掉了&gt;符号）
+</code></pre>
+<h2 id="less-head-tail-显示文件内容"><strong>less, head, tail - 显示文件内容</strong></h2>
+<pre><code class="language-bash">less file       # 分屏显示文件内容，按空格键显示下一页，按下/后可以搜索内容
+less -SN file   # 显示文件的行号，并且截断太长的行 
+
+head file       # 默认显示文件前10行
+head -n 20 file # 显示文件前20行
+
+tail file       # 默认显示文件后10行
+tail -n 20 file # 显示文件后20行
+tail -n +2 file # 跳过第1行，显示从第2行开始的所有行，可用于跳过文件的标题行
+tail -f file    # 当文件的内容还在增加时，实时显示末尾增加的内容，常用于查看日志文件的更新情况
+</code></pre>
+<h2 id="wc-统计文件内容"><strong>wc - 统计文件内容</strong></h2>
+<pre><code class="language-bash">wc -l file      # 统计文件行数
+</code></pre>
+<h2 id="touch-创建文件"><strong>touch - 创建文件</strong></h2>
+<pre><code class="language-bash">touch file                  # 创建一个空文件
+touch {file1,file2,file3}   # 同时创建3个文件
+</code></pre>
+<h2 id="cp-mv-rm-文件目录的复制移动删除"><strong>cp, mv, rm- 文件/目录的复制，移动，删除</strong></h2>
+<pre><code class="language-bash">scp file1 file2     # 将file1复制一份，命名为file2，复制目录要加-r参数：scp -r
+mv file1 dir1/      # 将file1移动到dir1/目录下
+mv file1 file2      # 重命名：即将file1移动成为file2
+rm file             # 删除文件，删除目录要加-r参数：rm -r
+rm -f file          # 文件若不存在，删除时会报错，加-f参数就不会报错
+</code></pre>
+<h2 id="tar-文件打包压缩"><strong>tar - 文件打包/压缩</strong></h2>
+<pre><code class="language-bash"># 平时tar基本上就能完成打包、压缩、解压的任务了
+tar czvf file.tar.gz files  # 打包并压缩
+tar xvf file.tar.gz         # 解包，解压缩
+
+gzip file                   # 压缩
+gunzip file.gz              # 解压
+</code></pre>
+<h2 id="chmod-改变文件目录权限"><strong>chmod - 改变文件/目录权限</strong></h2>
+<pre><code class="language-bash">chmod +x file   # 增加[本人]可执行权限
+chmod -x file   # 取消[本人]可执行权限
+chmod a+x file  # 增加[所有人]可执行权限
+chmod a-x file  # 取消[所有人]可执行权限
+</code></pre>
+<h2 id="chown-改变文件目录归属"><strong>chown - 改变文件/目录归属</strong></h2>
+<pre><code class="language-bash">chown jianzuoyi:jianzuoyi file      # 将文件的所有权给jianzuoyi
+chown -R jianzuoyi:jianzuoyi dirname    # 将目录以及目录内的文件的所有权给jianzuoyi
+</code></pre>
+<h2 id="sort-uniq-排序去重"><strong>sort, uniq - 排序，去重</strong></h2>
+<pre><code class="language-bash">sort file				# 默认按字典序对文件进行排序
+sort -k2,2 -k3,3 file	# 先按第2列排序，第2列相同，再按第3列排序
+sort -k2,2n file		# 按第2列排序，且第2列是数字，升序
+sort -k2,2nr file		# 按第2列排序，且第2列是数字，降序
+sort -u file			# 先排序文件，然后去除相邻的重复行，只保留一条记录
+sort file | uniq		# 去除相信的重复行，只保留一条记录，相当于： sort -u file
+
+# 利用sort, uniq取两个文件的交、并、补集
+sort a b | uniq			# 并集
+sort a b | uniq -d &gt; c	# 交集
+sort a c | uniq -u 		# 补集
+</code></pre>
+<h2 id="wget-下载文件"><strong>wget - 下载文件</strong></h2>
+<pre><code class="language-bash">wget https://repo.anaconda.com/archive/Anaconda3-2020.07-Linux-x86_64.sh	# 下载文件到当前目录，文件名保持不变
+</code></pre>
+<h2 id="ssh-远程登录"><strong>ssh - 远程登录</strong></h2>
+<pre><code class="language-bash">ssh username@host					 # ssh 远程连接至服务器
+</code></pre>
+<h2 id="scp-远程文件传输"><strong>scp - 远程文件传输</strong></h2>
+<pre><code class="language-bash">scp username@host:/path/to/file .	 # 将远程服务器上的文件传输到当前目录，文件名保持不变，复制目录加参数-r
+scp file username@host:/path/to/dir/ # 将本地文件复制到远程服务器，文件名保持不变，复制目录加参数-r
+</code></pre>
+<h2 id="rsync-远程文件拷贝"><strong>rsync - 远程文件拷贝</strong></h2>
+<p>rsync与scp不同，它只是做增量更新且支持断点续传，也就是要复制的文件存在于目标文件夹且内容与当前要复制的相同，则不会复制。</p>
+<pre><code class="language-bash">rsync -azvP dir1 dir2					# 将dir1的内容同步至dir2
+rsync -azvP --delete dir1 dir2			# 同步dir2与dir1，dir1中删除的文件，dir2中也要跟着删除
+rsync -azvP --exclude 'file' dir1 dir2  # 同步dir2与dir2，且将file排除在外
+</code></pre>
+<h2 id="df-du-free-查看磁盘内存使用情况"><strong>df, du, free - 查看磁盘/内存使用情况</strong></h2>
+<pre><code class="language-bash">df -h		# 查看磁盘使用情况，-h表示以人类可读的方式显示容量大小
+du -sh		# 查看当前目录使用了多少磁盘空间
+du -sh *	# 查看当前目录下各文件或文件夹使用的磁盘空间
+free -h		# 查看内存使用情况
+</code></pre>
+<h2 id="top-htop-ps-kill-任务管理"><strong>top, htop, ps, kill - 任务管理</strong></h2>
+<pre><code class="language-bash">top -c		# 查看CPU，内存的使用情况
+htop		# top的完美替代品，Linux系统不自带，需要安装， ubuntu系统：apt install htop
+ps aut		# 查看后台任务运行情况，第2列是任务的PID号
+kill -9 PID # 删除编号为PID的任务
+</code></pre>
+<h2 id="nohupdisown-远程任务管理"><strong>nohup，disown - 远程任务管理</strong></h2>
+<pre><code class="language-bash">nohup ./run.sh &amp;&gt; run.sh.o &amp;	# 远程SSH登录服务器，在后台运行任务，断开远程连接后任务仍然在后台跑
+</code></pre>
+<ul>
+<li>如果运行任务时没有加nohup命令，但任务运行时间长，但又必须断开（比如快下班了），若不想让任务因为断开远程连接而中断，可以用disown命令补救</li>
+</ul>
+<pre><code class="language-bash">./run.sh	# 假如任务是直接这样开始跑的
+ctrl + z	# 按ctrl + z，将任务放到后台
+jobs		# 输入jobs命令，回车，可以看到任务是暂停的： [1]+  Stopped(SIGTSTP)        bash run.sh
+bg			# 让后台暂停的任务开始运行
+jobs		# 再次运行jobs，可以看到任务已经跑起来了：   [1]+  Running                 bash run.sh &amp;
+disown -r 	# 从当前shell中移除运行中的作业，至此，可以关掉终端回家了
+</code></pre>
+<h2 id="-管道"><strong>| - 管道</strong></h2>
+<p>管道，将前一个命令的输出作为后一个命令的输入</p>
+<pre><code class="language-bash">command1 | command2
+</code></pre>
+<h2 id="-输入输出重定向"><strong>&gt;, &gt;&gt; - 输入输出重定向</strong></h2>
+<p>Linux中常用重定向操作符有：</p>
+<ol>
+<li>标准输入（/dev/stdin）：代码为0， 使用&lt;或&lt;&lt;</li>
+<li>标准输出（/dev/stdout）：代码为1，使用&gt;（覆盖）或&gt;&gt;（追加）</li>
+<li>标准错误输出（/dev/stderr）：代码为2，使用2&gt;或2&gt;&gt;</li>
+<li>&amp;&gt; 标准输出和错误输出同时重定向</li>
+<li>/dev/null 代表垃圾箱，不想要保存的东西都可以重定向到这里</li>
+</ol>
+<ul>
+<li>输出重定向就是将命令的结果重定向到文件，而不是输出到屏幕，通常用于保存命令的结果</li>
+</ul>
+<pre><code class="language-bash">./run.sh &gt; run.sh.o		# 标准输出到run.sh.o日志文件
+./run.sh 2&gt; run.sh.e	# 标准错误输出到run.sh.e错误日志文件
+./run.sh &amp;&gt; run.sh.log	# 标准输出和标准错误都输出到定一个文件
+./run.sh &amp;&gt; /dev/null	# 丢弃标准输出和标准错误信息
+</code></pre>
+<ul>
+<li>输入重定向是将文件作为输入的来源，而不是键盘</li>
+</ul>
+<pre><code class="language-bash">command &lt; file			# 将file的内容作为command的输入 
+command &lt;&lt; END			# 从标准输入（键盘）中读取数据，直到遇到分界符END时停止（分界符用户可以自定义）
+command &lt;file1 &gt; file2	# 将file1作为command的输入，并将处理结果输出到file2
+</code></pre>
+<ul>
+<li>综合运用</li>
+</ul>
+<pre><code class="language-bash">#!/bin/bash
+
+while read line
+do
+    do something
+done &lt; file.txt &gt; result.txt
+</code></pre>
+<p>逐行读入file.txt的内容，处理之后，将结果保存到result.txt文件中。</p>
+<h2 id="find-locate-which-文件查找"><strong>find, locate, which - 文件查找</strong></h2>
+<pre><code class="language-bash">find -name file					# 在当前目录查找名为file的文件
+find dir/ -name file			# 在dir/目录下查找名为file的文件
+find dir/ -name '*file*'		# 在dir/目录下查找包含file关键词的文件，-name参数支持正则表达式
+find dir/ -name file -delete	# 查找文件并删除
+
+locate file						# 查找文件
+which command					# 显示命令的绝对路径
+</code></pre>
+<h2 id="xargs-命令组合工具"><strong>xargs - 命令组合工具</strong></h2>
+<pre><code class="language-bash">cat file | xargs		# 将file的内容显示成一行
+cat file | xargs -n3	# 将file的内容每3列一行进行输出
+find /ifs/result -name '*.fq.gz' | xargs -n1 -I{} cp {} /ifs/data/	# 查找fq.gz文件并复制到/ifs/data目录下
+find /ifs/result -name '*.fq.gz' | xargs tar czvf all.fq.gz			# 查找fq.gz文件并打包在一起
+find . -type f -name '*.log' -print0 | xargs -0 rm -f				# 当rm文件过多时，可以这样删除
+find . -type f -name '*.py' -print0 | xargs -0 wc -l				# 统计一个目录中所有python文件的行数
+</code></pre>
+<h2 id="parallel-并行工具"><strong>parallel - 并行工具</strong></h2>
+<p>parallel是增强版的xargs。假如一个脚本文件中有4条命令：</p>
+<pre><code class="language-bash"># cat run.sh
+echo a
+echo b
+echo c
+echo d
+
+# 同时执行4个任务，生信中常通过这种方式并行执行多个任务
+cat run.sh | parallel -j 4	
+find *.fq | parallel -j 12 &quot;fastqc {} --outdir .&quot;	# 同时执行12个Fastqc任务
+find *.bam | parallel --dry-run 'samtools index {}' # 同时执行samtools index任务，--dry-run显示任务命令但不实际执行，用于命令检查
+</code></pre>
+<h2 id="useradd-添加用户"><strong>useradd - 添加用户</strong></h2>
+<pre><code class="language-bash">useradd -m username	# 创建用户并为其在/home下创建一个以其名称命名的目录
+</code></pre>
+<h2 id="passwd-更改密码"><strong>passwd - 更改密码</strong></h2>
+<pre><code class="language-bash">passwd	    	   # 更改当前用户的密码
+passwd username	   # 更改指定用户的密码
+</code></pre>
+<h2 id="dos2unix-文件格式转换"><strong>dos2unix - 文件格式转换</strong></h2>
+<p>Linux很多工具都是针对纯文本文件的，并且需要是Unix-like格式的文本文件。但是很多时候文件是从Windows或Mac系统上传到Linux服务器上的，这可能导致文件格式不兼容，原因是不同平台生成的文本文件的换行符不一样。</p>
+<table>
+<thead>
+<tr>
+<th>操作系统</th>
+<th>符号</th>
+<th>正则表达式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mac</td>
+<td>^M</td>
+<td>\r</td>
+</tr>
+<tr>
+<td>Linux</td>
+<td>$</td>
+<td>\n</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>^M$</td>
+<td>\r\n</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-bash">cat -A file			# 查看文件换行符情况
+dos2unix file			# Windows格式转换成Unix-like格式
+</code></pre>
+<h2 id="grep"><strong>grep</strong></h2>
+<p><strong>用于查找文件里符合条件的字符串。</strong></p>
+<pre><code class="language-bash">grep [-abcEFGhHilLnqrsvVwxy][-A&lt;显示列数&gt;][-B&lt;显示列数&gt;][-C&lt;显示列数&gt;][-d&lt;进行动作&gt;][-e&lt;范本样式&gt;][-f&lt;范本文件&gt;][--help][范本样式][文件或目录...]
+grep pattern files			 # 搜索文件中包含pattern的行
+grep -v pattern files		 # 搜索文件中不包含pattern的行
+
+grep -f pattern.txt files	 # 搜索的pattern来自于文件中
+grep -i pattern files		 # 不区分大小写。默认搜索是区分大小写的
+grep -i pattern files		 # 只匹配整个单词，而不是字符串的一部分（如搜索hello，不会匹配到helloworld）
+grep -n pattern files		 # 显示行号信息
+grep -c pattern files		 # 显示匹配的行数
+grep -l pattern files		 # 只显示匹配的文件名
+grep -L pattern files		 # 显示不匹配的文件名
+grep -C number pattern files     # 额外显示匹配行的上下[number]行
+grep pattern1 | grep pattern2 files     # 显示既匹配pattern1，又匹配pattern2的行
+grep -E &quot;pattern1|pattern2&quot; files	# 显示匹配pattern1或者pattern2的行, grep -E相当于egrep
+
+# 用于搜索的特殊字符
+^: 表示行前
+$: 表示行尾
+
+grep '^#' result.vcf		# 显示VCF文件的表头信息
+grep '^hello$' files		# 显示只包含hello的行
+grep -v '^\s*$' file		# 删除空白行
+</code></pre>
+<h2 id="sed"><strong>sed</strong></h2>
+<p>sed是stream editor的缩写，中文称之为“流编辑器”。</p>
+<pre><code class="language-bash">sed command file
+</code></pre>
+<ul>
+<li>command部分，针对每行要进行的处理</li>
+<li>file，要处理的文件</li>
+</ul>
+<h3 id="actions"><strong>Actions</strong></h3>
+<ul>
+<li>d：删除该行</li>
+<li>p：打印该行</li>
+<li>i：在行的前面插入新行</li>
+<li>a：在行的后面插入新行</li>
+<li>r：读取指定文件的内容。</li>
+<li>w：写入指定文件。</li>
+</ul>
+<pre><code class="language-bash">sed -n '10p' file		# 显示第10行
+sed -n '10,20p' file	# 显示第10到20之间的行
+sed -n '/pattern/p' file# 显示含有pattern的行
+sed -n '/pattern1/,/pattern2/p' file # 显示patter1与pattern2之间的行
+
+sed '10d' file			# 删除第10行
+sed '10,20d' file		# 删除第10到20之间的行
+sed '/pattern/d'		# 删除匹配pattern的行
+sed '/^\s*$/d' file		# 删除空白行
+sed 's/^\s*//' file		# 删除行前的空白：空格，制表符
+sed 's/\s*$//' file		# 删除行尾的空白：空格，制表符
+sed 's/^\s*//;s/\s*$//' file # 删除行首和行尾的空白：空格，制表符
+
+sed 's/AA/BB/' file		# 将文件中的AA替换成BB，只替换一行中第一次出现的AA，替换后的结果输出到屏幕
+sed 's/AA/BB/g' file	# 将文件中的所有AA都替换成BB，替换后的结果输出到屏幕
+sed -i 's/AA/BB/g' file # 将文件中的所有AA都替换成BB，直接更改文件的内容
+sed '/CC/s/AA/BB/g' file# 只替换那些含有CC的行
+sed 's/pattern/&amp;XXXX/' file	# 在pattern之后加上XXXX。&amp;表示之前被匹配的内容
+sed 's/pattern.*/&amp;XXXX' file# 在匹配pattern的行尾加上XXXX。pattern.*表示包含pattern的整行内容
+
+sed -n '1~4s/^@/&gt;/p;2~4p' file.fq &gt; file.fa	# Fastq文件转Fasta文件
+sed -n '2~4p' file.fq		# 提取Fastq文件的序列
+
+sed 'y/ABC/XYZ/' file	# 将ABC逐字替换成XYZ
+
+sed '1i\hello' file		# 在第1行前面插入一行，内容为hello，通常用来为文件增加标题
+sed '1a\hello' file		# 在第1行后面插入一行，内容为hello
+sed '1r file2' file1	# 在第1行后面读入file2的内容
+sed '/pattern/w file2' file1 # 将匹配的行写入file2中
+</code></pre>
+<h2 id="awk"><strong>awk</strong></h2>
+<p>Awk是一个强大的文本分析工具，它每次读入一条记录，并把每条记录切分成字段后进行分析。Awk官方文档是非常好的学习材料，通过<code>man awk</code>查看。</p>
+<pre><code class="language-bash">awk 'BEGIN { action } pattern { action } END { action }'
+</code></pre>
+<p><strong>Awk程序通常是一系列 pattern {action}对：</strong></p>
+<p><code>pattern</code>，表示模式匹配，只处理匹配的行。pattern可以省略，表示匹配所有行</p>
+<p><code>action</code>，表示对匹配行所做的动作。{actions}可以省略，表示{ print }。<code>BEGIN</code>和<code>END</code>的{action}不能省略</p>
+<p><strong>pattern可能是：</strong></p>
+<p><code>BEGIN</code>， 执行初始化操作，程序开始时执行一次</p>
+<p><code>END</code>，执行收尾工作，程序结束时执行一次</p>
+<p><code>expression</code>，一个表达式，既可以是判断语句，也可以是正则表达式</p>
+<h3 id="常用参数"><strong>常用参数</strong></h3>
+<ul>
+<li><code>-F value</code> 设置域分隔符，相当于给FS内置变量赋值</li>
+<li><code>-v var=value</code> 将变量value的值赋给程序变量var，-v可以多次使用</li>
+</ul>
+<h3 id="记录与字段"><strong>记录与字段</strong></h3>
+<p>记录是一次读入的内容，通常是文件的一行，保存在字段变量$0中，记录可以被分割成字段，保存在变量$1，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mi mathvariant="normal">，</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">，</mi></mrow><annotation encoding="application/x-tex">2，...，</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord cjk_fallback">，</span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mord cjk_fallback">，</span></span></span></span>NF中。</p>
+<h3 id="表达式与操作符"><strong>表达式与操作符</strong></h3>
+<p>Awk表达式的符号与C语言的类似，基本的表达式有数字，字符串，变量，字段，数组以及函数调用。变量无需声明，它们在首次使用时被初始化为<code>null</code>。</p>
+<pre><code class="language-bash">assignment          =  +=  -=  *=  /=  %=  ^=
+conditional         ?  :
+logical and         &amp;&amp;
+logical or          ||
+logical not         !
+array membership    in
+matching       		~   !~
+relational          &lt;  &gt;   &lt;=  &gt;=  ==  !=
+concatenation       (no explicit operator)
+add ops             +  -
+mul ops             *  /  %
+unary               +  -
+exponentiation      ^
+inc and dec         ++ -- (both post and pre)
+field               $
+</code></pre>
+<h3 id="正则表达式"><strong>正则表达式</strong></h3>
+<p>在Awk中语言中，通常测试一个记录、字段或字符串是否与一个正则表达式匹配，匹配返回1，不匹配返回0。正则表达式用两个反斜杠<code>/</code>包围。</p>
+<pre><code class="language-bash">expr ~ /r/							 # 评估expr是否与r匹配。匹配的意思是expr的一个子串是否在正则表达式r定义的字符串集中。
+
+/r/ { action }, $0 ~ /r/ { action }	 # 两者相同， /r/ 等于 $0 ~ /r/
+</code></pre>
+<p>任何表达式都可以放到<code>~</code>和<code>!~</code>右边或者内建的需要正则表达式的地方。在必要的时候，该表达式会被转变成字符串，然后作为一个正则表达式来解释。以下三行awk命令完成同样的功能：输出第5列为10的的行。</p>
+<pre><code class="language-bash">seq 20 | xargs -n5 &gt; file
+# cat file
+1 2 3 4 5
+6 7 8 9 10
+11 12 13 14 15
+16 17 18 19 20
+
+awk '$5 ~ /10/' file
+awk '$5 ~ &quot;10&quot;' file
+awk '$5 ~ 10' file
+</code></pre>
+<h3 id="数组"><strong>数组</strong></h3>
+<p>Awk支持一维数组。其表示方法为<code>array[expr]</code>，<code>expr</code>在内部被统一转换成字符串类型，因此A[1]，与A[&quot;1&quot;]相同，事实上索引都是“1”。索引为字符串的数组被称为关联数组。<code>expr in array</code>用于判断数组元素array[expr]是否存在。</p>
+<pre><code class="language-bash">for ( var in array ) statement
+</code></pre>
+<h3 id="控制语句"><strong>控制语句</strong></h3>
+<pre><code class="language-bash">if ( expr ) statement
+if ( expr ) statement else statement
+while ( expr ) statement
+do statement while ( expr )
+for ( opt_expr ; opt_expr ; opt_expr ) statement
+for ( var in array ) statement
+continue
+break
+</code></pre>
+<h3 id="内置变量"><strong>内置变量</strong></h3>
+<ul>
+<li><code>NR</code> - 当前行数</li>
+<li><code>NF</code> - 当前行的列数</li>
+<li><code>RS</code>，行分隔符，默认是换行符</li>
+<li><code>FS</code>，列分隔符，默认是空格和制表符</li>
+<li><code>ORS</code>，输出行分隔符，默认为换行符</li>
+<li><code>OFS</code>，输出列分隔符，默认为空格</li>
+<li><code>FILENAME</code>，当前文件名</li>
+</ul>
+<h3 id="内置函数"><strong>内置函数</strong></h3>
+<h3 id="字符串函数"><strong>字符串函数</strong></h3>
+<p>sub()、substr()、gsub()，sprintf()，index()，length()， match()，split()，tolower(), toupper()</p>
+<h3 id="数学函数"><strong>数学函数</strong></h3>
+<p>sin()，cos(), ...</p>
+<h3 id="输入输出"><strong>输入输出</strong></h3>
+<p>有两个输出语句，<code>print</code>和<code>printf</code></p>
+<pre><code class="language-python">print							# 打印整条记录到标准输出，相当于print $0
+print expr1, expr2, ..., exprn	# 打印指定字段到标准输出
+printf format, expr-list		# C语言printf函数的重用
+</code></pre>
+<p>输入函数getline有以下几种形式：</p>
+<pre><code class="language-bash">getline							# 读取下一条记录到$0，更新NF，NR和FNR
+getline var						# 读取下一条记录到var，更新NR和FNR
+getline &lt; file					# 从文件读取记录到$0，更新NF
+getline var &lt; file				# 从文件读取记录到var
+command | getline				# 通过管道传递command的结果到$0，更新NF
+command | getline var			# 通过管道传递command的结果到var
+seq 10 | awk '{print $0;getline}'					  # 显示奇数行
+seq 10 | awk '{getline; print $0}'					  # 显示偶数行
+seq 10 | awk '{getline tmp; print tmp; print $0}'	  # 奇偶行对调
+
+awk 'BEGIN {&quot;date&quot; | getline;close(&quot;date&quot;);print $0}' # 得到系统当前时间
+
+# fastq转换成fasta
+awk '{getline seq; getline comment; getline quality; sub(&quot;@&quot;, &quot;&gt;&quot;, $0); print $0&quot;\n&quot;seq}' file
+</code></pre>
+<h3 id="示例"><strong>示例</strong></h3>
+<pre><code class="language-bash">awk '{print $0}' file	# 打印整行
+awk '{print $1}' file	# 打印第一列
+awk '{print $2}' file	# 打印第二列
+awk '{print $NF}' file	# 打印最后一列
+awk '{print $(NF-1)}' file#打印倒数第二列
+awk -F ';' -v OFS='\t' '{print $1,$2,$NF}' file	# 读入的文件以逗号;分隔列，打印第1列，第2列和最后一列，并且打印时以制表符作为列的分隔符
+number=10;awk -v n=$number '{print n}' file	# number的值被传给了程序变量n
+awk '$2 &gt; 100' file		# 打印第2列大于100的行
+awk 'NR&gt;1 &amp;&amp; NR&lt;4' file # 打印第2~3行
+
+awk '/EGFR/' file		# 打印含有EGFR的行，相当于grep EGFR file
+awk '$1 ~ /EGFR/' file	# 打印第1列含有EGFR的列
+
+# 按指定列去除重复行
+# cat file
+1 2 3 4 5
+6 2 8 9 10
+11 12 13 14 15
+16 17 18 19 20
+awk '!a[$2]++' file		# 第二列出现两次2，只保留第一次出现的那一行，结果如下：
+1 2 3 4 5
+11 12 13 14 15
+16 17 18 19 20
+
+awk '{sum+=$1} END {print sum}' file	# 累加文件的第一列
+awk '{sum+=$1} END {print sum/NR}' file	# 求第一列的平均数
+
+# 从含有多条fasta序列的文件中提取指定序列
+ awk -v RS=&quot;&gt;&quot; '/chr1/ {print $0}' hg19.fa	# 提取chr1的序列
+ awk -v RS=&quot;&gt;&quot; '/chr1|chr2/ {print $0}' hg19.fa	# 提取chr1和chr2的序列
+</code></pre>
+<h2 id="bash脚本模板"><strong>Bash脚本模板</strong></h2>
+<pre><code class="language-bash">#!/bin/bash
+
+command1
+
+command2
+
+...
+</code></pre>
+<p><code>chmod +x run.sh</code> 给run.sh脚本增加可执行权限</p>
+<p>执行脚本，以下三种方式都可以：</p>
+<pre><code class="language-bash"># 脚本在前台执行，标准输出和标准错误输出到屏幕
+./run.sh
+bash run.sh
+sh run.sh		# 前提sh链接到了bash，如果没有，需要root权限执行命令：ln -sf /bin/bash /bin/sh
+
+# 脚本在前台执行，标准输出和标准错误保存到文件
+./run.sh &amp;&gt; run.sh.o
+
+# 脚本在后台执行，在最后加上一个&amp;符号
+./run.sh &amp;&gt; run.sh.o &amp;
+
+# 脚本在后台执行，并且防断线（长时间运行任务时使用）
+nohup ./run.sh &amp;&gt; run.sh.o &amp;
+</code></pre>
+<h2 id="其他命令"><strong>其他命令</strong></h2>
+<pre><code class="language-bash">echo $PATH		# 显示环境变量
+time command	# 显示命令执行时间
+date			# 显示日期和时间
+history			# 显示历史命令
+export PATH=$PATH:/path/to/bin	# 将路径加入环境变量中
+ln -s file file2# 为file文件创建软链接，名称为file2
+exit			# 退出登录
+Tab键自动补全	 # Tab键可以补全命令或文件路径，输入部分命令或路径时，尝试按Tab键补全
+Ctrl + c		# 中止当前命令的执行
+seq 10			# 产生1到10的整数
+md5sum			# 生成，或验证文件的MD5值
+</code></pre>
+<hr>
+<h2 id="1-帮助命令">1. 帮助命令</h2>
+<p>1.1 <code>man 命令名称</code>，man 的意思是 manual，即手册，对于大多数命令都可以使用这个命令来查看其使用的方法。</p>
+<p>1.2 <code>help 命令名称</code> 或者 <code>命令名称 --help</code>，可以查看命令的使用帮助。</p>
+<h2 id="2-目录操作">2. 目录操作</h2>
+<p>2.1 <code>pwd</code>，查看当前所在的目录路径。</p>
+<p>2.2 <code>ls 路径</code>，查看指定路径下的文件列表，可以加上多个路径，例如：<code>ls /usr /etc</code>，分别显示根目录下的 user 目录和 etc 目录。</p>
+<p>ls 命令的常用参数有：</p>
+<ul>
+<li><code>-a</code>，显示隐藏的目录或文件</li>
+<li><code>-l</code>，显示文件的详细信息，<code>ls -l</code> 等价于 <code>ll</code></li>
+<li><code>-h</code>，格式化显示文件的大小，如 1K，3M，1G，方便阅读</li>
+<li><code>-t</code>，以修改时间排序文件列表</li>
+<li><code>-r</code>，反序排序列表</li>
+<li><code>-R</code>，递归显示所有子文件夹的内容</li>
+<li><code>-S</code>，大写的 S，以文件的大小排序</li>
+</ul>
+<p>2.3 <code>cd 路径</code>，cd 的意思是 change directory，改变路径。</p>
+<p>2.4 <code>mkdir 目录名称</code>，创建目录，可以加多个参数创建多个目录，例如 <code>mkdir /tmp/a /tmp/b</code>。</p>
+<p>常用参数：<code>-p</code>，表示创建多级不存在的目录。</p>
+<p>2.5 <code>rmdir 目录</code>，删除目录，注意只能删除空目录。</p>
+<p>2.6 <code>cp</code>，复制文件或者目录的命令，例如将一个文件复制到另一个目录中：<code>cp test.txt /usr/local/</code></p>
+<p>常用参数：</p>
+<ul>
+<li><code>-r</code>，用于复制目录，递归目录中的所有内容</li>
+<li><code>-v</code>，显示复制的详细信息</li>
+</ul>
+<p>2.7 <code>mv</code>，这个命令有两个功能，一是重命名文件或文件夹，例如 <code>mv a.txt b.txt</code>，二是移动文件，例如将文件 a.txt 移动至 root 目录下 <code>mv a.txt /root/</code>。</p>
+<h2 id="3-查看文件">3. 查看文件</h2>
+<p>3.1 <code>cat 文件名</code>，查看文件的全部内容，常用参数 <code>-n</code>，可显示文件的行号。</p>
+<p>3.2 <code>head 文件名</code>，查看文件头部的内容，默认显示前 10 行，可加参数 <code>-行数</code> 查看前 n 行，例如 <code>head -30 文件名</code>。</p>
+<p>3.3 <code>tail 文件名</code>，查看文件尾部的内容，默认显示最后 10 行，常用参数 <code>-f</code>，可查看追加的文件内容。</p>
+<p>3.4 <code>wc 文件名</code>，查看文件的统计信息，常用参数：</p>
+<ul>
+<li><code>-l</code>，显示文件的行数</li>
+<li><code>-w</code>，显示文件内的总单词数</li>
+<li><code>-c</code>，文件的字节数大小</li>
+</ul>
+<h2 id="4-压缩解压">4. 压缩解压</h2>
+<p>4.1 打包命令：<code>tar cf 打包后存放路径和文件名 源文件</code>，例如打包根目录下的 /etc，命令：<code>tar cf /temp/etc-backup.tar /etc</code>，使用这个参数打包，不用压缩源文件。</p>
+<p>4.1 压缩打包：</p>
+<ul>
+<li>gz 格式：<code>tar czf /temp/etc-backup.tar.gz /etc</code></li>
+<li>bz2 格式：<code>tar cjf /temp/etc-backup.tar.bz2 /etc</code></li>
+</ul>
+<p>两种格式的区别：gz 格式压缩速度更快，bz2 个格式压缩后的文件更小。</p>
+<p>.tar.gz 可以缩写为 <strong>.tgz</strong>，.tar.bz2 可以缩写为 <strong>.tbz2</strong>。</p>
+<p>4.2 解压命令：</p>
+<ul>
+<li>解压 <strong>.tar</strong> 格式的文件：<code>tar xf 文件名</code>，可加参数 -C，指定解压后的存储路径</li>
+<li>解压 <strong>.tar.gz</strong> 格式的文件：<code>tar zxf 文件名</code></li>
+<li>解压 <strong>.tar.bz2</strong> 格式的文件：<code>tar jxf 文件名</code></li>
+</ul>
+<h2 id="5-权限操作">5. 权限操作</h2>
+<p>5.1 添加用户：<code>useradd 用户名</code>。</p>
+<p>5.2 修改用户密码：<code>passwd 用户名</code>，不加用户名的话，则默认修改当前用户的密码。</p>
+<p>5.3 删除用户：<code>userdel 用户名</code>，可加参数 -f 强制删除，-r 删除用户主目录。</p>
+<p>5.4 新建用户组：<code>groupadd 用户组名称</code>。</p>
+<p>5.5 将某个用户加入到某个用户组中：<code>usermod -g 用户组名称 用户名</code></p>
+<p>5.6 修改文件权限，文件权限的表示为 r（可读），w（可写），x（可执行），数字表示分别是 4， 2，1。</p>
+<p><code>chmod u+x a.txt</code>，表示对文件 a.txt 添加可执行权限，选项 u 表示所属用户，类似的有 g（属组）、a（全部）；+ 表示添加权限，- 表示删除权限</p>
+<p>5.7 修改文件的属主和属组权限：<code>chown root:root a.txt</code>，其中 : 前面的表示所属用户，后面的表示所属用户组。</p>
+<p>也可以单独改变属主和属组的权限：</p>
+<ul>
+<li><code>chown root a.txt</code>，改变所属用户。</li>
+<li><code>chown :root a.txt</code>，改变所属用户组。</li>
+</ul>
+<h2 id="6-软件安装">6. 软件安装</h2>
+<p>6.1 rpm 包管理，文件后缀一般是以 .rpm 结尾的。</p>
+<ul>
+<li>安装的命令：<code>rpm -i xxx.rpm</code>，如果安装的包需要有其他的依赖，则会提示先手动安装依赖。</li>
+<li>查看安装的软件包：<code>rpm -qa</code>，可加管道过滤想查询的软件包，<code>rpm -qa | grep mysql</code> 。</li>
+<li>卸载软件包命令：<code>rpm -e 软件包名称</code>，注意这里必须输入软件包的名字全程。常加参数 <code>--nodeps</code> 表示卸载时不检查依赖。</li>
+</ul>
+<p>6.2 yum 是一个基于 rpm 的包管理器，可以自己检查依赖，维护包的升级移除，更加的自动化，在实际中的使用也更多。</p>
+<ul>
+<li>安装软件包：<code>yum install 软件包名称</code></li>
+<li>卸载：<code>yum remove 软件包名称</code></li>
+<li>查看安装的软件：<code>yum list</code></li>
+</ul>
+<p>6.3 Linux 上安装软件的第三种方式是源代码编译安装，在下载好的源代码中一般有一个 configure 文件，安装的步骤为：</p>
+<ul>
+<li>进入软件包目录，执行 configure 文件，<code>./configure --prefix=/软件包安装路径</code></li>
+<li>然后执行命令 <code>make</code>，或者按照指示执行 <code>gmake</code>，两者是类似的命令</li>
+<li>然后再执行 <code>make install</code>命令</li>
+</ul>
+<h2 id="7-vim命令">7. Vim命令</h2>
+<p>Vim 是在 Linux 上经常使用的一个文本编辑器，熟练使用 Vim 的常用命令也是有必要的。</p>
+<p>7.1 输入 <code>vim 文件名</code> 则进入了 vim 的正常模式，常用命令如下：</p>
+<ul>
+<li>插入：
+<ul>
+<li>i（光标处前一个字符编辑），I（大写的 i，光标所处行首编辑）</li>
+<li>a（光标处后一个字符编辑），A（光标所处行尾编辑）</li>
+<li>o（光标处向下新建一行编辑），O（大写的 o，光标处向上新建一行编辑）</li>
+</ul>
+</li>
+<li>复制：
+<ul>
+<li>复制单行：光标处所处行按 YY，然后在目标行按 P</li>
+<li>复制多行：按数字 + YY，例如复制 3 行，在光标处按 3 YY，然后在目标行按 P</li>
+</ul>
+</li>
+<li>剪切：
+<ul>
+<li>剪切单行：光标所在行按 DD</li>
+<li>剪切多行：数字 + DD</li>
+</ul>
+</li>
+<li>撤销：按 U</li>
+<li>删除光标所处的字符：X</li>
+<li>替换光标所处的字符：按 R 后输入新的字符</li>
+<li>光标移动至某行：行数 + GG</li>
+<li>显示文件行数：按 ：后输入命令 <code>set nu</code></li>
+<li>移动至文件的第一行：GG</li>
+<li>移动至文件最后一行：shift + G</li>
+<li>移动至一行的开头：shift + 6</li>
+<li>移动至一行的末尾：shift + 4</li>
+</ul>
+<p>7.2 vim 的命令模式：</p>
+<ul>
+<li>
+<p><code>:w /usr/local/a.txt</code>，w 表示保存，后面可以跟上保存的路径和文件名称</p>
+</li>
+<li>
+<p><code>:wq</code> 表示保存并退出，<code>:q!</code> 表示强制退出，不保存修改</p>
+</li>
+<li>
+<p><code>:! 其他Linux命令</code>，输入 ! 可以进入临时的命令模式，在编辑文件的时候执行其他的命令，按 Enter 键回到正在编辑的文件中</p>
+</li>
+<li>
+<pre><code>/ 字符
+</code></pre>
+<p>，可以搜索文件中的内容，搜索后，匹配的文本会高亮显示，按 N 移动至下一个匹配的结果，按 shift + N 移动至上一个。</p>
+<ul>
+<li>搜索后的文件会高亮显示，如果需要取消高亮显示，输入命令：<code>:set nohlsearch</code>，如果需要重新高亮显示，去掉命令中的 no 即可：<code>:set hlsearch</code></li>
+</ul>
+</li>
+<li>
+<p>替换搜索到的内容：<code>:s/原文本/新的内容</code>，默认只会替换光标所在行的第一处搜索匹配的内容</p>
+</li>
+<li>
+<p>全局替换搜索到的内容：<code>:%s/原文本/新的内容</code></p>
+</li>
+<li>
+<p>如果匹配的内容有连续的，则全局替换时需要加参数 g：<code>:%s/原文本/新文件/g</code></p>
+</li>
+<li>
+<p>替换某行的内容：<code>m,ns/原文本/新的内容</code>， m、n 分别表示起始行和结束行，同理也可加参数 /g 替换有连续匹配的内容。</p>
+</li>
+</ul>
+<h1 id="考题">考题</h1>
+<hr>
+<h2 id="00-平常用什么-linux-命令比较多如何打开文件并进行查找某个单词怎么在某个目录下找到包含-txt-的文件">00 平常用什么 linux 命令比较多？如何打开文件并进行查找某个单词？怎么在某个目录下找到包含 txt 的文件？</h2>
+<p>pwd：显示当前所在位置</p>
+<p>sudo + 其他命令：以系统管理者的身份执行指令，也就是说，经由 sudo 所执行的指令就好像是 root 亲自执行。</p>
+<p>grep：要搜索的字符串 要搜索的文件 --color ： 搜索命令，--color 代表高亮显示</p>
+<p>ps - ef/ps aux： 这两个命令都是查看当前系统正在运行进程，两者的区别是展示格式不同。如果想要查看特定的进程可以使用这样的格式：</p>
+<pre><code class="language-shell"> ps aux|grep redis
+</code></pre>
+<p>（查看包括redis的进程），也可使用</p>
+<pre><code class="language-shell">pgrep redis -a
+</code></pre>
+<p>注意：如果直接用ps（（Process Status））命令，会显示所有进程的状态，通常结合 grep 命令查看某进程的状态。</p>
+<p>kill -9 进程的 pid ： 杀死进程（-9 表示强制终止），先用 ps 查找进程，然后用 kill 杀掉。</p>
+<p>find 目录 参数 ： 寻找目录（查）。在/home目录下查找以 .txt 结尾的文件名:</p>
+<pre><code class="language-shell">find /home -name &quot;*.txt&quot;
+</code></pre>
+<p>ls 或者 ll :（ll 是 ls -l 的别名，ll 命令可以看到该目录下的所有目录和文件的详细信息）： 查看目录信息。</p>
+<p>free : 显示系统内存的使用情况，包括物理内存、交换内存(swap)和内核缓冲区内存。</p>
+<p>tar -zcvf 打包压缩后的文件名 要打包压缩的文件 : 打包并压缩文件，一般情况下打包和压缩是一起进行的，打包并压缩后的文件的后缀名一般 .tar.gz。c：压缩。</p>
+<p>tar -xvf 压缩文件 - C 解压的位置 : 解压压缩包。x: 解压。</p>
+<p>wget : 是从远程下载的工具。</p>
+<p>vmstat : 虚拟内存性能监控、CPU 监控。</p>
+<p>top : 常用来监控Linux的系统状况，比如CPU、内存的使用，显示系统上正在运行的进程。load average：系统负载，就是进程队列的长度。当这个值&gt;cpu核心数的时候就说明有进程在等待处理了，是负载过重。</p>
+<p>2.18 用过 ping 命令么？简单介绍一下。TTL 是什么意思？<br>
+ping : 查看与某台机器的连接情况。TTL：生存时间。数据报被路由器丢弃之前允许通过的网段数量。</p>
+<p>2.19 怎么判断一个主机是不是开放某个端口？<br>
+telnet IP 地址 端口</p>
+<pre><code class="language-shell">telnet  127.0.0.1 3389 
+</code></pre>
+<h2 id="快捷键">快捷键</h2>
+<p>接下来是大家很熟悉的一个环节了，许多软件都内置了快捷键供用户使用，Linux/Shell 也不例外，熟悉这些快捷键可以极大提高我们的工作效率，我尤其推荐那些用来“移动光标”的命令。有时候我们输入的命令很长，会遇到一些“卡在中间、进退两难”的情况，这时候它们可能会发挥大的作用哦：</p>
+<table>
+<thead>
+<tr>
+<th>快捷键名</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CTRL+A</td>
+<td>把光标移到命令行开头</td>
+</tr>
+<tr>
+<td>CTRL+E</td>
+<td>把光标移到命令行结尾</td>
+</tr>
+<tr>
+<td>CTRL+C</td>
+<td>强制终止当前命令</td>
+</tr>
+<tr>
+<td>CTRL+L</td>
+<td>清屏，相当于clear命令</td>
+</tr>
+<tr>
+<td>CTRL+U</td>
+<td>删除/剪切当前行、光标前的内容</td>
+</tr>
+<tr>
+<td>CTRL+K</td>
+<td>删除/剪切当前行、光标后的内容</td>
+</tr>
+<tr>
+<td>CTRL+Y</td>
+<td>粘贴CTRL+U/K中剪切的内容</td>
+</tr>
+<tr>
+<td>CTRL+R</td>
+<td>在历史命令中搜索</td>
+</tr>
+<tr>
+<td>CTRL+D</td>
+<td>退出当前终端</td>
+</tr>
+<tr>
+<td>CTRL+Z</td>
+<td>刮起当前进程</td>
+</tr>
+<tr>
+<td>CTRL+S</td>
+<td>暂停屏幕输出</td>
+</tr>
+<tr>
+<td>CTRL+Q</td>
+<td>恢复屏幕输出</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Docker基础笔记]]></title>
+        <id>https://flyingchase.github.io/post/docker-ji-chu-bi-ji/</id>
+        <link href="https://flyingchase.github.io/post/docker-ji-chu-bi-ji/">
+        </link>
+        <updated>2021-05-03T12:25:14.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="00-虚拟化容器介绍">00 虚拟化容器介绍</h2>
+<ul>
+<li>
+<p>虚拟机的不足之处在于对物理服务器资源的消耗，当我们在物理服务器创建一台虚拟机时，便需要虚拟出一套硬件并在上面运行完整的操作系统，每台虚拟机都占用许多的服务器资源。</p>
+</li>
+<li>
+<p>传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程；而容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟。</p>
+</li>
+<li>
+<p><code>Docker</code>是使用时下很火的<code>Golang</code>语言进行开发的，其技术核心是<code>Linux</code>内核的<code>Cgroup</code>,<code>Namespace</code>和<code>AUFS</code>类的<code>Union FS</code>等技术，这些技术都是<code>Linux</code>内核中早已存在很多年的技术，所以严格来说<code>Docker</code>并不是一个完全创新的技术，<code>Docker</code>通过这些底层的<code>Linux</code>技术，对<code>Linux</code>进程进行封装隔离，而被隔离的进程也被称为容器，完全独立于宿主机的进程。</p>
+</li>
+<li>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/aTm088.png" alt="aTm088" loading="lazy"></figure>
+</li>
+<li>
+<p>Docker &amp; 虚拟机 比较</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20210401175039725.png" alt="image-20210401175039725" loading="lazy"></figure>
+</li>
+</ul>
+<p>0</p>
+<h2 id="01-docker基本概念">01 Docker基本概念</h2>
+<h3 id="0101-镜像-image">01.01 镜像 Image</h3>
+<ul>
+<li>
+<p>Root 文件系统 提供容器运行时的程序 库 资源 配置等文件和配置参数</p>
+<pre><code class="language-bash"># 列出镜像
+docker image ls
+# 拉取镜像
+docker pull [选项] [Docker Registry 地址[:端口号]/]仓库名[:标签]
+# 拉取一个镜像，需要指定Docker Registry的地址和端口号，默认是Docker Hub，还需要指定仓库名和标签，仓库名和标签唯一确定一个镜像，而标签是可能省略，如果省略，则默认使用latest作为标签名，另外，仓库名则由作者名和软件名组成。
+# 运行镜像
+docker run -it centos /bin/bash
+# image_name表示镜像名，image_id表示镜像id
+dockere image rm image_name/image_id
+
+</code></pre>
+</li>
+<li>
+<p><code>docker images</code> ：列出 docker host 机器上的镜像，可以使用 <code>-f</code> 进行过滤</p>
+</li>
+<li>
+<p><code>docker build</code>：从 Dockerfile 中构建出一个镜像</p>
+</li>
+<li>
+<p><code>docker history</code>：列出某个镜像的历史</p>
+</li>
+<li>
+<p><code>dockerimport</code>：从 tarball 中创建一个新的文件系统镜像</p>
+</li>
+<li>
+<p><code>docker pull</code>：从 docker registry 拉去镜像</p>
+</li>
+<li>
+<p><code>docker push</code>：把本地镜像推送到 registry</p>
+</li>
+<li>
+<p><code>docker rmi</code>：删除镜像</p>
+</li>
+<li>
+<p><code>docker save</code>：把镜像保存为 tar 文件</p>
+</li>
+<li>
+<p><code>docker search</code>：在 docker hub 上搜索镜像</p>
+</li>
+<li>
+<p><code>docker tag</code>：为镜像打上 tag 标记</p>
+</li>
+</ul>
+<h3 id="0102-容器-container">01.02 容器 container</h3>
+<p>镜像是生成容器的模版</p>
+<p><strong>镜像&amp;&amp;容器</strong></p>
+<p>​	面向对象中的 类与对象的关系</p>
+<pre><code class="language-bash"># 查看容器
+docker container ls
+docker ps
+# 删除容器
+docker rm container_id # (docker ps 可以看见container_id)
+# 进入容器
+docker exec -it container_id command
+
+</code></pre>
+<h3 id="0103-仓库-repository">01.03 仓库 Repository</h3>
+<p>类似GitHub进行集中储存和分发镜像的服务</p>
+<p>默认Docker Hub <code>hub.docker.com</code></p>
+<h3 id="0104-docker架构">01.04 Docker架构</h3>
+<p>使用C/S模型 通过客客户端调用服务端 Docker 客户端与 Docker 服务器进行交互，Docker服务端负责构建、运行和分发 Docker 镜像。</p>
+<figure data-type="image" tabindex="3"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20210401182157890.png" alt="image-20210401182157890" loading="lazy"></figure>
+<p>Docker Daemon 是服务器组建 为守护进程 响应客户端的请求并翻译为系统调用完成容器的管理操作</p>
+<h2 id="02-打包程序">02 打包程序</h2>
+<p>**普通打包方式: **</p>
+<p>以js打包为例</p>
+<ul>
+<li>start with an OS</li>
+<li>Install Node</li>
+<li>Copy app files</li>
+<li>Run node app.js</li>
+</ul>
+<p><strong>Dockerfileff打包:</strong></p>
+<ul>
+<li>首字母D大写 其他均小写 无后缀</li>
+<li>FROM 镜像文件</li>
+</ul>
+<pre><code class="language-shell">docker build -t hellodocker .
+docker images
+docker image ls //列举出来的tag可以进行版本公职 versioning 
+
+</code></pre>
+<pre><code class="language-shell"># 回顾基础Linux操作commad
+# 查看文件前2行
+head -n 2 *.txt
+# 查看文件最后2行
+tail -n 2 *.txt
+# less more查看长文件
+# 重定向 &gt;
+cat # 串联+合并 
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[刷题笔记]]></title>
+        <id>https://flyingchase.github.io/post/shua-ti-bi-ji/</id>
+        <link href="https://flyingchase.github.io/post/shua-ti-bi-ji/">
+        </link>
+        <updated>2021-05-03T12:23:50.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="00-杂项">00 杂项</h2>
+<h3 id="0001-待刷备份-lintcode-leetcode">00.01 待刷备份 LintCode LeetCode</h3>
+<hr>
+<p>待刷:</p>
+<p>①<strong>初期，刷入门核心题</strong></p>
+<p>这是针对毫无经验的刷题选手的策略。如果已经有一定刷题心得，可以跳过这步。</p>
+<p>首先要给自己建立信心，我的策略是先把<strong>最基础的入门题刷个30道左右</strong>，熟悉coding的过程，找到刷题的感觉。</p>
+<p>这些是我筛选过的还不错的入门题，我愿称之为——<strong>菜菜子必备的编程20题</strong>：</p>
+<p>1.<a href="https://www.lintcode.com/problem/463/?utm_source=sc-zhihuniming-sy0309-2">整数排序</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/37//?utm_source=sc-zhihuniming-sy0309-2">反转一个3位整数</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/283//?utm_source=sc-zhihuniming-sy0309-2">三数之中的最大值</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/1921//?utm_source=sc-zhihuniming-sy0309-2">从不充值的玩家</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/298//?utm_source=sc-zhihuniming-sy0309-2">寻找素数</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/297//?utm_source=sc-zhihuniming-sy0309-2">寻找最大值</a></p>
+<p>7.<a href="https://www.lintcode.com/problem/466//?utm_source=sc-zhihuniming-sy0309-2">链表节点计数</a></p>
+<p>8.<a href="https://www.lintcode.com/problem/454//?utm_source=sc-zhihuniming-sy0309-2">矩阵面积</a></p>
+<p>9.<a href="https://www.lintcode.com/problem/25//?utm_source=sc-zhihuniming-sy0309-2">打印X</a></p>
+<p>10.<a href="https://www.lintcode.com/problem/1919//?utm_source=sc-zhihuniming-sy0309-2">分数超过组长的组员</a></p>
+<p>11.<a href="https://www.lintcode.com/problem/1927//?utm_source=sc-zhihuniming-sy0309-2">硬币翻面</a></p>
+<p>12.<a href="https://www.lintcode.com/problem/1934//?utm_source=sc-zhihuniming-sy0309-2">张三的故事</a></p>
+<p>13.<a href="https://www.lintcode.com/problem/1931//?utm_source=sc-zhihuniming-sy0309-2">寻找特定的患者</a></p>
+<p>14.<a href="https://www.lintcode.com/problem/1932//?utm_source=sc-zhihuniming-sy0309-2">挂科最多的同学</a></p>
+<p>15.<a href="https://www.lintcode.com/problem/1938//?utm_source=sc-zhihuniming-sy0309-2">查询用户邮箱</a></p>
+<p>16.<a href="https://www.lintcode.com/problem/1923//?utm_source=sc-zhihuniming-sy0309-2">增长的疫情感染人数</a></p>
+<p>17.<a href="https://www.lintcode.com/problem/1930//?utm_source=sc-zhihuniming-sy0309-2">公租房信息查询</a></p>
+<p>18.<a href="https://www.lintcode.com/problem/1920//?utm_source=sc-zhihuniming-sy0309-2">查找重名的同学</a></p>
+<p>19.<a href="https://www.lintcode.com/problem/1925//?utm_source=sc-zhihuniming-sy0309-2">超过3名球员所得到的分数</a></p>
+<p>20.<a href="https://www.lintcode.com/problem/1924//?utm_source=sc-zhihuniming-sy0309-2">推荐学理科的同学</a></p>
+<p>②中期，按知识点tag刷题</p>
+<hr>
+<p>接下来就要真正的掌握算法和数据结构知识点。</p>
+<p>我的策略是逮着一个知识点使劲刷，刷到掌握了为止（不限题数）。</p>
+<p>但如果刷了30题以上还是不得其法，可以先放一放，不要给自己造成心理负担。</p>
+<p><strong>最让人头疼的动态规划，可以循序渐进的刷这10道题：</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/514/?utm_source=sc-zhihuniming-sy0309-2">栅栏染色</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/111/?utm_source=sc-zhihuniming-sy0309-2">爬楼梯</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/749/?utm_source=sc-zhihuniming-sy0309-2">约翰的后花园</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/683/?utm_source=sc-zhihuniming-sy0309-2">单词拆分</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/437/?utm_source=sc-zhihuniming-sy0309-2">书籍复印</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/512/?utm_source=sc-zhihuniming-sy0309-2">解码方法</a></p>
+<p>7.<a href="http://lintcode.com/problem/192/?utm_source=sc-zhihuniming-sy0309-2">通配符匹配</a></p>
+<p>8.<a href="https://www.lintcode.com/problem/816/?utm_source=sc-zhihuniming-sy0309-2">旅行商问题</a></p>
+<p>9.<a href="https://www.lintcode.com/problem/622/?utm_source=sc-zhihuniming-sy0309-2">青蛙跳</a></p>
+<p>10.<a href="https://www.lintcode.com/problem/20/?utm_source=sc-zhihuniming-sy0309-2">骰子求和</a></p>
+<p><strong>双指针算法，高频算法之王，变形比较多。想掌握的话，刷这些题：</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/148/?utm_source=sc-zhihuniming-sy0309-2">颜色分类</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/607/?utm_source=sc-zhihuniming-sy0309-2">两数之和 III-数据结构设计</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/143/?utm_source=sc-zhihuniming-sy0309-2">排颜色</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/32/?utm_source=sc-zhihuniming-sy0309-2">最长子串覆盖</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/891/?utm_source=sc-zhihuniming-sy0309-2">有效回文</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/102/?utm_source=sc-zhihuniming-sy0309-2">带环链表</a></p>
+<p>7.<a href="https://www.lintcode.com/problem/144/?utm_source=sc-zhihuniming-sy0309-2">交错正负数</a></p>
+<p>8.<a href="https://www.lintcode.com/problem/59/?utm_source=sc-zhihuniming-sy0309-2">最接近的三数之和</a></p>
+<p>9.<a href="https://www.lintcode.com/problem/58/?utm_source=sc-zhihuniming-sy0309-2">四数之和</a></p>
+<p>10.<a href="https://www.lintcode.com/problem/363/?utm_source=sc-zhihuniming-sy0309-2">接雨水</a></p>
+<p><strong>宽度优先搜索，考察频率高，但实现不难，刷这7道题：</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/433/?utm_source=sc-zhihuniming-sy0309-2">岛屿的个数</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/605/?utm_source=sc-zhihuniming-sy0309-2">序列重构</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/127/?utm_source=sc-zhihuniming-sy0309-2">拓扑排序</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/615/?utm_source=sc-zhihuniming-sy0309-2">课程表</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/151/?utm_source=sc-zhihuniming-sy0309-2">买卖股票的最佳时期</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/616/?utm_source=sc-zhihuniming-sy0309-2">安排课程</a></p>
+<p>7.<a href="https://www.lintcode.com/problem/45/?utm_source=sc-zhihuniming-sy0309-2">最大子数组差</a></p>
+<p><strong>深度优先搜索，考察频率高，主要是考察递归会不会写。</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/17/?utm_source=sc-zhihuniming-sy0309-2">子集</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/178/?utm_source=sc-zhihuniming-sy0309-2">图是否是树</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/138/?utm_source=sc-zhihuniming-sy0309-2">子数组之和</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/425/?utm_source=sc-zhihuniming-sy0309-2">电话号码的字母组合</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/90/?utm_source=sc-zhihuniming-sy0309-2">K数和</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/652/?utm_source=sc-zhihuniming-sy0309-2">因式分解</a></p>
+<p><strong>分治法，考察频率中等，一般和二叉树一起出现和考察，题一般不难。</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/17/?utm_source=sc-zhihuniming-sy0309-2">子集</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/31/?utm_source=sc-zhihuniming-sy0309-2">数组划分</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/95/?utm_source=sc-zhihuniming-sy0309-2">验证二叉查找树</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/15/?utm_source=sc-zhihuniming-sy0309-2">全排列</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/137/?utm_source=sc-zhihuniming-sy0309-2">克隆图</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/143/?utm_source=sc-zhihuniming-sy0309-2">排颜色</a></p>
+<p>7.<a href="https://www.lintcode.com/problem/138/?utm_source=sc-zhihuniming-sy0309-2">子数组之和</a></p>
+<p><strong>哈希表，原理和应用都需要掌握，而且需要掌握代码实现。</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/two-sum/?utm_source=sc-zhihuniming-sy0309-2">两数之和</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/longest-palindrome/?utm_source=sc-zhihuniming-sy0309-2">最长回文串</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/intersection-of-two-arrays/?utm_source=sc-zhihuniming-sy0309-2">两数组的交集</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/first-unique-number-in-data-stream/?utm_source=sc-zhihuniming-sy0309-2">数据流中第一个唯一的数字</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/two-sum-ii-input-array-is-sorted/?utm_source=sc-zhihuniming-sy0309-2">两数和 II-输入已排序的数组</a></p>
+<p><strong>堆，经常会用到，原理必须掌握。高频。</strong></p>
+<p>1.<a href="http://lintcode.com/problem/4/?utm_source=sc-zhihuniming-sy0309-2">丑数</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/130/?utm_source=sc-zhihuniming-sy0309-2">堆化</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/360/?utm_source=sc-zhihuniming-sy0309-2">滑动窗口的中位数</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/131/?utm_source=sc-zhihuniming-sy0309-2">大楼轮廓</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/518/?utm_source=sc-zhihuniming-sy0309-2">超级丑数</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/964/?utm_source=sc-zhihuniming-sy0309-2">食物集合</a></p>
+<p>7.<a href="https://www.lintcode.com/problem/808/?utm_source=sc-zhihuniming-sy0309-2">影际网络</a></p>
+<p><strong>贪心，考得不多，但起码要会用。</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/919/?utm_source=sc-zhihuniming-sy0309-2">会议室</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/602/?utm_source=sc-zhihuniming-sy0309-2">俄罗斯套娃信封</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/304/?utm_source=sc-zhihuniming-sy0309-2">最大乘积</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/187/?utm_source=sc-zhihuniming-sy0309-2">加油站</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/45/?utm_source=sc-zhihuniming-sy0309-2">最大子数组差</a></p>
+<p><strong>链表，中小公司考得多，大公司近年来考得少。题目一般不难，主要考察Reference。</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/104/?utm_source=sc-zhihuniming-sy0309-2">合并k个排序链表</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/685/?utm_source=sc-zhihuniming-sy0309-2">数据流中第一个唯一的数字</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/102/?utm_source=sc-zhihuniming-sy0309-2">带环链表</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/170/?utm_source=sc-zhihuniming-sy0309-2">旋转链表</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/380/?utm_source=sc-zhihuniming-sy0309-2">两个链表的交叉</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/450/?utm_source=sc-zhihuniming-sy0309-2">K组翻转链表</a></p>
+<p><strong>线段树，不太考。但当有的题目存在多种解法的时候，线段树可以帮忙降低思考难度。</strong></p>
+<p>1.<a href="https://www.lintcode.com/problem/201/?utm_source=sc-zhihuniming-sy0309-2">线段树的构造</a></p>
+<p>2.<a href="https://www.lintcode.com/problem/202/?utm_source=sc-zhihuniming-sy0309-2">线段树的查询</a></p>
+<p>3.<a href="https://www.lintcode.com/problem/207/?utm_source=sc-zhihuniming-sy0309-2">区间求和</a></p>
+<p>4.<a href="https://www.lintcode.com/problem/205/?utm_source=sc-zhihuniming-sy0309-2">区间最小数</a></p>
+<p>5.<a href="https://www.lintcode.com/problem/1063/?utm_source=zhihuniming-sy0309-2">我的日历</a></p>
+<p>6.<a href="https://www.lintcode.com/problem/290/?utm_source=sc-zhihuniming-sy0309-2">排序方案</a></p>
+<p>7.<a href="https://www.lintcode.com/problem/998/?utm_source=sc-zhihuniming-sy0309-2">构造队列</a></p>
+<p>8.<a href="https://www.lintcode.com/problem/1450/?utm_source=sc-zhihuniming-sy0309-2">矩形面积</a></p>
+<p><strong>③面试前，按公司ladder刷题</strong></p>
+<hr>
+<p>在准备面试前，我建议直接刷目标公司的高频题。熟悉这些公司的常考题、出题风格，会比漫无目的地乱刷效率高很多。</p>
+<p><strong>阿里巴巴：</strong></p>
+<p><a href="https://www.lintcode.com/problem/bull-cards/?utm_source=sc-zhihuniming-sy0309-2">牛牌</a></p>
+<p><a href="https://www.lintcode.com/problem/split-concatenated-strings/?utm_source=sc-zhihuniming-sy0309-2">连接字符串</a></p>
+<p><a href="https://www.lintcode.com/problem/split-array-with-equal-sum/?utm_source=sc-zhihuniming-sy0309-2">同和分割数组</a></p>
+<p><a href="https://www.lintcode.com/problem/valid-parenthesis-string/?utm_source=sc-zhihuniming-sy0309-2">有效的括号字符串</a></p>
+<p><a href="https://www.lintcode.com/problem/path-sum-iv/?utm_source=sc-zhihuniming-sy0309-2">路径和</a></p>
+<p><a href="https://www.lintcode.com/problem/array-score/?utm_source=sc-zhihuniming-sy0309-2">数组评分</a></p>
+<p><strong>字节跳动：</strong></p>
+<p><a href="https://www.lintcode.com/problem/delete-char/?utm_source=sc-zhihuniming-sy0309-2">删除字符</a></p>
+<p><a href="https://www.lintcode.com/problem/longest-increasing-path-in-a-matrix/?utm_source=sc-zhihuniming-sy0309-2">矩阵中的最长递增路径</a></p>
+<p><a href="https://www.lintcode.com/problem/restorearray/?utm_source=sc-zhihuniming-sy0309-2">恢复数组</a></p>
+<p><a href="https://www.lintcode.com/problem/food-set/?utm_source=sc-zhihuniming-sy0309-2">食物组合</a></p>
+<p><a href="https://www.lintcode.com/problem/combine-new-numbers/?utm_source=sc-zhihuniming-sy0309-2">组合新数字</a></p>
+<p><a href="https://www.lintcode.com/problem/maximum-points-set/?utm_source=sc-zhihuniming-sy0309-2">最大点的集合</a></p>
+<p><strong>腾讯：</strong></p>
+<p><a href="https://www.lintcode.com/problem/minimum-rest-days/?utm_source=sc-zhihuniming-sy0309-2">最短休息日</a></p>
+<p><a href="https://www.lintcode.com/problem/decrypt-the-string/?utm_source=sc-zhihuniming-sy0309-2">解压字符串</a></p>
+<p><a href="https://www.lintcode.com/problem/median-ii/?utm_source=sc-zhihuniming-sy0309-2">中位数</a></p>
+<p><a href="https://www.lintcode.com/problem/remove-boxes/?utm_source=sc-zhihuniming-sy0309-2">移除箱子</a></p>
+<p><a href="https://www.lintcode.com/problem/minimum-factorization/?utm_source=sc-zhihuniming-sy0309-2">最小分解</a></p>
+<p><a href="https://www.lintcode.com/problem/song-time/?utm_source=sc-zhihuniming-sy0309-2">歌曲时间</a></p>
+<p><strong>百度：</strong></p>
+<p><a href="https://www.lintcode.com/problem/arithmetic-slices/?utm_source=sc-zhihuniming-sy0309-2">等差切片</a></p>
+<p><a href="https://www.lintcode.com/problem/zuma-game/?utm_source=sc-zhihuniming-sy0309-2">祖玛游戏</a></p>
+<p><a href="https://www.lintcode.com/problem/game-of-life/?utm_source=sc-zhihuniming-sy0309-2">生命游戏</a></p>
+<p><a href="https://www.lintcode.com/problem/longest-substring-with-at-least-k-repeating-characters/?utm_source=sc-zhihuniming-sy0309-2">字符至少出现K次的最长子串</a></p>
+<p><a href="https://www.lintcode.com/problem/integer-replacement/?utm_source=sc-zhihuniming-sy0309-2">整数替换</a></p>
+<p><a href="https://www.lintcode.com/problem/split-array-largest-sum/?utm_source=sc-zhihuniming-sy0309-2">拆分子数组</a></p>
+<p><strong>美团：</strong></p>
+<p><a href="https://www.lintcode.com/problem/test-strategy/?utm_source=sc-zhihuniming-sy0309-2">考试策略</a></p>
+<p><a href="https://www.lintcode.com/problem/string-partition/?utm_source=sc-zhihuniming-sy0309-2">字符串划分</a></p>
+<p><a href="https://www.lintcode.com/problem/xorsum-of-interval-extremum/?utm_source=sc-zhihuniming-sy0309-2">区间极值异或</a></p>
+<p><a href="https://www.lintcode.com/problem/the-months-days/?utm_source=sc-zhihuniming-sy0309-2">月份天数</a></p>
+<p><a href="https://www.lintcode.com/problem/associated-query/?utm_source=sc-zhihuniming-sy0309-2">关联查询</a></p>
+<p><a href="https://www.lintcode.com/problem/character-deletion/?utm_source=sc-zhihuniming-sy0309-2">字符删除</a></p>
+<p>Google</p>
+<p><a href="https://www.lintcode.com/problem/kth-largest-element/?utm_source=sc-zhihuniming-sy0309-2">第k大元素</a></p>
+<p><a href="https://www.lintcode.com/problem/lru-cache/?utm_source=sc-zhihuniming-sy0309-2">LRU缓存策略</a></p>
+<p><a href="https://www.lintcode.com/problem/graph-valid-tree/?utm_source=sc-zhihuniming-sy0309-2">图是否是树</a></p>
+<p><a href="https://www.lintcode.com/problem/sequence-reconstruction/?utm_source=sc-zhihuniming-sy0309-2">序列重构</a></p>
+<p><a href="https://www.lintcode.com/problem/word-break/?utm_source=sc-zhihuniming-sy0309-2">单词拆分 I</a></p>
+<p><a href="https://www.lintcode.com/problem/longest-substring-with-at-most-k-distinct-characters/?utm_source=sc-zhihuniming-sy0309-2">最多有k个不同字符的最长子字符串</a></p>
+<p><strong>Facebook</strong></p>
+<p><a href="https://www.lintcode.com/problem/3sum/?utm_source=sc-zhihuniming-sy0309-2">三数之和</a></p>
+<p><a href="https://www.lintcode.com/problem/sort-colors/?utm_source=sc-zhihuniming-sy0309-2">颜色分类</a></p>
+<p><a href="https://www.lintcode.com/problem/word-ladder/?utm_source=sc-zhihuniming-sy0309-2">单词接龙</a></p>
+<p><a href="https://www.lintcode.com/problem/validate-binary-search-tree/?utm_source=sc-zhihuniming-sy0309-2">验证二叉查找树</a></p>
+<p><a href="https://www.lintcode.com/problem/search-in-rotated-sorted-array/?utm_source=sc-zhihuniming-sy0309-2">搜索旋转排序数组</a></p>
+<p><strong>Microsoft</strong></p>
+<p><a href="https://www.lintcode.com/problem/best-time-to-buy-and-sell-stock/?utm_source=sc-zhihuniming-sy0309-2">买卖股票的最佳时机</a></p>
+<p><a href="https://www.lintcode.com/problem/sliding-window-maximum/?utm_source=sc-zhihuniming-sy0309-2">滑动窗口的最大值</a></p>
+<p><a href="https://www.lintcode.com/problem/binary-tree-zigzag-level-order-traversal/?utm_source=sc-zhihuniming-sy0309-2">二叉树的锯齿形层次遍历</a></p>
+<p><a href="https://www.lintcode.com/problem/intersection-of-two-linked-lists/?utm_source=sc-zhihuniming-sy0309-2">两个链表的交叉</a></p>
+<p><a href="https://www.lintcode.com/problem/copy-list-with-random-pointer/?utm_source=sc-zhihuniming-sy0309-2">复制带随机指针的链表</a></p>
+<p><strong>Amazon</strong></p>
+<p><a href="https://www.lintcode.com/problem/627/?utm_source=sc-zhihuniming-sy0309-2">最长回文串</a></p>
+<p><a href="https://www.lintcode.com/problem/615/?utm_source=sc-zhihuniming-sy0309-2">课程表</a></p>
+<p><a href="https://www.lintcode.com/problem/384/?utm_source=sc-zhihuniming-sy0309-2">最长无重复字符的子串</a></p>
+<p><a href="https://www.lintcode.com/problem/616/?utm_source=sc-zhihuniming-sy0309-2">安排课程</a></p>
+<p><a href="https://www.lintcode.com/problem/1565/?utm_source=sc-zhihuniming-sy0309-2">飞行棋</a></p>
+<p><a href="https://www.lintcode.com/problem/380/?utm_source=sc-zhihuniming-sy0309-2">两个链表的交叉</a></p>
+<p><strong>领英</strong></p>
+<p><a href="https://www.lintcode.com/problem/392/?utm_source=sc-zhihuniming-sy0309-2">打劫房屋</a></p>
+<p><a href="https://www.lintcode.com/problem/645/?utm_source=sc-zhihuniming-sy0309-2">识别名人</a></p>
+<p><a href="https://www.lintcode.com/problem/1360/?utm_source=sc-zhihuniming-sy0309-2">对称树</a></p>
+<p><a href="https://www.lintcode.com/problem/588/?utm_source=sc-zhihuniming-sy0309-2">划分和相等的子集</a></p>
+<p><a href="https://www.lintcode.com/problem/859/?utm_source=sc-zhihuniming-sy0309-2">最大栈</a></p>
+<p><strong>Apple</strong></p>
+<p><a href="https://www.lintcode.com/problem/363/?utm_source=sc-zhihuniming-sy0309-2">接雨水</a></p>
+<p><a href="http://lintcode.com/problem/413/?utm_source=sc-zhihuniming-sy0309-2">反转整数</a></p>
+<p><a href="https://www.lintcode.com/problem/1270/?utm_source=sc-zhihuniming-sy0309-2">勒索信</a></p>
+<p><a href="https://www.lintcode.com/problem/1352/?utm_source=sc-zhihuniming-sy0309-2">比较版本号</a></p>
+<p><a href="https://www.lintcode.com/problem/1355/?utm_source=sc-zhihuniming-sy0309-2">杨辉三角</a></p>
+<p><a href="https://www.lintcode.com/problem/1532/?utm_source=sc-zhihuniming-sy0309-2">序列化和反序列N叉树</a></p>
+<hr>
+<h3 id="0002-求中点">00.02 求中点</h3>
+<hr>
+<ul>
+<li>
+<pre><code class="language-java">int mid = left + ((right-left) &gt;&gt; 1);	//(L+R)/2
+//防止溢出 a&gt;&gt;1 相当于a/2  使用位运算 速度更快
+</code></pre>
+</li>
+</ul>
+<h3 id="0003-函数返回新建数组">00.03 函数返回新建数组</h3>
+<hr>
+<pre><code class="language-java">return new int[] {less+1 ,more-1};
+</code></pre>
+<h3 id="0004-打印数组">00.04 打印数组</h3>
+<hr>
+<pre><code class="language-java">System.out.println(Arrays.toString(nums)); //打印结果为[1,2,3,4,]
+</code></pre>
+<h3 id="0005-int与integer互转">00.05 int[]与Integer[]互转</h3>
+<hr>
+<pre><code class="language-java">import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+// int[]nums 转化为Integer[] 数组
+Integer[] integers = Arrays.stream(nums).boxed().toArray(Integer[]::new);
+//转化为int[] 数组
+int[] nums = Arrays.stream(integers).mapToInt(Integer::valueOf).toArray();
+
+// 解释
+//将int数组转换为Integer数组
+int[] nums = {1,2,3};
+//先将int数组转换为数值流
+IntStream stream = Arrays.stream(nums);
+//流中的元素全部装箱，转换为流 ----&gt;int转为Integer
+Stream&lt;Integer&gt; integerStream = stream.boxed();
+//将流转换为数组
+Integer[] integers = integerStream.toArray(Integer[]::new);
+</code></pre>
+<h3 id="0006-int-与-listnode转换">00.06 int[] 与 ListNode转换</h3>
+<hr>
+<pre><code class="language-java">public class ListNode{
+    int val;
+    ListNode next=null;
+    ListNode(int val) {
+        this.val=val;
+    }
+}
+    // 将Integer[] nums转为ListNode
+public static ListNode arrayToListNode(Integer[] nums) {
+    ListNode head= new  ListNode(nums[0]);
+    ListNode oher = head;	//暂存头节点 避免丢失
+    for(int i=1;i&lt;nums.length;i++) {
+        ListNode temp = new ListNode(nums[i]); //借助中间temp实现
+		other.next=temp;     //将other下一节点指向新生节点temp
+        other=temp;			//将other后移 指向最后一个节点
+    }
+    return head;	//找回头节点    
+}
+
+	//将ListNode转化为int[] nums
+public static int[] 
+</code></pre>
+<h3 id="0007-int-nums中最小的k数大根堆partition">00.07 int[] nums中最小的k数—大根堆/partition</h3>
+<ul>
+<li>复杂度：O(NlogK) + O(K)</li>
+<li>特别适合处理海量数据</li>
+</ul>
+<p>维护一个大小为 K 的最小堆过程如下：使用大顶堆。在添加一个元素之后，如果大顶堆的大小大于 K，那么将大顶堆的堆顶元素去除，也就是将当前堆中值最大的元素去除，从而使得留在堆中的元素都比被去除的元素来得小。</p>
+<p>应该使用大顶堆来维护最小堆，而不能直接创建一个小顶堆并设置一个大小，企图让小顶堆中的元素都是最小元素。</p>
+<p>Java 的 PriorityQueue 实现了堆的能力，PriorityQueue 默认是小顶堆，可以在在初始化时使用 Lambda 表达式 (o1, o2) -&gt; o2 - o1 来实现大顶堆。</p>
+<p><code>lambda(o1,o2)-&gt;o2-o1</code> <code>Comparator.reverseOrder()</code></p>
+<pre><code class="language-java">public ArrayList&lt;Integer&gt; getLeastNumbers(int[] nums, int k) {
+    if(k&gt;nums.length||k&lt;1) {
+        return new ArrayList&lt;&gt;();
+    }
+    // 使用lambda表达式
+    PriorityQueue&lt;Integer&gt; maxHeap = new PriorityQueue&lt;&gt;((o1,o2)-&gt;o2-o1);
+    // 使用Comparator
+    priorityQueue&lt;Integer. maxHeap = new PriorityQueue&lt;&gt;(k,Comparator.reverseOrder());
+    
+    for(int num :nums) {
+        if(maxHeap.size()&lt;k) {
+            maxHeap.add(num);
+        }else{
+            if(maxHeap.peek()&gt;e) {
+                maxHeap.poll();
+                maxHeap.add(num);
+            }
+        }
+    }
+    return new ArrayList&lt;&gt;(maxHeap);
+}
+</code></pre>
+<h2 id="01-排序">01 排序</h2>
+<ul>
+<li>
+<p>**排序的稳定性: **</p>
+<p>意义: 保留业务数据中的原始信息 不被抹去(两次排序中第二次排序可以保留第一次排序后结果)</p>
+<ul>
+<li>在原序列中相同值的原始相对次序位置不变</li>
+<li>冒泡、插入(数据量小60的时候均适用、因为常数项低 )、归并、桶排序、计数排序、基数排序</li>
+<li>快排不稳定——&gt;partition随机选择分割</li>
+<li>堆排不稳定——&gt;</li>
+</ul>
+</li>
+<li>
+<p><strong>工程中综合排序:</strong></p>
+<ul>
+<li>基本数据类型——&gt;快排</li>
+<li>自定义类——&gt;归并</li>
+<li>小样本——&gt;插入</li>
+</ul>
+</li>
+<li>
+<p><strong>比较器的使用:</strong></p>
+<ul>
+<li>
+<p>利用系统提供的Arrays.sort(nums, new comparator()) 实现排序 相当于c中的sort 的第二个参数实现</p>
+</li>
+<li>
+<p>无comparator的实现默认按照nums的内存地址排序</p>
+<pre><code class="language-java">// 继承Comparator&lt;&gt;接口 重写这个比较的Compare()函数
+
+public static class AgeAscendingComparator implements Comparator&lt;Student&gt; {
+
+	@Override
+	public int compare(Student o1, Student o2) {
+		return o1.age - o2.age;
+	}
+}
+Arrays.sort(students, new IdAscendingComparator());
+// 无返回值
+</code></pre>
+</li>
+<li>
+<p>利用系统的 **优先级队列PriorityQueue&lt;&gt;**实现堆排序 **add() poll()**方法分别实现建堆和弹出堆头</p>
+</li>
+<li>
+<p>利用系统的 **TreeSetp&lt;&gt; **实现红黑树</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="0101-快排">01.01 快排</h3>
+<p>思想: 荷兰国旗问题——&gt;在左右区间内再次荷兰国旗划分</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/Zq7KoU.png" alt="Zq7KoU" style="zoom: 50%;" />
+<pre><code class="language-java">public static int[] partition(int[] arr, int l, int r, int p) {
+	int less = l - 1; //小于p的区域的下标最大值边界
+	int more = r + 1; //大于p的区域下标最小值边界
+	while (l &lt; more) {
+		if (arr[l] &lt; p) {
+			swap(arr, ++less, l++);
+		} else if (arr[l] &gt; p) {
+			swap(arr, --more, l);
+		} else {
+			l++;
+		}
+	}
+	return new int[] { less + 1, more - 1 };	//返回等于区域的数组下标范围
+}
+
+public static int[] swap(int[] arr, int i, int j) {
+    int temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+    return arr;
+}
+</code></pre>
+<ul>
+<li>
+<p>经典快排</p>
+<ul>
+<li>
+<p>以数组最后一个数作为基准 重复荷兰国旗划分</p>
+<pre><code class="language-java">public static void quickSort(int[] arr) {	if (arr == null || arr.length &lt; 2) {		return;	}	quickSort(arr, 0, arr.length - 1);}public static void quickSort(int[] arr, int l, int r) {	if (l &lt; r) {		swap(arr, l + (int) (Math.random() * (r - l + 1)), r);		int[] p = partition(arr, l, r);        //经典快排的改进——&gt;对于等于选择基点的区域不参与递归排序		quickSort(arr, l, p[0] - 1);		quickSort(arr, p[1] + 1, r);	}}public static int[] partition(int[] arr, int l, int r) {	int less = l - 1;	int more = r;	while (l &lt; more) {		if (arr[l] &lt; arr[r]) {			swap(arr, ++less, l++);		} else if (arr[l] &gt; arr[r]) {			swap(arr, --more, l);		} else {			l++;		}	}	swap(arr, more, r);	return new int[] { less + 1, more };}public static void swap(int[] arr, int i, int j) {	int tmp = arr[i];	arr[i] = arr[j];	arr[j] = tmp;}
+</code></pre>
+</li>
+<li>
+<p>问题:  大于和小于基准的区域大小不相等(总拿数组最后一个数作为基准 最坏情况下会是O(N^2)) 与数据状态息息相关</p>
+</li>
+</ul>
+</li>
+<li>
+<p>随机快排: 使得概率事件 使用长期期望方式算出时间复杂度 <strong>O(N*logN)</strong> 随机快排的空间复杂度O(logN)</p>
+<ul>
+<li>
+<pre><code class="language-java">swap(arr, L + (int) (Math.random()*(R - L + 1)), R);// L-R上等概率的随机选择一个数将其与最后一个数交换 使得函数结构上复用 //hash也可以
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="0102-堆排序">01.02 堆排序</h3>
+<ul>
+<li>
+<p>完全二叉树: 依次在下一层按照顺序从左到右补齐</p>
+<ul>
+<li>
+<p>堆可以用数组来实现  又称为<strong>优先级队列</strong></p>
+<ul>
+<li>数组与完全二叉树之间的转换:</li>
+<li>数组中位置i的左孩子的下标为<code>2*i+1</code> 右孩子为<code>2*i+2</code>  父节点的对应下标为<code>(i-1)/2</code>  0的父节点为0</li>
+</ul>
+</li>
+<li>
+<p><strong>堆的理解</strong>: 完全二叉树</p>
+<ul>
+<li>
+<p>大根堆——&gt;完全二叉树中任何一个子树的最大值都是头部</p>
+<ul>
+<li>
+<p>建立: 遍历数组, 与其父节点比较直至到根节点, 过程中自己比父节点的值大则swap 若小/等则跳出向上比较的循环 与现有的树高度有关h O(logN)</p>
+<p>建立过程中的复杂度：</p>
+</li>
+<li>
+<p>调整:  下沉 heapify() 不断与孩子中的最大值比较</p>
+</li>
+<li>
+<pre><code class="language-java">	public static void heapify(int[] arr, int index, int size) {  		int left = index * 2 + 1;  		while (left &lt; size) {  			//这里是右孩子存在&amp;&amp;右孩子大于左孩子的值情况下选择left+1 否则都是left  			int largest = left + 1 &lt; size &amp;&amp; arr[left + 1] &gt; arr[left] ? left + 1 : left;  			// 比较与我待查本身的值  			largest = arr[largest] &gt; arr[index] ? largest : index;  			if (largest == index) {  				break;  			}  			swap(arr, largest, index);  			// while循环继续的增量条件  			index = largest;  			left = index * 2 + 1;  		}  	}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code>  
+</code></pre>
+<ul>
+<li>小根堆——&gt;任何一个子树的最小值都是其头部</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="0103-非基于比较的排序">01.03 非基于比较的排序</h3>
+<hr>
+<p>一种数据状况出现的词频</p>
+<h4 id="桶排序">桶排序</h4>
+<h2 id="02-stack-queue">02 Stack Queue</h2>
+<h4 id="0201-队列实现栈结构">02.01 队列实现栈结构</h4>
+<pre><code class="language-java">	public static class TwoQueuesStack {		private Queue&lt;Integer&gt; queue;		private Queue&lt;Integer&gt; help;		public TwoQueuesStack() {			queue = new LinkedList&lt;Integer&gt;();			help = new LinkedList&lt;Integer&gt;();		}		public void push(int pushInt) {			queue.add(pushInt);		}		public int peek() {			if (queue.isEmpty()) {				throw new RuntimeException(&quot;Stack is empty!&quot;);			}			while (queue.size() != 1) {				help.add(queue.poll());			}			int res = queue.poll();			help.add(res);			swap();			return res;		}		public int pop() {			if (queue.isEmpty()) {				throw new RuntimeException(&quot;Stack is empty!&quot;);			}			while (queue.size() &gt; 1) {				help.add(queue.poll());			}			int res = queue.poll();			swap();			return res;		}		private void swap() {			Queue&lt;Integer&gt; tmp = help;			help = queue;			queue = tmp;		}	}
+</code></pre>
+<h2 id="03-链表">03 链表</h2>
+<pre><code class="language-java">public class ListNode{    int val;    ListNode next = null;        ListNode(int val) {        this.val = val;    }}
+</code></pre>
+<p>回文链表</p>
+<ul>
+<li>快慢指针,当快指针到链尾即慢指针到链中。慢指针继续遍历的下一半链表不断入栈, 入完后弹出与前半比较;</li>
+<li>不用辅助空间</li>
+</ul>
+<h3 id="0301-数组与链表的转化">03.01 数组与链表的转化</h3>
+<pre><code class="language-java">ListNode listNode = new ListNode(Arrays.asList(arry));
+</code></pre>
+<h2 id="04-二叉树">04 二叉树</h2>
+<pre><code class="language-java">public static class TreeNode {	public int val;    public TreeNode left;    public TreeNode right;    public TreeNode(int val) {        this.val = val;    }}
+</code></pre>
+<h4 id="0401-递归遍历二叉树">04.01 递归遍历二叉树</h4>
+<hr>
+<p>三者访问访问二叉树的次序一致, 只是不同时机输出</p>
+<pre><code class="language-java">// 先序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    System.out.print(head.val+&quot; &quot;);    preOrderRecur(head.left);    preOrderRecur(head.right);}// 中序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    preOrderRecur(head.left);    System.out.print(head.val+&quot; &quot;);    preOrderRecur(head.right);}// 后序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    preOrderRecur(head.left);    preOrderRecur(head.right);    System.out.print(head.val+&quot; &quot;);}// 三者访问访问二叉树的次序一致, 只是不同实际输出
+</code></pre>
+<h4 id="0402-非递归遍历二叉树">04.02 非递归遍历二叉树</h4>
+<hr>
+<p>递归本质上就是栈 由于二叉树提供节点只能向下访问 无法返回 故而使用栈结构实现返回</p>
+<pre><code class="language-java">// 非递归先序遍历public static void preOrderUnRecur(TreeNode head) {    if(head!=null) {        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();        stack.add(head);        while(!stack.isEmpty()) {            head = stack.pop();	//复用head            System.out.print(head.val+&quot; &quot;);            if(head.right!=null) {	//先右再左进栈。出栈则实现左再右子树                stack.push(head.right);            }            if(head.left!=null) {                stack.push(head.left);            }        }    }    System.out.println();}//非递归中序遍历// 将树拆分为左边界组成 public static void inOrderUnRecur(TreeNode head) {    if(head!=null) {        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();        while(!stack.isEmpth() || head!=null) {            if(head!=null) {	//当前节点非空 将当前节点的左节点全部压入栈内                stack.push(head);                head=head.left;            } else {                // 当前节点为空 从栈中弹 打印--节点右移                head  = stack.pop();                System.out.print(head.val+ &quot; &quot;);                head = head.right;            }        }    }    System.out.println();}// 非递归后续遍历二叉树public static void posOrderUnRecur_1(TrereNode head) {    if(head!=null) {        Stack&lt;TreeNode&gt; s1 = new Stack&lt;&gt;();        Stack&lt;TreeNode&gt; s2 = new Stack&lt;&gt;():	// 作为辅助栈 中右左        s1.push(head);	// 复用head        while(!s1.isEmpty()) {            head = s1.pop();            s2.push(head):            if(head.left!=null) {                s1.push(head.left);            }            if(head.right!=null) {                s1.push(head.right);            }        }        while(!s2.isEmpty()) {            System.out.print(s2.pop().val+&quot; &quot;);        }    }    System.out.println();}public static void posOrderUnRecur_2 (TreeNode head) {    if(head!=null) {        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();        stack.push(head);        TreeNode c = null;        while(!stack.isEmpty()) {            c = stack.peek();            if(c.left!=null&amp;&amp;head!=c.left&amp;&amp;head!=c.right) {                stack.push(c.left);            } else if (c.right!=null &amp;&amp; head!=c.right) {                stack.push(c.right);            } else {                System.out.print(stack.pop().val+&quot; &quot;);                head = c;            }        }    }    System.out.println();}
+</code></pre>
+<p><strong>后继节点:</strong> 二叉树的<em>中序遍历</em>中的下一节点</p>
+<p>前驱节点: 二叉树的<em>中序遍历</em>的前一节点</p>
+<h4 id="0403-查找后继节点">04.03 查找后继节点</h4>
+<hr>
+<ul>
+<li>通过parent找到根节点 再中序遍历</li>
+<li></li>
+</ul>
+<h4 id="0404-平衡二叉树">04.04 平衡二叉树</h4>
+<hr>
+<p>树中的任何一个节点其左右子树高度差在1以内</p>
+<p>满二叉树一定是平衡二叉树</p>
+<p>空树是平衡树</p>
+<pre><code class="language-java">
+</code></pre>
+<h4 id="0404-搜索二叉树-bst">04.04 搜索二叉树 BST</h4>
+<hr>
+<p>二叉树中序遍历的结果是依次升序的 一般无重复节点</p>
+<h4 id="0405-完全二叉树">04.05 完全二叉树</h4>
+<hr>
+<p><strong>判断</strong>标准二叉树按层遍历:</p>
+<p>​	该节点有左孩子无右孩子; false</p>
+<p>​	该节点有左孩子没有右孩子/两者都没有: 后面遇到的节点均为叶节点;</p>
+<p>​</p>
+<p>求完全二叉树节点个数:</p>
+<p>满二叉树: 高度l 则节点个数<strong>2^l-1</strong></p>
+<p>找出</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[XPS 7590 Hackintosh黑苹果]]></title>
+        <id>https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/</id>
+        <link href="https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/">
+        </link>
+        <updated>2021-05-03T12:20:28.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="xps-7590-hackinosh黑苹果">XPS 7590 Hackinosh黑苹果</h1>
+<h2 id="参考">参考</h2>
+<p>GitHub:</p>
+<ul>
+<li>https://github.com/gorquan/OC-XPS-7590</li>
+<li>https://github.com/Liyunlock/DELL-XPS-15-7590-4K-Touchscreen_OpenCore_Hackintosh</li>
+<li>https://github.com/romancin/Dell-XPS-7590-OpenCore</li>
+<li>https://github.com/kirainmoe/hasee-tongfang-macos/issues/33</li>
+<li>https://github.com/xxxzc/xps15-9570-macos/issues/40</li>
+<li>https://github.com/Drowningfish223/Xps-7590-BigSur</li>
+<li>https://github.com/stakeout55/Dell-XPS-7590-mac-OS-Big-Sur-11.1</li>
+<li>https://github.com/xxxzc/xps15-9570-macos/issues/69</li>
+</ul>
+<h2 id="准备">准备</h2>
+<h3 id="硬件概况">硬件概况</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">name</th>
+<th>introduction</th>
+<th style="text-align:center">name</th>
+<th style="text-align:center">introduction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">型号</td>
+<td>XPS15-7590</td>
+<td style="text-align:center">Cpu</td>
+<td style="text-align:center">i7-9750h</td>
+</tr>
+<tr>
+<td style="text-align:center">屏幕</td>
+<td>4k 夏普触控屏</td>
+<td style="text-align:center">网卡</td>
+<td style="text-align:center">Dw1820a(更换)</td>
+</tr>
+<tr>
+<td style="text-align:center">固态</td>
+<td>SN720 512G</td>
+<td style="text-align:center">声卡</td>
+<td style="text-align:center">ALC298(原生)</td>
+</tr>
+<tr>
+<td style="text-align:center">内存</td>
+<td>48G(32+16) 英睿达</td>
+<td style="text-align:center">Bios</td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bios设置">Bios设置</h3>
+<h3 id="cfg解锁">CFG解锁</h3>
+<p>显示器</p>
+<p>PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x0)</p>
+<p>bpr_probedelay=100 bpr_initialdelay=300 bpr_postresetdelay=300</p>
+<h2 id="bug">Bug</h2>
+<h3 id="啰嗦模式">啰嗦模式</h3>
+<ul>
+<li>OC引导Big Sur卡在<code>IOConsoleUsers: gIOScreenLockState 3, hs 0, bs 0 now</code> 注入苹果显示器EDID 48HZ (45 46字节替换为A6A6 再使用128计算最后一位字节 )</li>
+<li>更新WEG DeviceP.. 删除注入EDID</li>
+</ul>
+<h3 id="显示器描述文件">显示器描述文件</h3>
+<p>使用<code>ioreg -lw0 | grep IODisplayEDID | sed &quot;/[^&lt;]*&lt;/s///&quot; | xxd -p -r | strings -6</code> 查看屏幕的生产型号</p>
+<p>夏普屏幕安装对应的显示器描述文件, 位置<code>/Library/ColorSync/Profiles</code></p>
+<p>外接4k显示器 延迟高 卡顿: 重建缓存解决 <code>sudo kextchache -i\</code></p>
+<h3 id="雷电3设备">雷电3设备</h3>
+<ul>
+<li></li>
+</ul>
+<h3 id="睡眠唤醒后重启">睡眠唤醒后重启</h3>
+<p>电池供电下睡眠唤醒后重启——&gt;与TB3有关</p>
+<p>bootargs启动参数详解:</p>
+<p>darkwake=1(唤醒 偏好设置中节能选项的小憩功能)</p>
+<p>igfxfw=2 (开启核显的最大频率)</p>
+<p>keepsyms=1 (de bug使用)</p>
+<p>swd_panic=1</p>
+<h3 id="睡眠后蓝牙无法使用">睡眠后蓝牙无法使用</h3>
+<h2 id="三码更新">三码更新</h2>
+<p>使用<code>opencorepkg</code>下载下来的   <code>macserial</code>内置程序进行MLB和</p>
+]]></content>
+    </entry>
 </feed>
