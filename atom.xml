@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://flyingchase.github.io</id>
+    <title>flyingchase</title>
+    <updated>2021-05-03T04:47:59.260Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://flyingchase.github.io"/>
+    <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
+    <subtitle>记录📝</subtitle>
+    <logo>https://flyingchase.github.io/images/avatar.png</logo>
+    <icon>https://flyingchase.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, flyingchase</rights>
+</feed>
