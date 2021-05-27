@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-05-27T13:30:34.199Z</updated>
+    <updated>2021-05-27T13:34:29.801Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -1494,7 +1494,10 @@ public static int[] swap(int[] arr, int i, int j) {
         </link>
         <updated>2021-05-03T12:20:28.000Z</updated>
         <content type="html"><![CDATA[<h1 id="xps-7590-hackinosh黑苹果">XPS 7590 Hackinosh黑苹果</h1>
-<h2 id="参考">参考</h2>
+<h2 id="注意️">注意⚠️</h2>
+<p>本 EFI 适用于 bigsur 11.1-11.2.2  其余版本未经过测试</p>
+<p>仅为个人使用，故 README 写的杂乱，欢迎交流推进 XPS-7590 的 Hackintosh 进程</p>
+<h2 id="1-参考">1 参考</h2>
 <p>GitHub:</p>
 <ul>
 <li>https://github.com/gorquan/OC-XPS-7590</li>
@@ -1506,8 +1509,8 @@ public static int[] swap(int[] arr, int i, int j) {
 <li>https://github.com/stakeout55/Dell-XPS-7590-mac-OS-Big-Sur-11.1</li>
 <li>https://github.com/xxxzc/xps15-9570-macos/issues/69</li>
 </ul>
-<h2 id="准备">准备</h2>
-<h3 id="硬件概况">硬件概况</h3>
+<h2 id="2-准备">2 准备</h2>
+<h3 id="21-硬件概况">2.1 硬件概况</h3>
 <table>
 <thead>
 <tr>
@@ -1544,35 +1547,102 @@ public static int[] swap(int[] arr, int i, int j) {
 </tr>
 </tbody>
 </table>
-<h3 id="bios设置">Bios设置</h3>
-<h3 id="cfg解锁">CFG解锁</h3>
-<p>显示器</p>
-<p>PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x0)</p>
-<p>bpr_probedelay=100 bpr_initialdelay=300 bpr_postresetdelay=300</p>
-<h2 id="bug">Bug</h2>
-<h3 id="啰嗦模式">啰嗦模式</h3>
+<h3 id="22-bios设置">2.2 Bios设置</h3>
+<p>雷电设置关键</p>
+<h3 id="23-cfg解锁">2.3 CFG解锁</h3>
+<p>setup_var_3 0x789 0x00 to disable overclocking lock</p>
+<p>setup_var_3 0x6ED 0x00 to disable CFG lock</p>
+<p>https://www.imacpc.net/archives/1549</p>
+<p>dvmt-preallocted 设置为 96MB</p>
+<h2 id="3-bug及解决方法备份">3 Bug及解决方法备份</h2>
+<h3 id="31-啰嗦模式问题">3.1 啰嗦模式问题</h3>
 <ul>
-<li>OC引导Big Sur卡在<code>IOConsoleUsers: gIOScreenLockState 3, hs 0, bs 0 now</code> 注入苹果显示器EDID 48HZ (45 46字节替换为A6A6 再使用128计算最后一位字节 )</li>
-<li>更新WEG DeviceP.. 删除注入EDID</li>
+<li>
+<p>OC引导Big Sur卡在<code>IOConsoleUsers: gIOScreenLockState 3, hs 0, bs 0 now</code> 注入苹果显示器EDID 48HZ (45 46字节替换为A6A6 再使用128计算最后一位字节 )</p>
+</li>
+<li>
+<p>DeviceP.. 删除注入EDID</p>
+</li>
+<li>
+<p>现在新版WhateverGreen kexts 可以直接内屏 60Hz——&gt;无须注入 EDID</p>
+</li>
 </ul>
-<h3 id="显示器描述文件">显示器描述文件</h3>
+<h3 id="32-4k内屏闪屏">3.2 4k内屏闪屏</h3>
 <p>使用<code>ioreg -lw0 | grep IODisplayEDID | sed &quot;/[^&lt;]*&lt;/s///&quot; | xxd -p -r | strings -6</code> 查看屏幕的生产型号</p>
 <p>夏普屏幕安装对应的显示器描述文件, 位置<code>/Library/ColorSync/Profiles</code></p>
 <p>外接4k显示器 延迟高 卡顿: 重建缓存解决 <code>sudo kextchache -i\</code></p>
-<h3 id="雷电3设备">雷电3设备</h3>
-<ul>
-<li></li>
-</ul>
-<h3 id="睡眠唤醒后重启">睡眠唤醒后重启</h3>
-<p>电池供电下睡眠唤醒后重启——&gt;与TB3有关</p>
-<p>bootargs启动参数详解:</p>
-<p>darkwake=1(唤醒 偏好设置中节能选项的小憩功能)</p>
-<p>igfxfw=2 (开启核显的最大频率)</p>
-<p>keepsyms=1 (de bug使用)</p>
-<p>swd_panic=1</p>
-<h3 id="睡眠后蓝牙无法使用">睡眠后蓝牙无法使用</h3>
-<h2 id="三码更新">三码更新</h2>
-<p>使用<code>opencorepkg</code>下载下来的   <code>macserial</code>内置程序进行MLB和</p>
+<p>UI 4K设置: dlcd-max 1400000 UIscale—&gt;02</p>
+<p>目前type-c 低电压输入下首次链接type-c仍然出现</p>
+<h3 id="33-雷电3设备">3.3 雷电3设备</h3>
+<p>使用SSDT-TB3和SSDT-TYPEC和kexts内的IOElectrify</p>
+<p>Bios雷电设置最低权限 取消auto相关设置</p>
+<p>取消 IOElectrify.kext 和 type-c 的 SSDT 仅开启 SSDT-TB3 仍可</p>
+<p>BIOS 设置：</p>
+<p>​	ThunderBolt Adapter Configuration：勾选 Thunder 和 NoSecurity 其他关闭</p>
+<p>​	ThunderBolt Auto Switch：取消 AutoSwitch 勾选 Native Enumeration</p>
+<h3 id="35-关于08ghz锁频">3.5 关于0.8ghz锁频</h3>
+<p>解锁EC�风扇控制位，动态注入风扇控制<br>
+目前采用bios关闭DPTF解决此问题</p>
+<p>改造散热VRM后有效 降频次数减少 时间缩短为几秒</p>
+<p>替换cpufriends 后改善极少出现锁频情况 实现27档变频</p>
+<h3 id="37-lcd亮度调节">3.7 LCD亮度调节</h3>
+<p>改为<code>Fn+S/B</code></p>
+<p>karabiner软件实现快捷键</p>
+<h3 id="38-睡眠后蓝牙不可用">3.8 睡眠后蓝牙不可用</h3>
+<p>Q: 睡眠开机后蓝牙显示打开但不可连接设备 不可搜索新设备</p>
+<p>​	1. 将蓝牙内建后+睡眠修复(hackintosh) —&gt;仍然出现</p>
+<pre><code class="language-html">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
+&lt;plist version=&quot;1.0&quot;&gt;
+&lt;dict&gt;
+	&lt;key&gt;PciRoot(0x0)/Pci(0x1c,0x0)/Pci(0x0,0x0)&lt;/key&gt;
+	&lt;dict&gt;
+		&lt;key&gt;AAPL,slot-name&lt;/key&gt;
+		&lt;string&gt;WLAN&lt;/string&gt;
+		&lt;key&gt;compatible&lt;/key&gt;
+		&lt;string&gt;pci14e4,43a3&lt;/string&gt; // 也有改为43a0的
+		&lt;key&gt;device-type&lt;/key&gt;
+		&lt;string&gt;Airport Extreme&lt;/string&gt;
+		&lt;key&gt;model&lt;/key&gt;
+		&lt;string&gt;DW1820A (BCM4350) 802.11ac Wireless&lt;/string&gt;
+		&lt;key&gt;name&lt;/key&gt;
+		&lt;string&gt;Airport&lt;/string&gt;
+		&lt;key&gt;pci-aspm-default&lt;/key&gt;
+		&lt;integer&gt;0&lt;/integer&gt;
+	&lt;/dict&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;
+
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/lL2kFd.png" alt="lL2kFd" loading="lazy"></figure>
+<p>​	2. 屏蔽背面两脚针后生效</p>
+<h3 id="39-替换主板编号后-12-位后触控板二指失效">3.9 替换主板编号后 12 位后触控板二指失效</h3>
+<p>退出 iCloud 并在其他设备上删除本机，重新修改二码，清除 NVRM 开机重建缓存，设置触控板三指/二指拖 玄学好了。。。</p>
+<h2 id="4-三码更新">4 三码更新</h2>
+<p>使用<code>opencorepkg</code>下载下来的   <code>macserial</code>内置程序进行PlatformInfo-Generic-MLB和SystemSeriaNumber填写(先在apple序列号保修查询官网确保未使用过)</p>
+<p>重启后:</p>
+<p><code>ioreg -d2 -c IOPlatformExpertDevice | awk -F\&quot; '/IOPlatformUUID/{print $(NF-1)}’</code>获得本机主班的UUID填入SystemUUID</p>
+<p>⚠️：SystemUUID最后的十二位替换为网卡的mac地址 （mac地址中:去除并将所有小写字母大写再去替换）</p>
+<p>​	该法使得 imessage 和 facetime 体验提升巨大</p>
+<h2 id="5-优化">5 优化</h2>
+<h3 id="51-cpu降压调节">5.1 CPU降压调节</h3>
+<p>使用<code>voltageShif</code>调节，主要参考：</p>
+<p>https://www.insanelymac.com/forum/topic/331775-guide-how-to-undervolt-your-haswell-and-above-cpu/</p>
+<p>https://github.com/stakeout55/presigned_VoltageShift_Kext_DellXPS7590</p>
+<p>感谢！</p>
+<p>偏移设置 -110 -92 -110  亦可设置为</p>
+<pre><code class="language-shell">CPU voltage offset: -125mv
+GPU voltage offset: -125mv
+CPU Cache voltage offset: -125mv
+System Agency offset: -75mv
+</code></pre>
+<p>更改设置时先执行remove再launchd</p>
+<p><code>sudo ./voltageshift buildlaunchd -125 -125 -125 -75 0 0 20</code></p>
+<p><code>sudo ./voltageshift removelaunchd</code><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/TypOYq.png" alt="TypOYq" loading="lazy"></p>
+<h3 id="52-电池供电睡眠后耳机杂音">5.2 电池供电睡眠后耳机杂音</h3>
+<p>注入ALC守护进程即可</p>
+<h3 id="53-dvmt-offset修改为96mb">5.3 DVMT offset修改为96MB</h3>
+<p>Bios修改 使用UEFI和Bios提取工具 setup_var_3 0x** 0x03 地址未确定（待定优化） 目前使用WEG也蛮好 闪屏现象基本消失</p>
 ]]></content>
     </entry>
 </feed>
