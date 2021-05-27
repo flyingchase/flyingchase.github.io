@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-05-27T13:09:04.235Z</updated>
+    <updated>2021-05-27T13:28:29.458Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -23,7 +23,31 @@
 <li>做好多处备份, 机械和固态多个备份, 在升级和较多本地内容变动时加强备份频率;</li>
 <li>少折腾多干活, 黑苹果不要追求太完美, 现有的版本能稳定运行即可, 多刷题多学习, 不要花时间过于折腾;</li>
 </ul>
-<h2 id=""></h2>
+<h2 id="系统设置">系统设置</h2>
+<h4 id="触控板">触控板</h4>
+<p>Bettertouch</p>
+<h2 id="开发工具">开发工具</h2>
+<h4 id="idea系列">IDEA系列</h4>
+<h5 id="自动补全">自动补全</h5>
+<p><strong>快速输出</strong></p>
+<p>List.sout——&gt;System.out.println(list);</p>
+<p><strong>定义局部变量</strong></p>
+<p>new ArrayList&lt;&gt;().var;</p>
+<p><strong>判断空与否</strong></p>
+<p>List.null——&gt;if(List==null)</p>
+<p>List.notnull——&gt;if(List!=null)</p>
+<p><strong>快速取反:</strong></p>
+<p>​	输入 .not 可以让布尔值快速取反，再输入 .if 可快速生成 if 判断语句块。</p>
+<p>![2021-05-1311.47.57](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.47.57.gif)</p>
+<p><strong>快速遍历集合:</strong></p>
+<p>collection.for/.forr/.fori</p>
+<p>![2021-05-1311.51.59](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.51.59.gif)</p>
+<p><strong>快速返回:</strong></p>
+<p>Object.return——&gt;return Object;</p>
+<h5 id="重构生成">重构/生成</h5>
+<p>快速生成类的构造器和get set等常见方法</p>
+<p>重写toString/hashCode/equal等常见方法</p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/ry6AzG.png" alt="ry6AzG" loading="lazy"></figure>
 ]]></content>
     </entry>
     <entry>
