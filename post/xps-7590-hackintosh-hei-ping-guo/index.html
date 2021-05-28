@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622167492256">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622182624921">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://flyingchase.github.io">
-        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622167492256" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622182624921" alt="" width="32px" height="32px">
       </a>
       <a href="https://flyingchase.github.io">
         <h1 class="site-title">flyingchase</h1>
@@ -136,7 +136,7 @@
 <td style="text-align:center">内存</td>
 <td>48G(32+16) 英睿达</td>
 <td style="text-align:center">Bios</td>
-<td style="text-align:center"></td>
+<td style="text-align:center">v1.7.0</td>
 </tr>
 </tbody>
 </table>
@@ -234,8 +234,37 @@ System Agency offset: -75mv
 <p><code>sudo ./voltageshift removelaunchd</code><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/TypOYq.png" alt="TypOYq" loading="lazy"></p>
 <h3 id="52-电池供电睡眠后耳机杂音">5.2 电池供电睡眠后耳机杂音</h3>
 <p>注入ALC守护进程即可</p>
-<h3 id="53-dvmt-offset修改为96mb">5.3 DVMT offset修改为96MB</h3>
-<p>Bios修改 使用UEFI和Bios提取工具 setup_var_3 0x** 0x03 地址未确定（待定优化） 目前使用WEG也蛮好 闪屏现象基本消失</p>
+<h3 id="53-dvmt-offset修改为128mb解决4k-内屏低电压-type-c-输入时外接-4k显示器闪屏">5.3 DVMT offset修改为128MB—&gt;解决4k 内屏/低电压 type-c 输入时外接 4k显示器闪屏</h3>
+<ul>
+<li>
+<p>在 Window 下使用 DELL_PFS_Extract 工具实现官网对应本机 BIOS.exe 文件提取.bin 文件 （使用方式为将 bios.exe 直接拖到应用图标上打开即可） 感谢远景论坛网友的分享</p>
+</li>
+<li>
+<p>得到文件中<code>1 -- 1 System BIOS with BIOS Guard.bin</code>为待提取文件</p>
+</li>
+<li>
+<p>使用 UEFI Tool 打开<code>.bin</code>文件</p>
+<ul>
+<li>
+<p>查找<code>DVMT</code>并定位到 PE32<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/hiBhVr.png" alt="hiBhVr" loading="lazy"></p>
+</li>
+<li>
+<p>将 PE32 处导出为 <code>Section_PE32_image_Setup.sct</code>文件 <img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/GET145.png" alt="GET145" loading="lazy"></p>
+<ul>
+<li>
+<p>使用 <code>ifrextract</code>工具将 <code>.sct</code>文件转化为 <code>.txt</code>格式 再查找 CFG/DVMT 等offset 偏移量</p>
+</li>
+<li>
+<p>参考 CFG 解锁制作的 UEFI 引导盘 使用命令<code>setup_var_3 0xA11 0x02/0x03</code> 设置 再使用<code>setup_var_3 0xA10 0x04</code> 设置为 128MB</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/FXa9XI.png" alt="FXa9XI" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/yKs00E.png" alt="yKs00E" loading="lazy"></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>自此，4k 内屏在使用新版 WhateverGreen.kext 基础上配置相应的 framebuffer补丁后，在低电压45/60w 的PD 充电高负载场景、外接 4k 显示器并睡眠唤醒情况下均未出现闪屏现象</p>
 
           </div>
         </div>
