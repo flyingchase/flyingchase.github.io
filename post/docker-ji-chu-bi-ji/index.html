@@ -1,104 +1,94 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>Docker基础笔记 | flyingchase</title>
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622166584648">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<meta name="description" content="记录成长的脚印">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622167279328">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="Docker基础笔记 | flyingchase - Atom Feed" href="https://flyingchase.github.io/atom.xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
-
-    <meta name="description" content="00 虚拟化容器介绍
-
-
-虚拟机的不足之处在于对物理服务器资源的消耗，当我们在物理服务器创建一台虚拟机时，便需要虚拟出一套硬件并在上面运行完整的操作系统，每台虚拟机都占用许多的服务器资源。
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
 
-传统虚拟机技术是虚拟出一套硬件后，在其上运行一..." />
-    <meta name="keywords" content="" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://flyingchase.github.io">
-  <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622166584648" alt="">
-  </a>
-  <h1 class="site-title">
-    flyingchase
-  </h1>
-  <p class="site-description">
-    记录
-  </p>
-  <div class="menu-container">
-    
-      
-        <a href="/" class="menu">
-          首页
-        </a>
-      
-    
-      
-        <a href="/archives" class="menu">
-          归档
-        </a>
-      
-    
-      
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://flyingchase.github.io">flyingchase</a></h3>
   </div>
-  <div class="social-container">
-    
-      
-        <a href="https://github.com/flyingchase" target="_blank">
-          <i class="ri-github-line"></i>
-        </a>
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  </div>
-</div>
-
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              Docker基础笔记
-            </h2>
-            <div class="post-info">
-              <span>
-                2021-05-03
-              </span>
-              <span>
-                4 min read
-              </span>
-              
-            </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
             
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <h2 id="00-虚拟化容器介绍">00 虚拟化容器介绍</h2>
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>Docker基础笔记</h1>
+            <p class="article-meta">
+              2021-05-03
+              
+            </p>
+            
+            <div class="post-content">
+              <h2 id="00-虚拟化容器介绍">00 虚拟化容器介绍</h2>
 <ul>
 <li>
 <p>虚拟机的不足之处在于对物理服务器资源的消耗，当我们在物理服务器创建一台虚拟机时，便需要虚拟出一套硬件并在上面运行完整的操作系统，每台虚拟机都占用许多的服务器资源。</p>
@@ -215,92 +205,116 @@ tail -n 2 *.txt
 cat # 串联+合并 
 </code></pre>
 
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#00-%E8%99%9A%E6%8B%9F%E5%8C%96%E5%AE%B9%E5%99%A8%E4%BB%8B%E7%BB%8D">00 虚拟化容器介绍</a></li>
-<li><a href="#01-docker%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">01 Docker基本概念</a>
-<ul>
-<li><a href="#0101-%E9%95%9C%E5%83%8F-image">01.01 镜像 Image</a></li>
-<li><a href="#0102-%E5%AE%B9%E5%99%A8-container">01.02 容器 container</a></li>
-<li><a href="#0103-%E4%BB%93%E5%BA%93-repository">01.03 仓库 Repository</a></li>
-<li><a href="#0104-docker%E6%9E%B6%E6%9E%84">01.04 Docker架构</a></li>
-</ul>
-</li>
-<li><a href="#02-%E6%89%93%E5%8C%85%E7%A8%8B%E5%BA%8F">02 打包程序</a></li>
-</ul>
-</li>
-</ul>
-
-              </div>
             </div>
           </article>
         </div>
-
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://flyingchase.github.io/post/shua-ti-bi-ji/">
+                <h3 class="post-title">
+                  刷题笔记
+                </h3>
+              </a>
+            </div>
+          
+        </div>
         
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://flyingchase.github.io/post/shua-ti-bi-ji/">
-              <h3 class="post-title">
-                刷题笔记
-              </h3>
-            </a>
-          </div>
-        
+      </div>
 
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://flyingchase.github.io/images/avatar.png?v=1622167279328" class="no-responsive avatar">
+    <div class="text-muted">记录成长的脚印</div>
+    <div class="social-container">
+      
         
-
-        <div class="site-footer">
-  
-  <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">
-    <i class="ri-rss-line"></i> RSS
-  </a>
+          <a href="https://github.com/flyingchase" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/mac-pei-zhi-zhi-nan/">Mac配置指南</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">Linux操作命令笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/docker-ji-chu-bi-ji/">Docker基础笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/shua-ti-bi-ji/">刷题笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/">XPS 7590 Hackintosh黑苹果</a>
+            </li>
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+    </div>
+  </div>
+  <div class="paper">
+     | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+  </div>
 </div>
 
-      </div>
+
     </div>
 
-    <script>
-      hljs.initHighlightingOnLoad()
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+<script type="application/javascript">
 
-      // This should probably be throttled.
-      // Especially because it triggers during smooth scrolling.
-      // https://lodash.com/docs/4.17.10#throttle
-      // You could do like...
-      // window.addEventListener("scroll", () => {
-      //    _.throttle(doThatStuff, 100);
-      // });
-      // Only not doing it here to keep this Pen dependency-free.
+AOS.init();
 
-      window.addEventListener("scroll", event => {
-        let fromTop = window.scrollY;
+hljs.initHighlightingOnLoad()
 
-        mainNavLinks.forEach((link, index) => {
-          let section = document.getElementById(decodeURI(link.hash).substring(1));
-          let nextSection = null
-          if (mainNavLinks[index + 1]) {
-            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-          }
-          if (section.offsetTop <= fromTop) {
-            if (nextSection) {
-              if (nextSection.offsetTop > fromTop) {
-                link.classList.add("current");
-              } else {
-                link.classList.remove("current");    
-              }
-            } else {
-              link.classList.add("current");
-            }
-          } else {
-            link.classList.remove("current");
-          }
-        });
-      });
+</script>
 
-    </script>
+
+
+
   </body>
 </html>

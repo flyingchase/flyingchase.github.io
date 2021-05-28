@@ -1,104 +1,94 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" >
+
 <title>刷题笔记 | flyingchase</title>
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622166584648">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<meta name="description" content="记录成长的脚印">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622167279328">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="刷题笔记 | flyingchase - Atom Feed" href="https://flyingchase.github.io/atom.xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
-    <meta name="description" content="00 杂项
-00.01 待刷备份 LintCode LeetCode
 
-待刷:
-①初期，刷入门核心题
-这是针对毫无经验的刷题选手的策略。如果已经有一定刷题心得，可以跳过这步。
-首先要给自己建立信心，我的策略是先把最基础的入门题刷个30道左右..." />
-    <meta name="keywords" content="" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://flyingchase.github.io">
-  <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622166584648" alt="">
-  </a>
-  <h1 class="site-title">
-    flyingchase
-  </h1>
-  <p class="site-description">
-    记录
-  </p>
-  <div class="menu-container">
-    
-      
-        <a href="/" class="menu">
-          首页
-        </a>
-      
-    
-      
-        <a href="/archives" class="menu">
-          归档
-        </a>
-      
-    
-      
-        <a href="/tags" class="menu">
-          标签
-        </a>
-      
-    
-      
-        <a href="/post/about" class="menu">
-          关于
-        </a>
-      
-    
+  
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://flyingchase.github.io">flyingchase</a></h3>
   </div>
-  <div class="social-container">
-    
-      
-        <a href="https://github.com/flyingchase" target="_blank">
-          <i class="ri-github-line"></i>
-        </a>
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  </div>
-</div>
-
-        <div class="post-detail">
-          <article class="post">
-            <h2 class="post-title">
-              刷题笔记
-            </h2>
-            <div class="post-info">
-              <span>
-                2021-05-03
-              </span>
-              <span>
-                18 min read
-              </span>
-              
-            </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
             
-            <div class="post-content-wrapper">
-              <div class="post-content">
-                <h2 id="00-杂项">00 杂项</h2>
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>刷题笔记</h1>
+            <p class="article-meta">
+              2021-05-03
+              
+            </p>
+            
+            <div class="post-content">
+              <h2 id="00-杂项">00 杂项</h2>
 <h3 id="0001-待刷备份-lintcode-leetcode">00.01 待刷备份 LintCode LeetCode</h3>
 <hr>
 <p>待刷:</p>
@@ -582,126 +572,116 @@ public static int[] swap(int[] arr, int i, int j) {
 <p>满二叉树: 高度l 则节点个数<strong>2^l-1</strong></p>
 <p>找出</p>
 
-              </div>
-              <div class="toc-container">
-                <ul class="markdownIt-TOC">
-<li>
-<ul>
-<li><a href="#00-%E6%9D%82%E9%A1%B9">00 杂项</a>
-<ul>
-<li><a href="#0001-%E5%BE%85%E5%88%B7%E5%A4%87%E4%BB%BD-lintcode-leetcode">00.01 待刷备份 LintCode LeetCode</a></li>
-<li><a href="#0002-%E6%B1%82%E4%B8%AD%E7%82%B9">00.02 求中点</a></li>
-<li><a href="#0003-%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E6%96%B0%E5%BB%BA%E6%95%B0%E7%BB%84">00.03 函数返回新建数组</a></li>
-<li><a href="#0004-%E6%89%93%E5%8D%B0%E6%95%B0%E7%BB%84">00.04 打印数组</a></li>
-<li><a href="#0005-int%E4%B8%8Einteger%E4%BA%92%E8%BD%AC">00.05 int[]与Integer[]互转</a></li>
-<li><a href="#0006-int-%E4%B8%8E-listnode%E8%BD%AC%E6%8D%A2">00.06 int[] 与 ListNode转换</a></li>
-<li><a href="#0007-int-nums%E4%B8%AD%E6%9C%80%E5%B0%8F%E7%9A%84k%E6%95%B0%E5%A4%A7%E6%A0%B9%E5%A0%86partition">00.07 int[] nums中最小的k数—大根堆/partition</a></li>
-</ul>
-</li>
-<li><a href="#01-%E6%8E%92%E5%BA%8F">01 排序</a>
-<ul>
-<li><a href="#0101-%E5%BF%AB%E6%8E%92">01.01 快排</a></li>
-<li><a href="#0102-%E5%A0%86%E6%8E%92%E5%BA%8F">01.02 堆排序</a></li>
-<li><a href="#0103-%E9%9D%9E%E5%9F%BA%E4%BA%8E%E6%AF%94%E8%BE%83%E7%9A%84%E6%8E%92%E5%BA%8F">01.03 非基于比较的排序</a>
-<ul>
-<li><a href="#%E6%A1%B6%E6%8E%92%E5%BA%8F">桶排序</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#02-stack-queue">02 Stack Queue</a><br>
-*
-<ul>
-<li><a href="#0201-%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E6%A0%88%E7%BB%93%E6%9E%84">02.01 队列实现栈结构</a></li>
-</ul>
-</li>
-<li><a href="#03-%E9%93%BE%E8%A1%A8">03 链表</a>
-<ul>
-<li><a href="#0301-%E6%95%B0%E7%BB%84%E4%B8%8E%E9%93%BE%E8%A1%A8%E7%9A%84%E8%BD%AC%E5%8C%96">03.01 数组与链表的转化</a></li>
-</ul>
-</li>
-<li><a href="#04-%E4%BA%8C%E5%8F%89%E6%A0%91">04 二叉树</a><br>
-*
-<ul>
-<li><a href="#0401-%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%E4%BA%8C%E5%8F%89%E6%A0%91">04.01 递归遍历二叉树</a></li>
-<li><a href="#0402-%E9%9D%9E%E9%80%92%E5%BD%92%E9%81%8D%E5%8E%86%E4%BA%8C%E5%8F%89%E6%A0%91">04.02 非递归遍历二叉树</a></li>
-<li><a href="#0403-%E6%9F%A5%E6%89%BE%E5%90%8E%E7%BB%A7%E8%8A%82%E7%82%B9">04.03 查找后继节点</a></li>
-<li><a href="#0404-%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91">04.04 平衡二叉树</a></li>
-<li><a href="#0404-%E6%90%9C%E7%B4%A2%E4%BA%8C%E5%8F%89%E6%A0%91-bst">04.04 搜索二叉树 BST</a></li>
-<li><a href="#0405-%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91">04.05 完全二叉树</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-              </div>
             </div>
           </article>
         </div>
-
+        <div class="paper" data-aos="fade-in">
+          
+            <div class="next-post">
+              <div class="next">
+                下一篇
+              </div>
+              <a href="https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/">
+                <h3 class="post-title">
+                  XPS 7590 Hackintosh黑苹果
+                </h3>
+              </a>
+            </div>
+          
+        </div>
         
-          <div class="next-post">
-            <div class="next">下一篇</div>
-            <a href="https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/">
-              <h3 class="post-title">
-                XPS 7590 Hackintosh黑苹果
-              </h3>
-            </a>
-          </div>
-        
+      </div>
 
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://flyingchase.github.io/images/avatar.png?v=1622167279328" class="no-responsive avatar">
+    <div class="text-muted">记录成长的脚印</div>
+    <div class="social-container">
+      
         
-
-        <div class="site-footer">
-  
-  <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">
-    <i class="ri-rss-line"></i> RSS
-  </a>
+          <a href="https://github.com/flyingchase" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/mac-pei-zhi-zhi-nan/">Mac配置指南</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">Linux操作命令笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/docker-ji-chu-bi-ji/">Docker基础笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/shua-ti-bi-ji/">刷题笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/">XPS 7590 Hackintosh黑苹果</a>
+            </li>
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+    </div>
+  </div>
+  <div class="paper">
+     | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+  </div>
 </div>
 
-      </div>
+
     </div>
 
-    <script>
-      hljs.initHighlightingOnLoad()
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+<script type="application/javascript">
 
-      // This should probably be throttled.
-      // Especially because it triggers during smooth scrolling.
-      // https://lodash.com/docs/4.17.10#throttle
-      // You could do like...
-      // window.addEventListener("scroll", () => {
-      //    _.throttle(doThatStuff, 100);
-      // });
-      // Only not doing it here to keep this Pen dependency-free.
+AOS.init();
 
-      window.addEventListener("scroll", event => {
-        let fromTop = window.scrollY;
+hljs.initHighlightingOnLoad()
 
-        mainNavLinks.forEach((link, index) => {
-          let section = document.getElementById(decodeURI(link.hash).substring(1));
-          let nextSection = null
-          if (mainNavLinks[index + 1]) {
-            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
-          }
-          if (section.offsetTop <= fromTop) {
-            if (nextSection) {
-              if (nextSection.offsetTop > fromTop) {
-                link.classList.add("current");
-              } else {
-                link.classList.remove("current");    
-              }
-            } else {
-              link.classList.add("current");
-            }
-          } else {
-            link.classList.remove("current");
-          }
-        });
-      });
+</script>
 
-    </script>
+
+
+
   </body>
 </html>
