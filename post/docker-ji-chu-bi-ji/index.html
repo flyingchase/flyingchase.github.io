@@ -1,94 +1,92 @@
+
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" >
+    
+<meta charset="utf-8" >
 
 <title>Docker基础笔记 | flyingchase</title>
 <meta name="description" content="记录成长的脚印">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622167279328">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622167492256">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
 
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
-
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
   </head>
   <body>
-  
-    <nav class="navbar border fixed split-nav">
-  <div class="nav-brand">
-    <h3><a href="https://flyingchase.github.io">flyingchase</a></h3>
-  </div>
-  <div class="collapsible">
-    <input id="collapsible1" type="checkbox" name="collapsible1">
-    <button>
-      <label for="collapsible1">
-        <div class="bar1"></div>
-        <div class="bar2"></div>
-        <div class="bar3"></div>
-      </label>
-    </button>
-    <div class="collapsible-body">
-      <ul class="inline">
-        
-          <li>
-            
-              <a href="/" class="menu">
-                首页
-              </a>
-            
-          </li>
-        
-          <li>
-            
-              <a href="/archives" class="menu">
-                归档
-              </a>
-            
-          </li>
-        
-          <li>
-            
-              <a href="/tags" class="menu">
-                标签
-              </a>
-            
-          </li>
-        
-          <li>
-            
-              <a href="/post/about" class="menu">
-                关于
-              </a>
-            
-          </li>
-        
-      </ul>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://flyingchase.github.io">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622167492256" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://flyingchase.github.io">
+        <h1 class="site-title">flyingchase</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
     </div>
   </div>
-</nav>
+</div>
 
-    <div id="top" class="row site">
-      <div class="sm-12 md-8 col">
-        <div class="paper">
-          <article class="article">
-            <h1>Docker基础笔记</h1>
-            <p class="article-meta">
-              2021-05-03
-              
-            </p>
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Docker基础笔记</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-05-03</span>
             
-            <div class="post-content">
-              <h2 id="00-虚拟化容器介绍">00 虚拟化容器介绍</h2>
+          </div>
+          <div class="post-content">
+            <h2 id="00-虚拟化容器介绍">00 虚拟化容器介绍</h2>
 <ul>
 <li>
 <p>虚拟机的不足之处在于对物理服务器资源的消耗，当我们在物理服务器创建一台虚拟机时，便需要虚拟出一套硬件并在上面运行完整的操作系统，每台虚拟机都占用许多的服务器资源。</p>
@@ -205,111 +203,56 @@ tail -n 2 *.txt
 cat # 串联+合并 
 </code></pre>
 
-            </div>
-          </article>
+          </div>
         </div>
-        <div class="paper" data-aos="fade-in">
-          
-            <div class="next-post">
-              <div class="next">
-                下一篇
-              </div>
-              <a href="https://flyingchase.github.io/post/shua-ti-bi-ji/">
-                <h3 class="post-title">
-                  刷题笔记
-                </h3>
-              </a>
-            </div>
-          
-        </div>
+
         
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/shua-ti-bi-ji/">
+              <h3 class="post-title">
+                下一篇：刷题笔记
+              </h3>
+            </a>
+          </div>
+          
       </div>
 
-      <div class="sm-12 md-4 col sidebar">
-  <div class="paper info-container">
-    <img src="https://flyingchase.github.io/images/avatar.png?v=1622167279328" class="no-responsive avatar">
-    <div class="text-muted">记录成长的脚印</div>
-    <div class="social-container">
       
-        
-          <a href="https://github.com/flyingchase" target="_blank">
-            <i class="fab fa-github"></i>
-          </a>
-        
+
+      <div class="site-footer">
+  <div class="slogan">记录成长的脚印</div>
+  <div class="social-container">
+    
       
-        
+        <a href="https://github.com/flyingchase" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
       
-        
+    
       
-        
+    
       
-        
+    
       
-    </div>
+    
+      
+    
   </div>
-  <div class="paper">
-    <div class="sidebar-title">
-      最新文章
-    </div>
-    <div class="row">
-      <ul>
-        
-          
-            <li>
-              <a href="https://flyingchase.github.io/post/mac-pei-zhi-zhi-nan/">Mac配置指南</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">Linux操作命令笔记</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://flyingchase.github.io/post/docker-ji-chu-bi-ji/">Docker基础笔记</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://flyingchase.github.io/post/shua-ti-bi-ji/">刷题笔记</a>
-            </li>
-          
-        
-          
-            <li>
-              <a href="https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/">XPS 7590 Hackintosh黑苹果</a>
-            </li>
-          
-        
-      </ul>
-    </div>
-  </div>
-  <div class="paper">
-    <div class="sidebar-title">
-      标签列表
-    </div>
-    <div class="row">
-      
-    </div>
-  </div>
-  <div class="paper">
-     | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
-  </div>
+   | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
 </div>
 
 
     </div>
-
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-
-<script type="application/javascript">
-
-AOS.init();
+    <script type="application/javascript">
 
 hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
 
 </script>
 
