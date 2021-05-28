@@ -1460,6 +1460,10 @@ a.purple-link {
   border-radius: 16px;
 }
 
+      .main {
+        max-width: 1200px;
+      }
+    
       @import 'zj/fonts.css';
 :root {
     --side-bar-bg-color: #fff;
