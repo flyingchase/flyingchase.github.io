@@ -1,0 +1,518 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Java-集合 | flyingchase</title>
+<meta name="description" content="记录成长的脚印">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622624951462">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://flyingchase.github.io">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622624951462" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://flyingchase.github.io">
+        <h1 class="site-title">flyingchase</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Java-集合</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-06-02</span>
+            
+          </div>
+          <div class="post-content">
+            <h2 id="13-类集合框架">13 类集合框架</h2>
+<hr>
+<p>Collection定义的方法:</p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/NpsW79.png" alt="NpsW79" loading="lazy"></figure>
+<p>单列集合+双列集合</p>
+<p>Collection接口有两个子接口 list Set实现的子类均为单列集合 Map接口实现的子类为双列结合(K_V )</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/Whzxbx.png" alt="Whzxbx" loading="lazy"></figure>
+<figure data-type="image" tabindex="3"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/vkXtxV.png" alt="vkXtxV" loading="lazy"></figure>
+<h3 id="1301-collection接口">13.01 Collection接口</h3>
+<ul>
+<li>
+<p>常用方法</p>
+<ul>
+<li>add/addAll</li>
+<li>remove/clear/removeAll</li>
+<li>contains/containsAll</li>
+<li>size</li>
+<li>isEmpty</li>
+</ul>
+</li>
+<li>
+<p>遍历:</p>
+<ul>
+<li>
+<p>迭代器——&gt;Iterator对象; 所有实现Collection接口均实现</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 15.42.43.gif" alt="2021-05-1315.42.43" style="zoom:150%;" />
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="1302-list接口">13.02 List接口</h3>
+<p><code>List特点:</code></p>
+<ul>
+<li>元素有序(添加和取出顺序 ) 可重复</li>
+<li>支持索引 从0开始</li>
+</ul>
+<p>实现List接口有: <code>ArrayList LinkedList Vector Stack etc.</code></p>
+<p><code>List接口常用方法:</code> 常见8种</p>
+<pre><code class="language-java">// index位置插ele List长度自动+1
+void add(int index, Object ele);
+//index位置开始将eles中所有元素加入
+boolean addAll(int index, Collection eles);
+// 获取index位置元素
+Object get(int index);
+// 返回object在集合中首次出现位置
+int indexOf(Object obj);
+// 返回obj在集合中末次出现位置
+int lastIndexOf(Object obj);
+// 移除index位置元素并返回该元素
+Object remove(int index);
+// 替换index位置元素为ele——&gt;也可用于交换
+
+Object set(int index, Object ele);
+// 返回从fromIndex到toIndex位置的子集合 前闭后开[forIndex,toIndex)
+List subList(int formIndex, int toIndex);
+
+</code></pre>
+<p><code>set</code>可用于交换 注意先后访问的顺序</p>
+<figure data-type="image" tabindex="4"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/KGeM3K.png" alt="KGeM3K" loading="lazy"></figure>
+<p><code>List常见遍历方式:</code></p>
+<pre><code class="language-java">// 迭代器遍历
+Iterator ite = collection.iterator();
+while(ite.hasNext()) {
+    Object next - ite.next();
+}
+
+// foreach遍历
+for(Object o : Collection) {
+    
+}
+
+// 普通fori
+        for (int i = 0; i &lt; Collection.size(); i++) {
+            Object o = Collection.get(i);
+        }
+</code></pre>
+<h4 id="arraylist注意事项️">ArrayList注意事项⚠️</h4>
+<ul>
+<li>
+<p>可以加入多个null</p>
+</li>
+<li>
+<p>是由数组底层实现</p>
+</li>
+<li>
+<p>线程不安全——&gt;没有<code>synchronized</code> 可以等同于Vector (线程安全)</p>
+</li>
+</ul>
+<p><em>底层源码阅读</em>  注意IDEA默认debug不显示null的扩容内容</p>
+<ul>
+<li>
+<p>维护<code>Object</code>类型数组 <code>elecmentData</code></p>
+<ul>
+<li><code>transient object[] elementData</code> 表示为瞬时 该属性不会被序列化</li>
+</ul>
+</li>
+<li>
+<p>创建<code>ArrayList</code>对象时:</p>
+<ul>
+<li>无参构造器——&gt;初始化的elementData容量为0, 第一次添加扩容elementData为10, 再次扩容则为1.5倍(0_10_15_22)</li>
+<li>ArrayList(int) 指定大小的构造器——&gt;elementData容量为制定大小,扩容则直接扩为1.5倍</li>
+</ul>
+<p><strong>扩容:</strong></p>
+<pre><code class="language-java">// 右移一位 ——&gt; /2int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1);// 使用Arrays.copyOf(nums,length)来对底层数组elementData扩容return elementData = Arrays.copyOf(elementData, newCapacity);// Arrays.copyOf()超出nums的len范围用null来填充
+</code></pre>
+<p><code>无参构造器:</code><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/HXRDVH.png" alt="HXRDVH" loading="lazy"></p>
+</li>
+</ul>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/tIEh4x.png" alt="tIEh4x" style="zoom: 50%;" />
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/kBrKAj.png" alt="kBrKAj" style="zoom:150%;" />
+<p><code>ArraysSupport.newLength</code>方法用于获取newCapacity</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/Mh3IOH.png" alt="Mh3IOH" style="zoom:50%;" />
+<h4 id="vector底层结构源码剖析"><code>Vector</code>底层结构&amp;源码剖析</h4>
+<ul>
+<li>
+<p>底层同样是对象数组 <code>protected Object[] elementData</code></p>
+</li>
+<li>
+<p>线程同步安全 操作方法带有<code>synchronized</code></p>
+<p><strong>无参构造:</strong> 默认10initalCapacity 再按照2倍扩容</p>
+<p><strong>指定大小:</strong> 每次2倍扩容</p>
+</li>
+</ul>
+<h4 id="linkedlist源码和结构"><code>LinkedList</code>源码和结构</h4>
+<img src="/Users/qlzhou/Library/Application Support/typora-user-images/image-20210514171051143.png" alt="image-20210514171051143" style="zoom:50%;" />
+<ul>
+<li>底层双向链表、队列——&gt;插入、删除效率高
+<ul>
+<li>维护两个属性first last 分别指向首尾结点</li>
+<li>每个节点Node维护prev next item三个属性</li>
+<li>双向链表的插入——&gt; waitInsert.next=prevNode; waitInsert.pre=nextNode; prevNode.next=waitInsert; nextNode.pre=waitInsert;</li>
+</ul>
+</li>
+<li>元素任意(可以重复)  包括null</li>
+<li>线程不安全 没有实现同步</li>
+</ul>
+<p><strong><code>LinkedListCRUD</code></strong></p>
+<p>​	linkedList.add(item)——&gt;使用linkLast(e)函数(将添加的节点挂入原链表的最后)</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/NJEbDZ.png" alt="NJEbDZ" style="zoom:50%;" />
+<p><em><code>Explain To linkLast(E e)</code></em></p>
+<p>初始last=null——&gt;第一个节点时 first last newNode均指向节点newNode——&gt;再插入则 l=last last=newNode 将newNode的prev指向l 即原先的last(上一个节点位置) 同时将last指向newNode 设为双向链表的尾指针——&gt;l!=null 再将上一个节点的next指针指向newNode 同时更新size/modCount 完成两个节点之间的链接</p>
+<p>linkedList.remove(int index)——&gt;首先使用node(index)函数找到index下标的结点并返回该节点——&gt;调用unlink(Node<E> x) 函数删除该节点并返回item值</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/C2JGW8.png" alt="C2JGW8" style="zoom:50%;" />
+<p><em><code>Explain To node(index)</code></em></p>
+<p>判断下标index在整个链表的前部还是后部——&gt;⚠️后部<code>i=size-1;i&gt;index;i--</code> 判断</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/DdBI3S.png" alt="DdBI3S" style="zoom:50%;" />
+<p>​	<em><code>Explain To unlink(Node&lt;E&gt; x)</code></em></p>
+<p>暂存待删结点x的前后结点</p>
+<p>prev next——&gt;移动x的前一结点的next指向x的下一结点<code>prev.next=next</code>   移动x的下一结点的prev指向x的上一结点<code>next.prev=prev</code> ——&gt;同时将x的prev和next均置空(help GC) ——&gt;最后item置空并链表size-1</p>
+<h5 id="arraylist-linkedlist-compare">ArrayList &amp;&amp; LinkedList Compare</h5>
+<p>ArrayList——&gt;增查</p>
+<p>LinkedList——删改</p>
+<p>均为线程不安全</p>
+<h3 id="1303-set">13.03 <code>Set</code></h3>
+<p><code>Feature:</code></p>
+<ul>
+<li>无序（添加与取出的顺序不一致） 没有 index 索引
+<ul>
+<li>取出的顺序一次设定即被固定</li>
+</ul>
+</li>
+<li>无重复元素——&gt;最多包含一个 null 多个重复数字后者不会被添加</li>
+<li><code>set</code>接口实现的类：<code>HashSet、TreeSet、LinkedHashSet、etc.</code></li>
+</ul>
+<p><code>Mathods:</code></p>
+<ul>
+<li>是 Collection 的子接口——&gt;常用方法一致</li>
+<li>遍历：迭代器 foeeach 不可 index 索引</li>
+</ul>
+<h4 id="hashset"><code>HashSet</code></h4>
+<p><code>instructions:</code></p>
+<ul>
+<li>
+<p>实现 Set 接口</p>
+</li>
+<li>
+<p>本质上是<code>HashMap</code> <img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/DBF5F0.png" alt="DBF5F0" style="zoom:50%;" />——<code>HashMap</code>底层是数组+链表+红黑树</p>
+<ul>
+<li>在数组的某个index 位置存储链表（数据存储的高效）</li>
+<li>index 上存储的链表长度&gt;8（TreeIfy_Threshold）并且数组长度&gt;64(Min_TreeIfy_Capacity) ————&gt;转化为树</li>
+</ul>
+</li>
+<li>
+<p>可存放 null 但仅可有一个 元素不可重复</p>
+<ul>
+<li>注意元素重复与否与 JVM 内存相关——&gt;常量池、栈内存</li>
+<li>toString 没有重写则输出为引用的地址 重写则为内容</li>
+<li>new String(“**”)——&gt;先在常量池中查找有没有已经存在的 str</li>
+</ul>
+</li>
+<li>
+<p>不保证元素有序，取决于 Hash 后在确定索引</p>
+</li>
+</ul>
+<h5 id="hashset-add-method"><code>HashSet add Method</code></h5>
+<ul>
+<li>添加元素时——&gt;得到元素的 hash 值再转化——&gt;索引值(存储位置)</li>
+<li>存储数据表 tables——&gt;是否已经存放（没有直接加入、有则下步比较 ）</li>
+<li>有调用 equal 比较——&gt;不相同再加入到最后</li>
+</ul>
+<p>hash 值计算<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2b37hf.png" alt="2b37hf" style="zoom:50%;" /></p>
+<p>第一次 add</p>
+<p>依据 hash 计算出的 key 应该存档于 table 的位置，并赋值给辅助变量 p(p 指向索引的结点)</p>
+<p>再判断 p 是否为空——&gt;空（对应的插入位置无元素）则将 key新建 Node 并存入 tab[i] （hash key value=present next）——&gt;判断 size 与 threshold(0.75*16)  扩容与否  再返回 null 则表示插入成功</p>
+<p>add 所插入的位置非空——&gt;</p>
+<p><code>p.hash==hash &amp;&amp; ((k=p.key)==key)||(key!=null&amp;&amp;key.equals(k))</code> hash value equals 三重比较确保两者不相同</p>
+<p>返回 oldValue 非空则插入式失败</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/Jzejjh.png" alt="Jzejjh" style="zoom:150%;" />
+<h5 id="hashset-扩容机制"><code>HashSet 扩容机制</code></h5>
+<ol>
+<li>
+<p>底层<code>HashMap</code> 第一次添加时 <code>table 数组</code>扩容到 16，阈值<code>threshold</code>为 16*0.75加载因子（<code>loadFactor</code>）=12</p>
+</li>
+<li>
+<p><code>table 数组</code>扩容为* 2=32 新的临界值(<code>threshold</code>)为 0.75*32=24</p>
+<p>扩容是使用左移&lt;&lt;1实现 * 2</p>
+</li>
+<li>
+<p>链表元素个数达到<code>TreeIfy_Threshold(8)</code>且 table 数组大小&gt;=<code>Min_Treeify_Capacity</code> 则转化为红黑树，否则仍然是扩容数组</p>
+</li>
+</ol>
+<p>​	使用重写 class 的 hashcode 方法 返回同一个 hashcode 使得插入在 map 的同一个数组 index 上的链表内 链表长度超过 8 后会使  table 扩容 &lt;&lt;1 表长+1  扩容为 32表长再+1 到 10  再扩容 64  若在添加元素则树化  treeifyBin 方法</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/29NvGo.png" alt="29NvGo" style="zoom:50%;" />
+<p>​	直到走到链表末尾进行且 binCount&gt;=8-1=7(从 0 开始)则调用<code>treeifyBin</code>方法树化 传入 table 和 hash 参数</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/B2ojcy.png" alt="B2ojcy" style="zoom:50%;" />
+<p><code>Min_TreeIfy_Capacity=64</code></p>
+<p><code>tab[index=(n-1)&amp;hash]</code> 找到数组储存数据的位置并将e 指向这个引用</p>
+<h4 id="linkedhashset"><code>LinkedHashSet</code></h4>
+<blockquote>
+<p><code>Features:</code></p>
+<ol>
+<li>属于 HashSet 的子类；</li>
+<li>底层是<code>LinkedHashMap</code>，维护了数组+双向链表；</li>
+<li>依据元素的<code>hashcode</code>决定元素的存储位置，同时用链表维护元素的次序（图），使得元素看起来插入顺序保存；</li>
+<li>不允许重复元素；</li>
+</ol>
+</blockquote>
+<p><code>Explain</code></p>
+<blockquote>
+<ol>
+<li>维护 hash 表和双向链表（属性有 head 和 tail） 使得每次后续插入的元素连接在最后 有序</li>
+<li>每个节点有 prev 和 next 属性 before after</li>
+<li>添加元素时，先求 hash值再求索引，从而确定元素在 hashtable 的位置——&gt;再添加进入双向链表</li>
+<li>遍历顺序保证与插入顺序一致</li>
+</ol>
+</blockquote>
+<ul>
+<li>
+<p>底层维护<code>LinkedeHashMap</code>结构 ——&gt;是 <code>HashMap</code> 的子类</p>
+</li>
+<li>
+<p>首次初始化为 16（size）结点类型为<code>LinkedHashMao$Entry</code>——&gt;数组是<code>HashMap$Node[]</code> 存放的元素是<code>LinkedHashMap$Entry</code>  即为多态 继承父类的属性</p>
+<figure data-type="image" tabindex="5"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/W58GVZ.png" alt="W58GVZ" loading="lazy"></figure>
+</li>
+</ul>
+<p>要求 hashcode 和 equal 均相同才无法加入，对于非基本数据类型需要重写两个方法 equal 和 hashcode</p>
+<h4 id="treeset">TreeSet</h4>
+<p>可以排序</p>
+<p>使用无参构造器创建<code>TreeSet</code>  无序</p>
+<p>有参可以使用<code>Comparator</code> 接口——&gt;传入比较器 匿名内部类</p>
+<p>构造器将传入的比较器对象comparator赋给 TreeSet 底层的 TreeMap 的属性 comparator</p>
+<pre><code class="language-java">public TreeMap(Comparator&lt;? super K&gt; comparator) {
+    this.comparator = comparator;
+}
+
+
+final int compare(Object k1, Object k2) {
+    return comparator==null ? ((Comparable&lt;? super K&gt;)k1).compareTo((K)k2)
+        : comparator.compare((K)k1, (K)k2);
+}
+</code></pre>
+<p>在 TreeSet 的 add 方法会调用</p>
+<pre><code class="language-java">private V put(K key, V value, boolean replaceOld) {
+    Entry&lt;K,V&gt; t = root;
+    if (t == null) {
+        addEntryToEmptyMap(key, value);
+        return null;
+    }
+    int cmp;
+    Entry&lt;K,V&gt; parent;
+    // split comparator and comparable paths
+    Comparator&lt;? super K&gt; cpr = comparator;
+    if (cpr != null) {
+        do {
+            parent = t;
+           	// 调用自定的 compare
+            cmp = cpr.compare(key, t.key);
+            if (cmp &lt; 0)
+                t = t.left;
+            else if (cmp &gt; 0)
+                t = t.right;
+            else {
+                // 两个值相等时候即返回 oldVaule 无法添加
+                V oldValue = t.value;
+                if (replaceOld || oldValue == null) {
+                    t.value = value;
+                }
+                return oldValue;
+            }
+        } while (t != null);
+    } else {
+        Objects.requireNonNull(key);
+        @SuppressWarnings(&quot;unchecked&quot;)
+        Comparable&lt;? super K&gt; k = (Comparable&lt;? super K&gt;) key;
+        do {
+            // 这里的循环逐个比较则一旦出现相应的就 return了 
+            // 即==时候无法被加入（==为自定的规则）
+            parent = t;
+            cmp = k.compareTo(t.key);
+            if (cmp &lt; 0)
+                t = t.left;
+            else if (cmp &gt; 0)
+                t = t.right;
+            else {
+                V oldValue = t.value;
+                if (replaceOld || oldValue == null) {
+                    t.value = value;
+                }
+                return oldValue;
+            }
+        } while (t != null);
+    }
+    addEntry(key, value, parent, cmp &lt; 0);
+    return null;
+}
+</code></pre>
+<h3 id="1304-map">13.04 Map</h3>
+<p>该接口子类具有的特点：</p>
+<blockquote>
+<p>Features:</p>
+<ol>
+<li>Map 和 collection 并列，用于保存具有映射关系的 Key-value 之间为单项一对一的关系</li>
+<li>Key Value 可以是任何引用类型的数据 object，会被封装到 HashMap$Node 内部类，Node 实现Entry 接口，即一对 K-V 就是一个 Entry</li>
+<li>使用 EntrySet 内部类，定义的类型是 Entry 实际上存放是 HashMap$Node 因为 Node implement Map.Entry 接口——&gt;接口的多态</li>
+<li>EntrySet 方便遍历——&gt;提供了 getKey getValue 方法</li>
+<li>Key 可为 null 仅一个但不可重复（），value 可以重复并可为 null</li>
+</ol>
+</blockquote>
+<p>Node——&gt;Entry——&gt;EntrySet</p>
+<p>Properties：</p>
+<p>​	继承自HashTable 并且适用于 Properties文件类型导入加载数据到 Properities 类对象读取和修改</p>
+<p>​	读取配置文件时候常用</p>
+<h4 id="集合选择">集合选择</h4>
+<ul>
+<li>存储类型</li>
+<li>单列对象：<code>Collection</code> 接口
+<ul>
+<li>允许重复：List
+<ul>
+<li>增删：LinkedList——&gt;底层双向链表</li>
+<li>改查：ArrayList——&gt;底层维护 Object 可变数组</li>
+</ul>
+</li>
+<li>不允许重复：Set
+<ul>
+<li>无序：HashSet——&gt;底层 HashMap 维护哈希表（数组+链表+红黑树）</li>
+<li>排序：TreeSet</li>
+<li>插入和取出循序一致：LinkedHashSet——&gt;数组+双向链表</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>双列键值对：Map
+<ul>
+<li>键无序：HashMap——&gt;哈希表</li>
+<li>键排序：TreeMap</li>
+<li>键插入和取出顺序一致：LinkedHashMap</li>
+<li>读取配置文件：Properties</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/mac-pei-zhi-zhi-nan/">
+              <h3 class="post-title">
+                下一篇：Mac配置指南
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">记录成长的脚印</div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/flyingchase" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+   | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
