@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622624951462">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622688619269">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://flyingchase.github.io">
-        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622624951462" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622688619269" alt="" width="32px" height="32px">
       </a>
       <a href="https://flyingchase.github.io">
         <h1 class="site-title">flyingchase</h1>
@@ -86,7 +86,9 @@
             
           </div>
           <div class="post-content">
-            <h2 id="00-杂项">00 杂项</h2>
+            <h1 id="刷题坑">刷题坑</h1>
+<hr>
+<h2 id="00-杂项">00 杂项</h2>
 <h3 id="0001-待刷备份-lintcode-leetcode">00.01 待刷备份 LintCode LeetCode</h3>
 <hr>
 <p>待刷:</p>
@@ -420,6 +422,62 @@ Arrays.sort(students, new IdAscendingComparator());
 </ul>
 </li>
 </ul>
+<p>常见基于比较的排序方法性能汇总表</p>
+<table>
+<thead>
+<tr>
+<th>排序方法</th>
+<th>时间复杂度</th>
+<th>空间复杂度</th>
+<th>稳定性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>选择</td>
+<td>N<sup>2</sup></td>
+<td>1</td>
+<td>no</td>
+</tr>
+<tr>
+<td>冒泡</td>
+<td>N<sup>2</sup></td>
+<td>1</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>插入</td>
+<td>N<sup>2</sup></td>
+<td>1</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>归并</td>
+<td>N*logN</td>
+<td>N</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>快排</td>
+<td>N*logN</td>
+<td>logN</td>
+<td>no</td>
+</tr>
+<tr>
+<td>堆</td>
+<td>N*logN</td>
+<td>1</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见注意事项：</strong></p>
+<ol>
+<li>“原定归并排序”会让时间复杂度上升到 N<sup>2</sup> 不实用；</li>
+<li>工程上在小数量样本下，使用插入排序进行综合排序利用 NLogN和 N<sup>2</sup>的优势；</li>
+<li></li>
+</ol>
+<p>快排的常数项实践下来最快</p>
 <h3 id="0101-快排">01.01 快排</h3>
 <p>思想: 荷兰国旗问题——&gt;在左右区间内再次荷兰国旗划分</p>
 <img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/Zq7KoU.png" alt="Zq7KoU" style="zoom: 50%;" />
@@ -518,6 +576,14 @@ public static int[] swap(int[] arr, int i, int j) {
 <h4 id="0201-队列实现栈结构">02.01 队列实现栈结构</h4>
 <pre><code class="language-java">	public static class TwoQueuesStack {		private Queue&lt;Integer&gt; queue;		private Queue&lt;Integer&gt; help;		public TwoQueuesStack() {			queue = new LinkedList&lt;Integer&gt;();			help = new LinkedList&lt;Integer&gt;();		}		public void push(int pushInt) {			queue.add(pushInt);		}		public int peek() {			if (queue.isEmpty()) {				throw new RuntimeException(&quot;Stack is empty!&quot;);			}			while (queue.size() != 1) {				help.add(queue.poll());			}			int res = queue.poll();			help.add(res);			swap();			return res;		}		public int pop() {			if (queue.isEmpty()) {				throw new RuntimeException(&quot;Stack is empty!&quot;);			}			while (queue.size() &gt; 1) {				help.add(queue.poll());			}			int res = queue.poll();			swap();			return res;		}		private void swap() {			Queue&lt;Integer&gt; tmp = help;			help = queue;			queue = tmp;		}	}
 </code></pre>
+<h4 id="0202-栈实现队列结构">02.02 栈实现队列结构</h4>
+<p>使用两个栈实现队列,支持队列的基本操作(add poll peek)</p>
+<ul>
+<li>stackPush向stackPop压入数据, 必须一次性将stackPush数据压入;</li>
+<li>stackPop非空, 不可压入数据</li>
+</ul>
+<pre><code class="language-java">import java.util.Stack;public class TwoStackWithQueue {    public Stack&lt;Integer&gt; stackPush;    public Stack&lt;Integer&gt; stackPop;    public TwoStackWithQueue(){        stackPop=new Stack&lt;Integer&gt;();        stackPush=new Stack&lt;Integer&gt;();    }    //push栈向pop栈倒入数据    private void pushTopop() {        if(stackPop.empty()) {            while (!stackPush.empty()) {                stackPop.push(stackPush.pop());            }        }    }    public void add(int pushInt) {        stackPush.push(pushInt);        pushTopop();    }    public int poll() {        if(stackPop.empty()&amp;&amp;stackPush.empty()) {            throw new RuntimeException(&quot;Queue is empty!&quot;);        }        pushTopop();        return stackPop.pop();    }    public int peek() {        if(stackPop.empty()&amp;&amp;stackPush.empty()) {            throw new RuntimeException(&quot;Queue is empty!&quot;);        }        pushTopop();        return stackPop.peek();    }}
+</code></pre>
 <h2 id="03-链表">03 链表</h2>
 <pre><code class="language-java">public class ListNode{    int val;    ListNode next = null;        ListNode(int val) {        this.val = val;    }}
 </code></pre>
@@ -526,6 +592,7 @@ public static int[] swap(int[] arr, int i, int j) {
 <li>快慢指针,当快指针到链尾即慢指针到链中。慢指针继续遍历的下一半链表不断入栈, 入完后弹出与前半比较;</li>
 <li>不用辅助空间</li>
 </ul>
+<p>访问 搜索 插入 删除</p>
 <h3 id="0301-数组与链表的转化">03.01 数组与链表的转化</h3>
 <pre><code class="language-java">ListNode listNode = new ListNode(Arrays.asList(arry));
 </code></pre>
@@ -569,6 +636,53 @@ public static int[] swap(int[] arr, int i, int j) {
 <p>求完全二叉树节点个数:</p>
 <p>满二叉树: 高度l 则节点个数<strong>2^l-1</strong></p>
 <p>找出</p>
+<h2 id="05-lfu-lfu算法">05 <code>LFU &amp; LFU</code>算法</h2>
+<p>https://mp.weixin.qq.com/s?__biz=MzA4NDE4MzY2MA==&amp;mid=2647524319&amp;idx=1&amp;sn=fdca85b7bb34d46e428a0d240f810811&amp;chksm=87d1bcdcb0a635caecf466761bcd224846f9fa93711c0da35115bb25ea904ddfb4b172389a2f&amp;mpshare=1&amp;scene=1&amp;srcid=0522hQRdOsdk14xOj8EYzGDY&amp;sharer_sharetime=1621651227490&amp;sharer_shareid=116ef760e9b961326f61bb96be400660#rd</p>
+<blockquote></blockquote>
+<h3 id="概念">概念</h3>
+<p>LFU 算法即为 Least Frequently Used Algorithm 最不常用算法，发生缺页中断时选择访问次数最少的页面中断</p>
+<p>LRU 算法即为 Least Recently Usef Algorithm 最近常用算法，缺页中断时优先最久没有访问的页面</p>
+<blockquote>
+<p>LRU 考察多久未访问，时间越短越好；</p>
+<p>LFU 考虑访问频率，访问次数越多越好</p>
+</blockquote>
+<h3 id="question">Question</h3>
+<blockquote>
+<p>请你为 最不经常使用（LFU）缓存算法设计并实现数据结构。</p>
+<p>实现 LFUCache 类：</p>
+<p><code>LFUCache(int capacity)</code> - 用 LFU 的容量 capacity 初始化对象<code>int get(int key)</code> - 如果键存在于缓存中，则获取键的值并返回，否则返回 -1。<code>void put(int key, int value)</code> - 如果键已存在，则更新其值；如果键不存在，请插入键值对。当缓存达到其容量时，则应该在插入新页之前，淘汰最不经常使用的页。在此问题中，当存在平局（即两个或更多个键具有相同使用频率）时，应该去除 <strong>最近最久未使用</strong> 的键。注意「项的使用次数」就是自插入该项以来对其调用 get 和 put 函数的次数之和。使用次数会在对应项被移除后置为 0 。</p>
+<p>为了确定最不常使用的键，可以为缓存中的每个键维护一个 使用计数器 。使用计数最小的键是最久未使用的键。</p>
+<p>当一个键首次插入到缓存中时，它的使用计数器被设置为 1 (由于 put 操作)。对缓存中的键执行 get 或 put 操作，使用计数器的值将会递增。</p>
+</blockquote>
+<h3 id="solution">Solution</h3>
+<p>哈希算法+双向链表可以实现查找、插入删除均为 O(1)的数据结构</p>
+<pre><code class="language-java">class Cache {    private Map&lt;Integer,Node&gt; cache;    public int get(int key) {}    public void put(int key, int value) {}    class DoublelinkedList {}}
+</code></pre>
+<h2 id="06-表">06 表</h2>
+<h3 id="0601-概念">06.01 概念</h3>
+<p><strong>哈希表：</strong></p>
+<ol>
+<li>使用可被视为集合结构 不允许重复</li>
+<li>只有 <code>Key</code>使用 HashSet，有<code>Key &amp; Value</code>使用 HashMap 两者的底层结构实际一致</li>
+<li>哈希表的增删改查可视为时间复杂度为<code>O(1)</code> 但常数时间较大 put remove put get</li>
+<li>基础类型存放内部按值传递——&gt;占用大小为其本身；其他按引用传递，内存占用为其本身内存地址大小</li>
+</ol>
+<p><strong>有序表：</strong></p>
+<ol>
+<li>集合结构</li>
+<li>TreeSet 和 TreeMap 结构表示，两者底层一致；有序（双向链表）</li>
+<li>红黑树 AVL树 size-balance-tree  跳表均为有序表</li>
+<li></li>
+</ol>
+<h2 id="tips"><code>Tips</code></h2>
+<h3 id="01-位移运算">01 位移运算</h3>
+<ul>
+<li>左移 扩大
+<ul>
+<li><code>1&gt;&gt;4</code> 即1 * 2 * 2 * 2 * 2 = 16 左移 4 位即pow（2,4）</li>
+</ul>
+</li>
+</ul>
 
           </div>
         </div>
