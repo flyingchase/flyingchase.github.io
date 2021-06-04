@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622688709089">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1622796177582">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://flyingchase.github.io">
-        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622688709089" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1622796177582" alt="" width="32px" height="32px">
       </a>
       <a href="https://flyingchase.github.io">
         <h1 class="site-title">flyingchase</h1>
@@ -228,7 +228,7 @@
 <p>现状：</p>
 <p>​	重 GPU 需求下仍然出现降频 0.8ghz 现象 拔出电源恢复几秒后再次降频 视负载情况恢复正常睿频 大概在 10s-Long 最长有过持续十分钟</p>
 <p>总结：</p>
-<p>​	目前存在可能是主板上元件损坏/原装充电器圆孔内针脚损坏/BIOS需要更新</p>
+<p>​	目前存在可能是主板上元件损坏/原装充电器圆孔内针脚损坏/BIOS需要更新或者刷低版/电池不合格需要更换</p>
 <h3 id="37-lcd亮度调节">3.7 LCD亮度调节</h3>
 <p>改为<code>Fn+S/B</code></p>
 <ul>
@@ -275,11 +275,13 @@ sudo cat /tmp/AppleIntelInfo.dat
 sudo kextunload AppleIntelInfo.kext
 </code></pre>
 <h2 id="4-三码更新">4 三码更新</h2>
+<p><a href="https://heipg.cn/tutorial/macserial-and-iservice-opencore.html">三码参考链接-写的很详细很完备</a></p>
 <p>使用<code>opencorepkg</code>下载下来的   <code>macserial</code>内置程序进行PlatformInfo-Generic-MLB和SystemSeriaNumber填写(先在apple序列号保修查询官网确保未使用过)</p>
 <p>重启后:</p>
 <p><code>ioreg -d2 -c IOPlatformExpertDevice | awk -F\&quot; '/IOPlatformUUID/{print $(NF-1)}’</code>获得本机主班的UUID填入SystemUUID</p>
 <p>⚠️：SystemUUID最后的十二位替换为网卡的mac地址 （mac地址中:去除并将所有小写字母大写再去替换）</p>
 <p>​	该法使得 imessage 和 facetime 体验提升巨大</p>
+<p>ROM：修改为en0的网卡mac地址 注意删掉: 最后四位与前面有空格</p>
 <h2 id="5-优化">5 优化</h2>
 <h3 id="51-cpu降压调节">5.1 CPU降压调节</h3>
 <p>使用<code>voltageShif</code>调节，主要参考：</p>
