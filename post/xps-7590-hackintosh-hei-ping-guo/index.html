@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1624860519781">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1624860985443">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://flyingchase.github.io">
-        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1624860519781" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1624860985443" alt="" width="32px" height="32px">
       </a>
       <a href="https://flyingchase.github.io">
         <h1 class="site-title">flyingchase</h1>
@@ -168,12 +168,18 @@
 <p>UI 4K设置: dlcd-max 1400000 UIscale—&gt;02</p>
 <p>目前type-c 低电压输入下首次链接type-c仍然出现</p>
 <h3 id="33-雷电3设备">3.3 雷电3设备</h3>
-<p>使用SSDT-TB3和SSDT-TYPEC和kexts内的IOElectrify</p>
-<p>Bios雷电设置最低权限 取消auto相关设置</p>
-<p>取消 IOElectrify.kext 和 type-c 的 SSDT 仅开启 SSDT-TB3 仍可</p>
 <p>BIOS 设置：</p>
 <p>​	ThunderBolt Adapter Configuration：勾选 Thunder 和 NoSecurity 其他关闭</p>
 <p>​	ThunderBolt Auto Switch：取消 AutoSwitch 勾选 Native Enumeration</p>
+<p>​	BIOS修改：</p>
+<pre><code class="language-shell">setup_var 0x4F0 0x01
+setup_var 0x4F6 0x01
+</code></pre>
+<p>关闭其他 type-c 和tb3 相关的 ssdt 使用TbtOnPch.aml 并 patch 修改_E42 to XE42</p>
+<p>重置 nvrm 后即可</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/6XeA6p.png" alt="6XeA6p" style="zoom:50%;" />
+<p>注意第一次睡眠前拔掉雷电设备或者采用开机后即睡眠再唤醒</p>
+<p>感谢群内大佬！</p>
 <h3 id="35-关于08ghz锁频">3.5 关于0.8ghz锁频</h3>
 <blockquote>
 <p>资讯：</p>

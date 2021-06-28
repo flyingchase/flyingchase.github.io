@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-06-28T06:10:13.111Z</updated>
+    <updated>2021-06-28T06:16:29.331Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -2112,12 +2112,18 @@ public static int[] swap(int[] arr, int i, int j) {
 <p>UI 4K设置: dlcd-max 1400000 UIscale—&gt;02</p>
 <p>目前type-c 低电压输入下首次链接type-c仍然出现</p>
 <h3 id="33-雷电3设备">3.3 雷电3设备</h3>
-<p>使用SSDT-TB3和SSDT-TYPEC和kexts内的IOElectrify</p>
-<p>Bios雷电设置最低权限 取消auto相关设置</p>
-<p>取消 IOElectrify.kext 和 type-c 的 SSDT 仅开启 SSDT-TB3 仍可</p>
 <p>BIOS 设置：</p>
 <p>​	ThunderBolt Adapter Configuration：勾选 Thunder 和 NoSecurity 其他关闭</p>
 <p>​	ThunderBolt Auto Switch：取消 AutoSwitch 勾选 Native Enumeration</p>
+<p>​	BIOS修改：</p>
+<pre><code class="language-shell">setup_var 0x4F0 0x01
+setup_var 0x4F6 0x01
+</code></pre>
+<p>关闭其他 type-c 和tb3 相关的 ssdt 使用TbtOnPch.aml 并 patch 修改_E42 to XE42</p>
+<p>重置 nvrm 后即可</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/6XeA6p.png" alt="6XeA6p" style="zoom:50%;" />
+<p>注意第一次睡眠前拔掉雷电设备或者采用开机后即睡眠再唤醒</p>
+<p>感谢群内大佬！</p>
 <h3 id="35-关于08ghz锁频">3.5 关于0.8ghz锁频</h3>
 <blockquote>
 <p>资讯：</p>
