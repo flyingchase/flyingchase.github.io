@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Git常见问题汇总 | flyingchase</title>
+<title>二叉树的非递归遍历算法 | flyingchase</title>
 <meta name="description" content="记录成长的脚印">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,57 +80,100 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Git常见问题汇总</h2>
+          <h2 class="post-title">二叉树的非递归遍历算法</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-06-28</span>
+            <span><i class="icon-calendar-outline"></i> 2021-07-02</span>
             
           </div>
           <div class="post-content">
-            <h1 id="git常见问题">Git常见问题</h1>
-<blockquote>
-<p>整理收集于互联网</p>
-</blockquote>
-<h3 id="1修改提交信息">1.修改提交信息</h3>
-<p>重写<code>commit</code></p>
-<pre><code class="language-shell">git commit --amend -m &quot;new message&quot;
+            <h2 id="非递归遍历二叉树">非递归遍历二叉树</h2>
+<hr>
+<p>递归本质上就是栈 由于二叉树提供节点只能向下访问 无法返回 故而使用栈结构实现返回</p>
+<pre><code class="language-java">public static List&lt;Integer&gt; inOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最左侧走 并不断压栈
+        while (cur != null) {
+            stack.push(cur);
+            cur = cur.left;
+        }
+        // 走完最左侧后弹栈顶
+        TreeNode node = stack.pop();
+        res.add(node.val);
+        // 往上层的右边去再重复找最左侧
+        cur = node.right;
+    }
+    return res;
+}
+
+
+public static List&lt;Integer&gt; preOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最左侧走 并不断压栈入数组
+        while (cur != null) {
+            res.add(cur.val);
+            stack.push(cur);
+            cur = cur.left;
+        }
+        // 走完最左侧后弹栈顶 无须入组 cur循环内已经入组
+        TreeNode node = stack.pop();
+        // 往上层的右边去 再重复找最左侧
+        cur = node.right;
+    }
+
+    return res;
+}
+
+
+public static List&lt;Integer&gt; postOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最右侧走 并不断压栈入数组
+        while (cur != null) {
+            res.add(cur.val);
+            stack.push(cur);
+            cur = cur.right; // 使得reverse后正常左在前
+        }
+        // 走完最右侧后弹栈顶 无须入组 cur循环内已经入组
+        TreeNode node = stack.pop();
+        // 往上层的左边去 再重复找最右侧
+        cur=node.left;
+    }
+    Collections.reverse(res);
+    return res;
+}
 </code></pre>
-<h3 id="2添加文件到最后一次提交">2.添加文件到最后一次提交</h3>
-<p><code>git push</code> 后新增文件到最后一次提交</p>
-<pre><code class="language-shell">git add &lt;file_name&gt;git commit --amend HEAD~1
-</code></pre>
-<h3 id="3撤消提交">3.撤消提交</h3>
-<p>如果要撤消最近一次提交但保留更改，可执行以下操作：</p>
-<pre><code class="language-shell">git reset --soft HEAD~1
-</code></pre>
-<p>如果要撤消提交和更改，可执行以下操作：——&gt;丢弃更改</p>
-<pre><code class="language-shell">git reset --hard HEAD~1
-</code></pre>
-<p>如果要撤消所有的本地更改，则可以重置为分支的原始版本：</p>
-<pre><code class="language-shell">git reset --hard origin/&lt;branch_name&gt;
-</code></pre>
-<p>如果要撤消提交而不修改现有历史记录，则可以使用 git revert，此命令通过创建新的提交来撤消提交。</p>
-<pre><code class="language-shell">git revert HEAD
-</code></pre>
-<p>撤消已经推送到远程分支的合并提交的安全方法是使用 git revert 命令：</p>
-<pre><code class="language-shell">git revert -m 1 &lt;commit_id&gt;
-</code></pre>
-<p>commit_id 是要还原的合并提交 id。</p>
-<p>注意要点：</p>
-<ol>
-<li>可以撤消任意数量的提交。例如：<code>git reset HEAD~3</code>（返回 HEAD 之前的 3 个提交)；<code>git reset --hard &lt;commit_id&gt;</code>（返回特定的提交）。</li>
-<li>如果尚未推送提交，并且你不想引入糟糕的提交到远程分支，可以使用 git reset。</li>
-<li>使用 git revert 还原已经推送到远程分支的合并提交。</li>
-<li>使用 git log 查看提交历史。</li>
-</ol>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://flyingchase.github.io/post/java-ji-he/">
+            <a class="purple-link" href="https://flyingchase.github.io/post/git-chang-jian-wen-ti-hui-zong/">
               <h3 class="post-title">
-                下一篇：Java-集合
+                下一篇：Git常见问题汇总
               </h3>
             </a>
           </div>

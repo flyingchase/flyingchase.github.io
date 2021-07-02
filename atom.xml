@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-06-28T06:16:29.331Z</updated>
+    <updated>2021-07-02T10:13:46.461Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,93 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[二叉树的非递归遍历算法]]></title>
+        <id>https://flyingchase.github.io/post/er-cha-shu-de-fei-di-gui-bian-li-suan-fa/</id>
+        <link href="https://flyingchase.github.io/post/er-cha-shu-de-fei-di-gui-bian-li-suan-fa/">
+        </link>
+        <updated>2021-07-02T10:13:16.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="非递归遍历二叉树">非递归遍历二叉树</h2>
+<hr>
+<p>递归本质上就是栈 由于二叉树提供节点只能向下访问 无法返回 故而使用栈结构实现返回</p>
+<pre><code class="language-java">public static List&lt;Integer&gt; inOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最左侧走 并不断压栈
+        while (cur != null) {
+            stack.push(cur);
+            cur = cur.left;
+        }
+        // 走完最左侧后弹栈顶
+        TreeNode node = stack.pop();
+        res.add(node.val);
+        // 往上层的右边去再重复找最左侧
+        cur = node.right;
+    }
+    return res;
+}
+
+
+public static List&lt;Integer&gt; preOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最左侧走 并不断压栈入数组
+        while (cur != null) {
+            res.add(cur.val);
+            stack.push(cur);
+            cur = cur.left;
+        }
+        // 走完最左侧后弹栈顶 无须入组 cur循环内已经入组
+        TreeNode node = stack.pop();
+        // 往上层的右边去 再重复找最左侧
+        cur = node.right;
+    }
+
+    return res;
+}
+
+
+public static List&lt;Integer&gt; postOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最右侧走 并不断压栈入数组
+        while (cur != null) {
+            res.add(cur.val);
+            stack.push(cur);
+            cur = cur.right; // 使得reverse后正常左在前
+        }
+        // 走完最右侧后弹栈顶 无须入组 cur循环内已经入组
+        TreeNode node = stack.pop();
+        // 往上层的左边去 再重复找最右侧
+        cur=node.left;
+    }
+    Collections.reverse(res);
+    return res;
+}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Git常见问题汇总]]></title>
         <id>https://flyingchase.github.io/post/git-chang-jian-wen-ti-hui-zong/</id>
