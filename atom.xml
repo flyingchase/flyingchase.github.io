@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-07-12T04:32:02.078Z</updated>
+    <updated>2021-07-15T09:14:55.645Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -1538,7 +1538,7 @@ cat # 串联+合并
 <hr>
 <h2 id="00-杂项">00 杂项</h2>
 <h3 id="0001-待刷备份-lintcode-leetcode">00.01 待刷备份 LintCode LeetCode</h3>
-<hr>
+<h3 id="算法笔记">[[算法笔记]]</h3>
 <p>待刷:</p>
 <p>①<strong>初期，刷入门核心题</strong></p>
 <p>这是针对毫无经验的刷题选手的策略。如果已经有一定刷题心得，可以跳过这步。</p>
@@ -1820,6 +1820,12 @@ public static int[]
     return new ArrayList&lt;&gt;(maxHeap);
 }
 </code></pre>
+<h3 id="0008-assert-断言">00.08 assert 断言</h3>
+<p>IDEA中JVM设置自定义参数-ea后即可打开</p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/v6WKwP.png" alt="v6WKwP" loading="lazy"></figure>
+<pre><code class="language-java">assert [boolean//表达式]
+</code></pre>
+<p>只有当 表达式为真——&gt;继续执行后续代码否则终止执行并抛出<code>AssertionError</code></p>
 <h2 id="01-排序">01 排序</h2>
 <ul>
 <li>
@@ -1957,7 +1963,44 @@ public static int[] swap(int[] arr, int i, int j) {
 <ul>
 <li>
 <p>以数组最后一个数作为基准 重复荷兰国旗划分</p>
-<pre><code class="language-java">public static void quickSort(int[] arr) {	if (arr == null || arr.length &lt; 2) {		return;	}	quickSort(arr, 0, arr.length - 1);}public static void quickSort(int[] arr, int l, int r) {	if (l &lt; r) {		swap(arr, l + (int) (Math.random() * (r - l + 1)), r);		int[] p = partition(arr, l, r);        //经典快排的改进——&gt;对于等于选择基点的区域不参与递归排序		quickSort(arr, l, p[0] - 1);		quickSort(arr, p[1] + 1, r);	}}public static int[] partition(int[] arr, int l, int r) {	int less = l - 1;	int more = r;	while (l &lt; more) {		if (arr[l] &lt; arr[r]) {			swap(arr, ++less, l++);		} else if (arr[l] &gt; arr[r]) {			swap(arr, --more, l);		} else {			l++;		}	}	swap(arr, more, r);	return new int[] { less + 1, more };}public static void swap(int[] arr, int i, int j) {	int tmp = arr[i];	arr[i] = arr[j];	arr[j] = tmp;}
+<pre><code class="language-java">public static void quickSort(int[] arr) {
+	if (arr == null || arr.length &lt; 2) {
+		return;
+	}
+	quickSort(arr, 0, arr.length - 1);
+}
+
+public static void quickSort(int[] arr, int l, int r) {
+	if (l &lt; r) {
+		swap(arr, l + (int) (Math.random() * (r - l + 1)), r);
+		int[] p = partition(arr, l, r);
+        //经典快排的改进——&gt;对于等于选择基点的区域不参与递归排序
+		quickSort(arr, l, p[0] - 1);
+		quickSort(arr, p[1] + 1, r);
+	}
+}
+
+public static int[] partition(int[] arr, int l, int r) {
+	int less = l - 1;
+	int more = r;
+	while (l &lt; more) {
+		if (arr[l] &lt; arr[r]) {
+			swap(arr, ++less, l++);
+		} else if (arr[l] &gt; arr[r]) {
+			swap(arr, --more, l);
+		} else {
+			l++;
+		}
+	}
+	swap(arr, more, r);
+	return new int[] { less + 1, more };
+}
+
+public static void swap(int[] arr, int i, int j) {
+	int tmp = arr[i];
+	arr[i] = arr[j];
+	arr[j] = tmp;
+}
 </code></pre>
 </li>
 <li>
@@ -2006,11 +2049,9 @@ public static int[] swap(int[] arr, int i, int j) {
 </li>
 </ul>
 </li>
-</ul>
-<pre><code>  
-</code></pre>
-<ul>
-<li>小根堆——&gt;任何一个子树的最小值都是其头部</li>
+<li>
+<p>小根堆——&gt;任何一个子树的最小值都是其头部</p>
+</li>
 </ul>
 </li>
 </ul>
@@ -2020,9 +2061,75 @@ public static int[] swap(int[] arr, int i, int j) {
 <hr>
 <p>一种数据状况出现的词频</p>
 <h4 id="桶排序">桶排序</h4>
+<h3 id="0104-bubbleinsertsortselectsort">01.04 Bubble+InsertSort+SelectSort</h3>
+<ul>
+<li>
+<p><code>BubbleSort</code></p>
+<ul>
+<li>
+<p>逐个比较 最值上浮——&gt;则外围循环为从右到左 使得j+1与j比较得到最值上浮</p>
+<pre><code class="language-java">public static void BubbleSort(int[] nums) {
+    if (nums == null || nums.length &lt; 2) {
+        return;
+    }
+    for (int i = nums.length - 1; i &gt; 0; i--) {
+        for (int j = 0; j &lt; i; j++) {
+            if (nums[j] &gt; nums[j + 1]) {
+                swap(nums, j, j + 1);
+            }
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>InsertSort</code></p>
+<ul>
+<li>
+<p>的</p>
+<pre><code class="language-java">public static void InsertionSort(int[] nums) {
+    if (nums==null||nums.length&lt;2) {
+        return;
+    }
+    for (int i = 1; i &lt; nums.length; i++) {
+        for (int j = i-1; j &gt;0; j--) {
+            if (nums[j]&gt;nums[j+1]) {
+                swap(nums,j,j+1);
+            }
+        }
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>SelectionSort</code></p>
+<ul>
+<li>
+<p>a</p>
+<pre><code class="language-java">public static void SelectionSort(int[] nums) {
+    if (nums == null || nums.length &lt; 2) {
+        return;
+    }
+    for (int i = 0; i &lt; nums.length - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j &lt; nums.length; j++) {
+            minIndex = nums[j] &lt; nums[minIndex] ? j : minIndex;
+        }
+        swap(nums, i, minIndex);
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
 <h2 id="02-stack-queue">02 Stack Queue</h2>
 <h4 id="0201-队列实现栈结构">02.01 队列实现栈结构</h4>
-<pre><code class="language-java">	public static class TwoQueuesStack {		private Queue&lt;Integer&gt; queue;		private Queue&lt;Integer&gt; help;		public TwoQueuesStack() {			queue = new LinkedList&lt;Integer&gt;();			help = new LinkedList&lt;Integer&gt;();		}		public void push(int pushInt) {			queue.add(pushInt);		}		public int peek() {			if (queue.isEmpty()) {				throw new RuntimeException(&quot;Stack is empty!&quot;);			}			while (queue.size() != 1) {				help.add(queue.poll());			}			int res = queue.poll();			help.add(res);			swap();			return res;		}		public int pop() {			if (queue.isEmpty()) {				throw new RuntimeException(&quot;Stack is empty!&quot;);			}			while (queue.size() &gt; 1) {				help.add(queue.poll());			}			int res = queue.poll();			swap();			return res;		}		private void swap() {			Queue&lt;Integer&gt; tmp = help;			help = queue;			queue = tmp;		}	}
+<pre><code class="language-java">public static class TwoQueuesStack {    private Queue&lt;Integer&gt; queue;    private Queue&lt;Integer&gt; help;    public TwoQueuesStack() {        queue = new LinkedList&lt;Integer&gt;();        help = new LinkedList&lt;Integer&gt;();    }    public void push(int pushInt) {        queue.add(pushInt);    }    public int peek() {        if (queue.isEmpty()) {            throw new RuntimeExceptioan(&quot;Stack is empty!&quot;);        }        while (queue.size() != 1) {            help.add(queue.poll());        }        int res = queue.poll();        help.add(res);        swap();        return res;    }    public int pop() {        if (queue.isEmpty()) {            throw new RuntimeException(&quot;Stack is empty!&quot;);        }        while (queue.size() &gt; 1) {            help.add(queue.poll());        }        int res = queue.poll();        swap();        return res;    }    private void swap() {        Queue&lt;Integer&gt; tmp = help;        help = queue;        queue = tmp;    }}
 </code></pre>
 <h4 id="0202-栈实现队列结构">02.02 栈实现队列结构</h4>
 <p>使用两个栈实现队列,支持队列的基本操作(add poll peek)</p>
@@ -2033,7 +2140,14 @@ public static int[] swap(int[] arr, int i, int j) {
 <pre><code class="language-java">import java.util.Stack;public class TwoStackWithQueue {    public Stack&lt;Integer&gt; stackPush;    public Stack&lt;Integer&gt; stackPop;    public TwoStackWithQueue(){        stackPop=new Stack&lt;Integer&gt;();        stackPush=new Stack&lt;Integer&gt;();    }    //push栈向pop栈倒入数据    private void pushTopop() {        if(stackPop.empty()) {            while (!stackPush.empty()) {                stackPop.push(stackPush.pop());            }        }    }    public void add(int pushInt) {        stackPush.push(pushInt);        pushTopop();    }    public int poll() {        if(stackPop.empty()&amp;&amp;stackPush.empty()) {            throw new RuntimeException(&quot;Queue is empty!&quot;);        }        pushTopop();        return stackPop.pop();    }    public int peek() {        if(stackPop.empty()&amp;&amp;stackPush.empty()) {            throw new RuntimeException(&quot;Queue is empty!&quot;);        }        pushTopop();        return stackPop.peek();    }}
 </code></pre>
 <h2 id="03-链表">03 链表</h2>
-<pre><code class="language-java">public class ListNode{    int val;    ListNode next = null;        ListNode(int val) {        this.val = val;    }}
+<pre><code class="language-java">public class ListNode{
+    int val;
+    ListNode next = null;
+    
+    ListNode(int val) {
+        this.val = val;
+    }
+}
 </code></pre>
 <p>回文链表</p>
 <ul>
@@ -2045,17 +2159,129 @@ public static int[] swap(int[] arr, int i, int j) {
 <pre><code class="language-java">ListNode listNode = new ListNode(Arrays.asList(arry));
 </code></pre>
 <h2 id="04-二叉树">04 二叉树</h2>
-<pre><code class="language-java">public static class TreeNode {	public int val;    public TreeNode left;    public TreeNode right;    public TreeNode(int val) {        this.val = val;    }}
+<pre><code class="language-java">public static class TreeNode {
+	public int val;
+    public TreeNode left;
+    public TreeNode right;
+    public TreeNode(int val) {
+        this.val = val;
+    }
+}
 </code></pre>
 <h4 id="0401-递归遍历二叉树">04.01 递归遍历二叉树</h4>
 <hr>
 <p>三者访问访问二叉树的次序一致, 只是不同时机输出</p>
-<pre><code class="language-java">// 先序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    System.out.print(head.val+&quot; &quot;);    preOrderRecur(head.left);    preOrderRecur(head.right);}// 中序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    preOrderRecur(head.left);    System.out.print(head.val+&quot; &quot;);    preOrderRecur(head.right);}// 后序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    preOrderRecur(head.left);    preOrderRecur(head.right);    System.out.print(head.val+&quot; &quot;);}// 三者访问访问二叉树的次序一致, 只是不同实际输出
+<pre><code class="language-java">// 先序递归遍历二叉树
+public static void preOrderRecur(TreeNode head) {
+    if(head == null) {
+        return;
+    }
+    System.out.print(head.val+&quot; &quot;);
+    preOrderRecur(head.left);
+    preOrderRecur(head.right);
+}
+
+// 中序递归遍历二叉树
+public static void preOrderRecur(TreeNode head) {
+    if(head == null) {
+        return;
+    }
+    preOrderRecur(head.left);
+    System.out.print(head.val+&quot; &quot;);
+    preOrderRecur(head.right);
+}
+
+// 后序递归遍历二叉树
+public static void preOrderRecur(TreeNode head) {
+    if(head == null) {
+        return;
+    }
+
+    preOrderRecur(head.left);
+    preOrderRecur(head.right);
+    System.out.print(head.val+&quot; &quot;);
+}
+
+// 三者访问访问二叉树的次序一致, 只是不同实际输出
 </code></pre>
 <h4 id="0402-非递归遍历二叉树">04.02 非递归遍历二叉树</h4>
 <hr>
 <p>递归本质上就是栈 由于二叉树提供节点只能向下访问 无法返回 故而使用栈结构实现返回</p>
-<pre><code class="language-java">// 非递归先序遍历public static void preOrderUnRecur(TreeNode head) {    if(head!=null) {        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();        stack.add(head);        while(!stack.isEmpty()) {            head = stack.pop();	//复用head            System.out.print(head.val+&quot; &quot;);            if(head.right!=null) {	//先右再左进栈。出栈则实现左再右子树                stack.push(head.right);            }            if(head.left!=null) {                stack.push(head.left);            }        }    }    System.out.println();}//非递归中序遍历// 将树拆分为左边界组成 public static void inOrderUnRecur(TreeNode head) {    if(head!=null) {        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();        while(!stack.isEmpth() || head!=null) {            if(head!=null) {	//当前节点非空 将当前节点的左节点全部压入栈内                stack.push(head);                head=head.left;            } else {                // 当前节点为空 从栈中弹 打印--节点右移                head  = stack.pop();                System.out.print(head.val+ &quot; &quot;);                head = head.right;            }        }    }    System.out.println();}// 非递归后续遍历二叉树public static void posOrderUnRecur_1(TrereNode head) {    if(head!=null) {        Stack&lt;TreeNode&gt; s1 = new Stack&lt;&gt;();        Stack&lt;TreeNode&gt; s2 = new Stack&lt;&gt;():	// 作为辅助栈 中右左        s1.push(head);	// 复用head        while(!s1.isEmpty()) {            head = s1.pop();            s2.push(head):            if(head.left!=null) {                s1.push(head.left);            }            if(head.right!=null) {                s1.push(head.right);            }        }        while(!s2.isEmpty()) {            System.out.print(s2.pop().val+&quot; &quot;);        }    }    System.out.println();}public static void posOrderUnRecur_2 (TreeNode head) {    if(head!=null) {        Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();        stack.push(head);        TreeNode c = null;        while(!stack.isEmpty()) {            c = stack.peek();            if(c.left!=null&amp;&amp;head!=c.left&amp;&amp;head!=c.right) {                stack.push(c.left);            } else if (c.right!=null &amp;&amp; head!=c.right) {                stack.push(c.right);            } else {                System.out.print(stack.pop().val+&quot; &quot;);                head = c;            }        }    }    System.out.println();}
+<pre><code class="language-java">public static List&lt;Integer&gt; inOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最左侧走 并不断压栈
+        while (cur != null) {
+            stack.push(cur);
+            cur = cur.left;
+        }
+        // 走完最左侧后弹栈顶
+        TreeNode node = stack.pop();
+        res.add(node.val);
+        // 往上层的右边去再重复找最左侧
+        cur = node.right;
+    }
+    return res;
+}
+
+
+public static List&lt;Integer&gt; preOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最左侧走 并不断压栈入数组
+        while (cur != null) {
+            res.add(cur.val);
+            stack.push(cur);
+            cur = cur.left;
+        }
+        // 走完最左侧后弹栈顶 无须入组 cur循环内已经入组
+        TreeNode node = stack.pop();
+        // 往上层的右边去 再重复找最左侧
+        cur = node.right;
+    }
+
+    return res;
+}
+
+
+public static List&lt;Integer&gt; postOrderTraversalBT(TreeNode root) {
+    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
+    //空树则直接返回null的res
+    if (root == null) {
+        return res;
+    }
+    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
+    // 保存root
+    TreeNode cur = root;
+    while (cur != null || !stack.isEmpty()) {
+        // 向树的最右侧走 并不断压栈入数组
+        while (cur != null) {
+            res.add(cur.val);
+            stack.push(cur);
+            cur = cur.right; // 使得reverse后正常左在前
+        }
+        // 走完最右侧后弹栈顶 无须入组 cur循环内已经入组
+        TreeNode node = stack.pop();
+        // 往上层的左边去 再重复找最右侧
+        cur=node.left;
+    }
+    Collections.reverse(res);
+    return res;
+}
 </code></pre>
 <p><strong>后继节点:</strong> 二叉树的<em>中序遍历</em>中的下一节点</p>
 <p>前驱节点: 二叉树的<em>中序遍历</em>的前一节点</p>
@@ -2075,6 +2301,20 @@ public static int[] swap(int[] arr, int i, int j) {
 <h4 id="0404-搜索二叉树-bst">04.04 搜索二叉树 BST</h4>
 <hr>
 <p>二叉树中序遍历的结果是依次升序的 一般无重复节点</p>
+<p>LC-99-recoverTree</p>
+<p>​	两结点被错误交换 还原</p>
+<pre><code class="language-java">// 非常妙的两个if 使得中序遍历的pre和node在不断比较大小找出错误的位置
+if (firstNode == null &amp;&amp; preNode.val &gt; node.val) {
+    firstNode = preNode;
+}
+if (firstNode != null &amp;&amp; preNode.val &gt; node.val) {
+    secondNode = node;
+}
+</code></pre>
+<blockquote>
+<p>第一个节点，是第一个按照中序遍历时候前一个节点大于后一个节点，我们选取前一个节点，这里指节点 ；</p>
+<p>第二个节点，是在第一个节点找到之后，后面出现前一个节点大于后一个节点，我们选择后一个节点，这里指节点 ；</p>
+</blockquote>
 <h4 id="0405-完全二叉树">04.05 完全二叉树</h4>
 <hr>
 <p><strong>判断</strong>标准二叉树按层遍历:</p>
@@ -2084,6 +2324,99 @@ public static int[] swap(int[] arr, int i, int j) {
 <p>求完全二叉树节点个数:</p>
 <p>满二叉树: 高度l 则节点个数<strong>2^l-1</strong></p>
 <p>找出</p>
+<h3 id="0406-重建二叉树">04.06 重建二叉树</h3>
+<pre><code class="language-java">package Tree;
+
+import DataStructure.TreeNode;
+
+import java.util.Arrays;
+
+import static Tree._100_SameTree.isSameTree;
+
+public class _105_BuildTree {
+    /*
+     * 从前序和后序遍历结果构造二叉树
+     * */
+    public static void main(String[] args) {
+        TreeNode root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        root.left.left = new TreeNode(4);
+        root.left.right = new TreeNode(5);
+        root.right.right = new TreeNode(7);
+        root.right.left = new TreeNode(6);
+        root.left.left.left = new TreeNode(8);
+        root.left.left.right = new TreeNode(9);
+
+        int[] preorder = {1, 2, 4, 8, 9, 5, 3, 6, 7};
+        int[] inorder = {8, 4, 9, 2, 5, 1, 6, 3, 7};
+
+        TreeNode root2 = buildTree(preorder, inorder);
+
+        System.out.println(isSameTree(root2, root));
+
+    }
+
+    public static TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder.length == 0) {
+            return null;
+        }
+        assert (preorder.length == inorder.length);
+
+        TreeNode root = new TreeNode(preorder[0]);
+
+        for (int i = 0; i &lt; preorder.length; i++) {
+            // 找到root在中序遍历数组中的位置
+            if (preorder[0] == inorder[i]) {
+                /*将前 中序遍历数组各分为两半*/
+                int[] preLeft = Arrays.copyOfRange(preorder, 1, i + 1);
+                int[] preRight = Arrays.copyOfRange(preorder, i + 1, preorder.length);
+                int[] inLeft = Arrays.copyOfRange(inorder, 0, i);
+                int[] inRight = Arrays.copyOfRange(inorder, i + 1, inorder.length);
+                // 递归处理左右两部分
+                root.left = buildTree(preLeft, inLeft);
+                root.right = buildTree(preRight, inRight);
+                break;
+            }
+
+        }
+        return root;
+
+    }
+}
+</code></pre>
+<pre><code class="language-java">public static TreeNode buildTree(int[] inorder, int[] postorder) {
+    if (inorder == null || postorder == null) {
+        return null;
+    }
+    return helper(inorder, postorder);
+}
+
+private static TreeNode helper(int[] in, int[] post) {
+    if (in.length == 0) {
+        return null;
+    }
+    //根据后序数组的最后一个元素，创建根节点
+    TreeNode root = new TreeNode(post[post.length - 1]);
+    //在中序数组中查找值等于【后序数组最后一个元素】的下标
+    for (int i = 0; i &lt; in.length; ++i) {
+        if (in[i] == post[post.length - 1]) {
+            //确定这个下标i后，将中序数组分成两部分，后序数组分成两部分
+            int[] inLeft = Arrays.copyOfRange(in, 0, i);
+            int[] inRight = Arrays.copyOfRange(in, i + 1, in.length);
+            int[] postLeft = Arrays.copyOfRange(post, 0, i);
+            int[] postRight = Arrays.copyOfRange(post, i, post.length - 1);
+            //递归处理中序数组左边，后序数组左边
+            root.left = helper(inLeft, postLeft);
+            //递归处理中序数组右边，后序数组右边
+            root.right = helper(inRight, postRight);
+            break;
+        }
+    }
+    return root;
+}
+
+</code></pre>
 <h2 id="05-lfu-lfu算法">05 <code>LFU &amp; LFU</code>算法</h2>
 <p>https://mp.weixin.qq.com/s?__biz=MzA4NDE4MzY2MA==&amp;mid=2647524319&amp;idx=1&amp;sn=fdca85b7bb34d46e428a0d240f810811&amp;chksm=87d1bcdcb0a635caecf466761bcd224846f9fa93711c0da35115bb25ea904ddfb4b172389a2f&amp;mpshare=1&amp;scene=1&amp;srcid=0522hQRdOsdk14xOj8EYzGDY&amp;sharer_sharetime=1621651227490&amp;sharer_shareid=116ef760e9b961326f61bb96be400660#rd</p>
 <blockquote></blockquote>
@@ -2125,9 +2458,38 @@ public static int[] swap(int[] arr, int i, int j) {
 <h2 id="tips"><code>Tips</code></h2>
 <h3 id="01-位移运算">01 位移运算</h3>
 <ul>
-<li>左移 扩大
+<li>
+<p>左移 扩大</p>
 <ul>
-<li><code>1&gt;&gt;4</code> 即1 * 2 * 2 * 2 * 2 = 16 左移 4 位即pow（2,4）</li>
+<li>
+<p><code>1&gt;&gt;4</code> 即1 * 2 * 2 * 2 * 2 = 16 左移 4 位即pow（2,4）</p>
+</li>
+<li>
+<p>Java提供的位运算符有：左移( <code>&lt;&lt;</code> )、右移( <code>&gt;&gt;</code> ) 、无符号右移( <code>&gt;&gt;&gt;</code> ) 、位与( <code>&amp;</code> ) 、位或( <code>|</code> )、位非( <code>~</code> )、位异或( <code>^</code> )，除了位非( <code>~</code> )是一元操作符外，其它的都是二元操作符。</p>
+<h4 id="1-左移">1. 左移( &lt;&lt; )</h4>
+<p>a &lt;&lt; b 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向左方向移动 b 位，符号位不变，低位空出来的位补数值 0。</p>
+<p><code>a &lt;&lt; b = a \* (2 ^ b)</code>\</p>
+<h4 id="2-右移">2. 右移( &gt;&gt; )</h4>
+<p><strong>a &gt;&gt; b</strong> 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向右方向移动 b 位，符号位不变，高位空出来的位补数值 0。</p>
+<pre><code>a &gt;&gt; b = a / ( 2 ^ b )
+</code></pre>
+<h4 id="3-无符号右移">3. 无符号右移( &gt;&gt;&gt; )</h4>
+<p>无符号右移运算符&gt;&gt;&gt;和右移运算符&gt;&gt;是一样的，只不过右移时左边是补上符号位，而无符号右移运算符是补上0，也就是说，对于正数移位来说等同于：&gt;&gt;，负数通过此移位运算符能移位成正数。</p>
+<h4 id="4-位与">4. 位与( &amp; )</h4>
+<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值都是 1，则结果值相应的 bit 就是 1，否则为 0.</p>
+<pre><code class="language-java">0 &amp; 0 = 0,0 &amp; 1 = 0,1 &amp; 1 = 1
+</code></pre>
+<h4 id="5-位或">5. 位或( | )</h4>
+<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值只要 1 个为 1，则结果值相应的 bit 就是 1，否则为 0。</p>
+<pre><code class="language-java">0 | 0 = 0,0 | 1 = 1,1 | 1 = 1
+</code></pre>
+<h4 id="6-位异或">6. 位异或( ^ )</h4>
+<p>两个操作数进行异或时，对于同一位上，如果数值相同则为 0，数值不同则为 1。</p>
+<pre><code class="language-java">1 ^ 0 = 1,1 ^ 1 = 0,0 ^ 0 = 0;
+</code></pre>
+<h4 id="7-位非-~">7. 位非( ~ )</h4>
+<p>对操作数的每一位进行操作，1 变成 0，0 变成 1。</p>
+</li>
 </ul>
 </li>
 </ul>
