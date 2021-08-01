@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-07-15T09:14:55.645Z</updated>
+    <updated>2021-08-01T13:38:02.248Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -1826,6 +1826,40 @@ public static int[]
 <pre><code class="language-java">assert [boolean//表达式]
 </code></pre>
 <p>只有当 表达式为真——&gt;继续执行后续代码否则终止执行并抛出<code>AssertionError</code></p>
+<h3 id="009-两链表长度差值">0.09 两链表长度差值</h3>
+<p>一个变量即可实现</p>
+<pre><code class="language-java">int cnt = 0;
+while (cur1!=null) {
+    cnt++; //遍历第一个链表时++
+    cur1=cur1.next;
+}
+while (cur2!=null) {
+    cnt--;	//遍历第二个链表时--
+    cur2=cur2.next;
+}
+cnt = Math.abs(cnt);	// 二链表长&gt;一链表长时cnt&lt;0 
+</code></pre>
+<h3 id="010-堆化">0.10 堆化</h3>
+<p>O(N)</p>
+<pre><code class="language-java">    PriorityQueue&lt;Integer&gt; minheap = new PriorityQueue&lt;&gt;();		 // 默认最小堆    PriorityQueue&lt;Integer&gt; maxheap = new PriorityQueue&lt;&gt;(Collections.reverseOrder());//    minheap.add();//    peek() 查看堆顶元素//    poll() 弹出堆顶元素并删除//    size() 堆的大小
+</code></pre>
+<h3 id="011-arraylist-与-int转换">0.11 ArrayList 与 int[]转换</h3>
+<pre><code class="language-java">int[] res = integers.stream().mapToInt(Integer::intValue).toArray();// 使用 stream流 和 方法引用
+</code></pre>
+<pre><code class="language-java">List&lt;Integer&gt; lists = Arrays.stream(res).boxed().collect(Collectors.toList());// 装箱
+</code></pre>
+<h3 id="012-统计出现的频率得到频率数组">0.12 统计出现的频率——&gt;得到频率数组</h3>
+<pre><code class="language-java">Map&lt;Integer, Integer&gt; frequents = new HashMap&lt;&gt;();
+for (int num:
+     nums) {
+    frequents.put(num,frequents.getOrDefault(num,0)+1)
+}
+// 将 Map 转换为 Set
+Set&lt;Map.Entry&lt;Integer,Integer&gt;&gt; entries = frequents.entrySet();
+</code></pre>
+<h3 id="013-最短子串">0.13 最短子串</h3>
+<p>找到 minwindow 的 len 同时记住起始的left 即可</p>
+<p>​	使用 substring(left,left+resLen)</p>
 <h2 id="01-排序">01 排序</h2>
 <ul>
 <li>
@@ -1935,27 +1969,7 @@ Arrays.sort(students, new IdAscendingComparator());
 <h3 id="0101-快排">01.01 快排</h3>
 <p>思想: 荷兰国旗问题——&gt;在左右区间内再次荷兰国旗划分</p>
 <img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/Zq7KoU.png" alt="Zq7KoU" style="zoom: 50%;" />
-<pre><code class="language-java">public static int[] partition(int[] arr, int l, int r, int p) {
-	int less = l - 1; //小于p的区域的下标最大值边界
-	int more = r + 1; //大于p的区域下标最小值边界
-	while (l &lt; more) {
-		if (arr[l] &lt; p) {
-			swap(arr, ++less, l++);
-		} else if (arr[l] &gt; p) {
-			swap(arr, --more, l);
-		} else {
-			l++;
-		}
-	}
-	return new int[] { less + 1, more - 1 };	//返回等于区域的数组下标范围
-}
-
-public static int[] swap(int[] arr, int i, int j) {
-    int temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-    return arr;
-}
+<pre><code class="language-java">public static int[] partition(int[] arr, int l, int r, int p) {	int less = l - 1; //小于p的区域的下标最大值边界	int more = r + 1; //大于p的区域下标最小值边界	while (l &lt; more) {		if (arr[l] &lt; p) {			swap(arr, ++less, l++);		} else if (arr[l] &gt; p) {			swap(arr, --more, l);		} else {			l++;		}	}	return new int[] { less + 1, more - 1 };	//返回等于区域的数组下标范围}public static int[] swap(int[] arr, int i, int j) {    int temp = arr[i];    arr[i] = arr[j];    arr[j] = temp;    return arr;}
 </code></pre>
 <ul>
 <li>
@@ -1963,44 +1977,7 @@ public static int[] swap(int[] arr, int i, int j) {
 <ul>
 <li>
 <p>以数组最后一个数作为基准 重复荷兰国旗划分</p>
-<pre><code class="language-java">public static void quickSort(int[] arr) {
-	if (arr == null || arr.length &lt; 2) {
-		return;
-	}
-	quickSort(arr, 0, arr.length - 1);
-}
-
-public static void quickSort(int[] arr, int l, int r) {
-	if (l &lt; r) {
-		swap(arr, l + (int) (Math.random() * (r - l + 1)), r);
-		int[] p = partition(arr, l, r);
-        //经典快排的改进——&gt;对于等于选择基点的区域不参与递归排序
-		quickSort(arr, l, p[0] - 1);
-		quickSort(arr, p[1] + 1, r);
-	}
-}
-
-public static int[] partition(int[] arr, int l, int r) {
-	int less = l - 1;
-	int more = r;
-	while (l &lt; more) {
-		if (arr[l] &lt; arr[r]) {
-			swap(arr, ++less, l++);
-		} else if (arr[l] &gt; arr[r]) {
-			swap(arr, --more, l);
-		} else {
-			l++;
-		}
-	}
-	swap(arr, more, r);
-	return new int[] { less + 1, more };
-}
-
-public static void swap(int[] arr, int i, int j) {
-	int tmp = arr[i];
-	arr[i] = arr[j];
-	arr[j] = tmp;
-}
+<pre><code class="language-java">public static void quickSort(int[] arr) {	if (arr == null || arr.length &lt; 2) {		return;	}	quickSort(arr, 0, arr.length - 1);}public static void quickSort(int[] arr, int l, int r) {	if (l &lt; r) {		swap(arr, l + (int) (Math.random() * (r - l + 1)), r);		int[] p = partition(arr, l, r);        //经典快排的改进——&gt;对于等于选择基点的区域不参与递归排序		quickSort(arr, l, p[0] - 1);		quickSort(arr, p[1] + 1, r);	}}public static int[] partition(int[] arr, int l, int r) {	int less = l - 1;	int more = r;	while (l &lt; more) {		if (arr[l] &lt; arr[r]) {			swap(arr, ++less, l++);		} else if (arr[l] &gt; arr[r]) {			swap(arr, --more, l);		} else {			l++;		}	}	swap(arr, more, r);	return new int[] { less + 1, more };}public static void swap(int[] arr, int i, int j) {	int tmp = arr[i];	arr[i] = arr[j];	arr[j] = tmp;}
 </code></pre>
 </li>
 <li>
@@ -2068,18 +2045,7 @@ public static void swap(int[] arr, int i, int j) {
 <ul>
 <li>
 <p>逐个比较 最值上浮——&gt;则外围循环为从右到左 使得j+1与j比较得到最值上浮</p>
-<pre><code class="language-java">public static void BubbleSort(int[] nums) {
-    if (nums == null || nums.length &lt; 2) {
-        return;
-    }
-    for (int i = nums.length - 1; i &gt; 0; i--) {
-        for (int j = 0; j &lt; i; j++) {
-            if (nums[j] &gt; nums[j + 1]) {
-                swap(nums, j, j + 1);
-            }
-        }
-    }
-}
+<pre><code class="language-java">public static void BubbleSort(int[] nums) {    if (nums == null || nums.length &lt; 2) {        return;    }    for (int i = nums.length - 1; i &gt; 0; i--) {        for (int j = 0; j &lt; i; j++) {            if (nums[j] &gt; nums[j + 1]) {                swap(nums, j, j + 1);            }        }    }}
 </code></pre>
 </li>
 </ul>
@@ -2089,18 +2055,7 @@ public static void swap(int[] arr, int i, int j) {
 <ul>
 <li>
 <p>的</p>
-<pre><code class="language-java">public static void InsertionSort(int[] nums) {
-    if (nums==null||nums.length&lt;2) {
-        return;
-    }
-    for (int i = 1; i &lt; nums.length; i++) {
-        for (int j = i-1; j &gt;0; j--) {
-            if (nums[j]&gt;nums[j+1]) {
-                swap(nums,j,j+1);
-            }
-        }
-    }
-}
+<pre><code class="language-java">public static void InsertionSort(int[] nums) {    if (nums==null||nums.length&lt;2) {        return;    }    for (int i = 1; i &lt; nums.length; i++) {        for (int j = i-1; j &gt;0; j--) {            if (nums[j]&gt;nums[j+1]) {                swap(nums,j,j+1);            }        }    }}
 </code></pre>
 </li>
 </ul>
@@ -2110,18 +2065,7 @@ public static void swap(int[] arr, int i, int j) {
 <ul>
 <li>
 <p>a</p>
-<pre><code class="language-java">public static void SelectionSort(int[] nums) {
-    if (nums == null || nums.length &lt; 2) {
-        return;
-    }
-    for (int i = 0; i &lt; nums.length - 1; i++) {
-        int minIndex = i;
-        for (int j = i + 1; j &lt; nums.length; j++) {
-            minIndex = nums[j] &lt; nums[minIndex] ? j : minIndex;
-        }
-        swap(nums, i, minIndex);
-    }
-}
+<pre><code class="language-java">public static void SelectionSort(int[] nums) {    if (nums == null || nums.length &lt; 2) {        return;    }    for (int i = 0; i &lt; nums.length - 1; i++) {        int minIndex = i;        for (int j = i + 1; j &lt; nums.length; j++) {            minIndex = nums[j] &lt; nums[minIndex] ? j : minIndex;        }        swap(nums, i, minIndex);    }}
 </code></pre>
 </li>
 </ul>
@@ -2129,7 +2073,51 @@ public static void swap(int[] arr, int i, int j) {
 </ul>
 <h2 id="02-stack-queue">02 Stack Queue</h2>
 <h4 id="0201-队列实现栈结构">02.01 队列实现栈结构</h4>
-<pre><code class="language-java">public static class TwoQueuesStack {    private Queue&lt;Integer&gt; queue;    private Queue&lt;Integer&gt; help;    public TwoQueuesStack() {        queue = new LinkedList&lt;Integer&gt;();        help = new LinkedList&lt;Integer&gt;();    }    public void push(int pushInt) {        queue.add(pushInt);    }    public int peek() {        if (queue.isEmpty()) {            throw new RuntimeExceptioan(&quot;Stack is empty!&quot;);        }        while (queue.size() != 1) {            help.add(queue.poll());        }        int res = queue.poll();        help.add(res);        swap();        return res;    }    public int pop() {        if (queue.isEmpty()) {            throw new RuntimeException(&quot;Stack is empty!&quot;);        }        while (queue.size() &gt; 1) {            help.add(queue.poll());        }        int res = queue.poll();        swap();        return res;    }    private void swap() {        Queue&lt;Integer&gt; tmp = help;        help = queue;        queue = tmp;    }}
+<pre><code class="language-java">public static class TwoQueuesStack {
+    private Queue&lt;Integer&gt; queue;
+    private Queue&lt;Integer&gt; help;
+
+    public TwoQueuesStack() {
+        queue = new LinkedList&lt;Integer&gt;();
+        help = new LinkedList&lt;Integer&gt;();
+    }
+
+    public void push(int pushInt) {
+        queue.add(pushInt);
+    }
+
+    public int peek() {
+        if (queue.isEmpty()) {
+            throw new RuntimeExceptioan(&quot;Stack is empty!&quot;);
+        }
+        while (queue.size() != 1) {
+            help.add(queue.poll());
+        }
+        int res = queue.poll();
+        help.add(res);
+        swap();
+        return res;
+    }
+
+    public int pop() {
+        if (queue.isEmpty()) {
+            throw new RuntimeException(&quot;Stack is empty!&quot;);
+        }
+        while (queue.size() &gt; 1) {
+            help.add(queue.poll());
+        }
+        int res = queue.poll();
+        swap();
+        return res;
+    }
+
+    private void swap() {
+        Queue&lt;Integer&gt; tmp = help;
+        help = queue;
+        queue = tmp;
+    }
+
+}
 </code></pre>
 <h4 id="0202-栈实现队列结构">02.02 栈实现队列结构</h4>
 <p>使用两个栈实现队列,支持队列的基本操作(add poll peek)</p>
@@ -2137,7 +2125,47 @@ public static void swap(int[] arr, int i, int j) {
 <li>stackPush向stackPop压入数据, 必须一次性将stackPush数据压入;</li>
 <li>stackPop非空, 不可压入数据</li>
 </ul>
-<pre><code class="language-java">import java.util.Stack;public class TwoStackWithQueue {    public Stack&lt;Integer&gt; stackPush;    public Stack&lt;Integer&gt; stackPop;    public TwoStackWithQueue(){        stackPop=new Stack&lt;Integer&gt;();        stackPush=new Stack&lt;Integer&gt;();    }    //push栈向pop栈倒入数据    private void pushTopop() {        if(stackPop.empty()) {            while (!stackPush.empty()) {                stackPop.push(stackPush.pop());            }        }    }    public void add(int pushInt) {        stackPush.push(pushInt);        pushTopop();    }    public int poll() {        if(stackPop.empty()&amp;&amp;stackPush.empty()) {            throw new RuntimeException(&quot;Queue is empty!&quot;);        }        pushTopop();        return stackPop.pop();    }    public int peek() {        if(stackPop.empty()&amp;&amp;stackPush.empty()) {            throw new RuntimeException(&quot;Queue is empty!&quot;);        }        pushTopop();        return stackPop.peek();    }}
+<pre><code class="language-java">import java.util.Stack;
+
+public class TwoStackWithQueue {
+
+    public Stack&lt;Integer&gt; stackPush;
+    public Stack&lt;Integer&gt; stackPop;
+    public TwoStackWithQueue(){
+        stackPop=new Stack&lt;Integer&gt;();
+        stackPush=new Stack&lt;Integer&gt;();
+    }
+
+    //push栈向pop栈倒入数据
+    private void pushTopop() {
+        if(stackPop.empty()) {
+            while (!stackPush.empty()) {
+                stackPop.push(stackPush.pop());
+            }
+        }
+    }
+    public void add(int pushInt) {
+        stackPush.push(pushInt);
+        pushTopop();
+    }
+
+    public int poll() {
+        if(stackPop.empty()&amp;&amp;stackPush.empty()) {
+            throw new RuntimeException(&quot;Queue is empty!&quot;);
+        }
+        pushTopop();
+        return stackPop.pop();
+    }
+
+    public int peek() {
+        if(stackPop.empty()&amp;&amp;stackPush.empty()) {
+            throw new RuntimeException(&quot;Queue is empty!&quot;);
+        }
+        pushTopop();
+        return stackPop.peek();
+    }
+}
+
 </code></pre>
 <h2 id="03-链表">03 链表</h2>
 <pre><code class="language-java">public class ListNode{
@@ -2155,133 +2183,64 @@ public static void swap(int[] arr, int i, int j) {
 <li>不用辅助空间</li>
 </ul>
 <p>访问 搜索 插入 删除</p>
+<pre><code class="language-java">private ListNode reverseListNode (ListNode head) {
+    ListNode cur =head;
+    ListNode prev =null;
+    while (cur != null) {
+        ListNode next = cur.Next;
+        cur.Next=prev;
+        prev=cur;
+        cur=next;
+    }
+    return prev;
+}
+</code></pre>
 <h3 id="0301-数组与链表的转化">03.01 数组与链表的转化</h3>
 <pre><code class="language-java">ListNode listNode = new ListNode(Arrays.asList(arry));
 </code></pre>
-<h2 id="04-二叉树">04 二叉树</h2>
-<pre><code class="language-java">public static class TreeNode {
-	public int val;
-    public TreeNode left;
-    public TreeNode right;
-    public TreeNode(int val) {
-        this.val = val;
-    }
+<h3 id="0302-链表环">03.02 链表环</h3>
+<ul>
+<li>
+<p><strong>找环思路</strong></p>
+<ul>
+<li>快慢分别走 直到两只相遇</li>
+<li>其中快指针回到头结点 以正常步伐+1 与慢指针同步走 直到两者相遇</li>
+<li>相遇结点即为头结点</li>
+</ul>
+</li>
+<li>
+<p>**两表首个公共结点思路: **</p>
+<ul>
+<li>先判断是否有环 Ring  成环必然在环处开始重合</li>
+<li>无环则 长链表走两表长度差值 gap 步伐  再长短链表指针同步走直到相遇 相遇点为首公共结点</li>
+</ul>
+</li>
+</ul>
+<h3 id="0303-两表长度差值一个变量">03.03 两表长度差值—一个变量</h3>
+<p>一个变量即可实现</p>
+<pre><code class="language-java">int cnt = 0;
+while (cur1!=null) {
+    cnt++; //遍历第一个链表时++
+    cur1=cur1.next;
 }
+while (cur2!=null) {
+    cnt--;	//遍历第二个链表时--
+    cur2=cur2.next;
+}
+cnt = Math.abs(cnt);	// 二链表长&gt;一链表长时cnt&lt;0 
+</code></pre>
+<h2 id="04-二叉树">04 二叉树</h2>
+<pre><code class="language-java">public static class TreeNode {	public int val;    public TreeNode left;    public TreeNode right;    public TreeNode(int val) {        this.val = val;    }}
 </code></pre>
 <h4 id="0401-递归遍历二叉树">04.01 递归遍历二叉树</h4>
 <hr>
 <p>三者访问访问二叉树的次序一致, 只是不同时机输出</p>
-<pre><code class="language-java">// 先序递归遍历二叉树
-public static void preOrderRecur(TreeNode head) {
-    if(head == null) {
-        return;
-    }
-    System.out.print(head.val+&quot; &quot;);
-    preOrderRecur(head.left);
-    preOrderRecur(head.right);
-}
-
-// 中序递归遍历二叉树
-public static void preOrderRecur(TreeNode head) {
-    if(head == null) {
-        return;
-    }
-    preOrderRecur(head.left);
-    System.out.print(head.val+&quot; &quot;);
-    preOrderRecur(head.right);
-}
-
-// 后序递归遍历二叉树
-public static void preOrderRecur(TreeNode head) {
-    if(head == null) {
-        return;
-    }
-
-    preOrderRecur(head.left);
-    preOrderRecur(head.right);
-    System.out.print(head.val+&quot; &quot;);
-}
-
-// 三者访问访问二叉树的次序一致, 只是不同实际输出
+<pre><code class="language-java">// 先序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    System.out.print(head.val+&quot; &quot;);    preOrderRecur(head.left);    preOrderRecur(head.right);}// 中序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    preOrderRecur(head.left);    System.out.print(head.val+&quot; &quot;);    preOrderRecur(head.right);}// 后序递归遍历二叉树public static void preOrderRecur(TreeNode head) {    if(head == null) {        return;    }    preOrderRecur(head.left);    preOrderRecur(head.right);    System.out.print(head.val+&quot; &quot;);}// 三者访问访问二叉树的次序一致, 只是不同实际输出
 </code></pre>
 <h4 id="0402-非递归遍历二叉树">04.02 非递归遍历二叉树</h4>
 <hr>
 <p>递归本质上就是栈 由于二叉树提供节点只能向下访问 无法返回 故而使用栈结构实现返回</p>
-<pre><code class="language-java">public static List&lt;Integer&gt; inOrderTraversalBT(TreeNode root) {
-    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
-    //空树则直接返回null的res
-    if (root == null) {
-        return res;
-    }
-    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
-    // 保存root
-    TreeNode cur = root;
-    while (cur != null || !stack.isEmpty()) {
-        // 向树的最左侧走 并不断压栈
-        while (cur != null) {
-            stack.push(cur);
-            cur = cur.left;
-        }
-        // 走完最左侧后弹栈顶
-        TreeNode node = stack.pop();
-        res.add(node.val);
-        // 往上层的右边去再重复找最左侧
-        cur = node.right;
-    }
-    return res;
-}
-
-
-public static List&lt;Integer&gt; preOrderTraversalBT(TreeNode root) {
-    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
-    //空树则直接返回null的res
-    if (root == null) {
-        return res;
-    }
-    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
-    // 保存root
-    TreeNode cur = root;
-    while (cur != null || !stack.isEmpty()) {
-        // 向树的最左侧走 并不断压栈入数组
-        while (cur != null) {
-            res.add(cur.val);
-            stack.push(cur);
-            cur = cur.left;
-        }
-        // 走完最左侧后弹栈顶 无须入组 cur循环内已经入组
-        TreeNode node = stack.pop();
-        // 往上层的右边去 再重复找最左侧
-        cur = node.right;
-    }
-
-    return res;
-}
-
-
-public static List&lt;Integer&gt; postOrderTraversalBT(TreeNode root) {
-    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
-    //空树则直接返回null的res
-    if (root == null) {
-        return res;
-    }
-    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
-    // 保存root
-    TreeNode cur = root;
-    while (cur != null || !stack.isEmpty()) {
-        // 向树的最右侧走 并不断压栈入数组
-        while (cur != null) {
-            res.add(cur.val);
-            stack.push(cur);
-            cur = cur.right; // 使得reverse后正常左在前
-        }
-        // 走完最右侧后弹栈顶 无须入组 cur循环内已经入组
-        TreeNode node = stack.pop();
-        // 往上层的左边去 再重复找最右侧
-        cur=node.left;
-    }
-    Collections.reverse(res);
-    return res;
-}
+<pre><code class="language-java">public static List&lt;Integer&gt; inOrderTraversalBT(TreeNode root) {    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();    //空树则直接返回null的res    if (root == null) {        return res;    }    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();    // 保存root    TreeNode cur = root;    while (cur != null || !stack.isEmpty()) {        // 向树的最左侧走 并不断压栈        while (cur != null) {            stack.push(cur);            cur = cur.left;        }        // 走完最左侧后弹栈顶        TreeNode node = stack.pop();        res.add(node.val);        // 往上层的右边去再重复找最左侧        cur = node.right;    }    return res;}public static List&lt;Integer&gt; preOrderTraversalBT(TreeNode root) {    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();    //空树则直接返回null的res    if (root == null) {        return res;    }    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();    // 保存root    TreeNode cur = root;    while (cur != null || !stack.isEmpty()) {        // 向树的最左侧走 并不断压栈入数组        while (cur != null) {            res.add(cur.val);            stack.push(cur);            cur = cur.left;        }        // 走完最左侧后弹栈顶 无须入组 cur循环内已经入组        TreeNode node = stack.pop();        // 往上层的右边去 再重复找最左侧        cur = node.right;    }    return res;}public static List&lt;Integer&gt; postOrderTraversalBT(TreeNode root) {    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();    //空树则直接返回null的res    if (root == null) {        return res;    }    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();    // 保存root    TreeNode cur = root;    while (cur != null || !stack.isEmpty()) {        // 向树的最右侧走 并不断压栈入数组        while (cur != null) {            res.add(cur.val);            stack.push(cur);            cur = cur.right; // 使得reverse后正常左在前        }        // 走完最右侧后弹栈顶 无须入组 cur循环内已经入组        TreeNode node = stack.pop();        // 往上层的左边去 再重复找最右侧        cur=node.left;    }    Collections.reverse(res);    return res;}
 </code></pre>
 <p><strong>后继节点:</strong> 二叉树的<em>中序遍历</em>中的下一节点</p>
 <p>前驱节点: 二叉树的<em>中序遍历</em>的前一节点</p>
@@ -2303,13 +2262,7 @@ public static List&lt;Integer&gt; postOrderTraversalBT(TreeNode root) {
 <p>二叉树中序遍历的结果是依次升序的 一般无重复节点</p>
 <p>LC-99-recoverTree</p>
 <p>​	两结点被错误交换 还原</p>
-<pre><code class="language-java">// 非常妙的两个if 使得中序遍历的pre和node在不断比较大小找出错误的位置
-if (firstNode == null &amp;&amp; preNode.val &gt; node.val) {
-    firstNode = preNode;
-}
-if (firstNode != null &amp;&amp; preNode.val &gt; node.val) {
-    secondNode = node;
-}
+<pre><code class="language-java">// 非常妙的两个if 使得中序遍历的pre和node在不断比较大小找出错误的位置if (firstNode == null &amp;&amp; preNode.val &gt; node.val) {    firstNode = preNode;}if (firstNode != null &amp;&amp; preNode.val &gt; node.val) {    secondNode = node;}
 </code></pre>
 <blockquote>
 <p>第一个节点，是第一个按照中序遍历时候前一个节点大于后一个节点，我们选取前一个节点，这里指节点 ；</p>
@@ -2324,98 +2277,10 @@ if (firstNode != null &amp;&amp; preNode.val &gt; node.val) {
 <p>求完全二叉树节点个数:</p>
 <p>满二叉树: 高度l 则节点个数<strong>2^l-1</strong></p>
 <p>找出</p>
-<h3 id="0406-重建二叉树">04.06 重建二叉树</h3>
-<pre><code class="language-java">package Tree;
-
-import DataStructure.TreeNode;
-
-import java.util.Arrays;
-
-import static Tree._100_SameTree.isSameTree;
-
-public class _105_BuildTree {
-    /*
-     * 从前序和后序遍历结果构造二叉树
-     * */
-    public static void main(String[] args) {
-        TreeNode root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4);
-        root.left.right = new TreeNode(5);
-        root.right.right = new TreeNode(7);
-        root.right.left = new TreeNode(6);
-        root.left.left.left = new TreeNode(8);
-        root.left.left.right = new TreeNode(9);
-
-        int[] preorder = {1, 2, 4, 8, 9, 5, 3, 6, 7};
-        int[] inorder = {8, 4, 9, 2, 5, 1, 6, 3, 7};
-
-        TreeNode root2 = buildTree(preorder, inorder);
-
-        System.out.println(isSameTree(root2, root));
-
-    }
-
-    public static TreeNode buildTree(int[] preorder, int[] inorder) {
-        if (preorder.length == 0) {
-            return null;
-        }
-        assert (preorder.length == inorder.length);
-
-        TreeNode root = new TreeNode(preorder[0]);
-
-        for (int i = 0; i &lt; preorder.length; i++) {
-            // 找到root在中序遍历数组中的位置
-            if (preorder[0] == inorder[i]) {
-                /*将前 中序遍历数组各分为两半*/
-                int[] preLeft = Arrays.copyOfRange(preorder, 1, i + 1);
-                int[] preRight = Arrays.copyOfRange(preorder, i + 1, preorder.length);
-                int[] inLeft = Arrays.copyOfRange(inorder, 0, i);
-                int[] inRight = Arrays.copyOfRange(inorder, i + 1, inorder.length);
-                // 递归处理左右两部分
-                root.left = buildTree(preLeft, inLeft);
-                root.right = buildTree(preRight, inRight);
-                break;
-            }
-
-        }
-        return root;
-
-    }
-}
+<h4 id="0406-重建二叉树">04.06 重建二叉树</h4>
+<pre><code class="language-java">package Tree;import DataStructure.TreeNode;import java.util.Arrays;import static Tree._100_SameTree.isSameTree;public class _105_BuildTree {    /*     * 从前序和后序遍历结果构造二叉树     * */    public static void main(String[] args) {        TreeNode root = new TreeNode(1);        root.left = new TreeNode(2);        root.right = new TreeNode(3);        root.left.left = new TreeNode(4);        root.left.right = new TreeNode(5);        root.right.right = new TreeNode(7);        root.right.left = new TreeNode(6);        root.left.left.left = new TreeNode(8);        root.left.left.right = new TreeNode(9);        int[] preorder = {1, 2, 4, 8, 9, 5, 3, 6, 7};        int[] inorder = {8, 4, 9, 2, 5, 1, 6, 3, 7};        TreeNode root2 = buildTree(preorder, inorder);        System.out.println(isSameTree(root2, root));    }    public static TreeNode buildTree(int[] preorder, int[] inorder) {        if (preorder.length == 0) {            return null;        }        assert (preorder.length == inorder.length);        TreeNode root = new TreeNode(preorder[0]);        for (int i = 0; i &lt; preorder.length; i++) {            // 找到root在中序遍历数组中的位置            if (preorder[0] == inorder[i]) {                /*将前 中序遍历数组各分为两半*/                int[] preLeft = Arrays.copyOfRange(preorder, 1, i + 1);                int[] preRight = Arrays.copyOfRange(preorder, i + 1, preorder.length);                int[] inLeft = Arrays.copyOfRange(inorder, 0, i);                int[] inRight = Arrays.copyOfRange(inorder, i + 1, inorder.length);                // 递归处理左右两部分                root.left = buildTree(preLeft, inLeft);                root.right = buildTree(preRight, inRight);                break;            }        }        return root;    }}
 </code></pre>
-<pre><code class="language-java">public static TreeNode buildTree(int[] inorder, int[] postorder) {
-    if (inorder == null || postorder == null) {
-        return null;
-    }
-    return helper(inorder, postorder);
-}
-
-private static TreeNode helper(int[] in, int[] post) {
-    if (in.length == 0) {
-        return null;
-    }
-    //根据后序数组的最后一个元素，创建根节点
-    TreeNode root = new TreeNode(post[post.length - 1]);
-    //在中序数组中查找值等于【后序数组最后一个元素】的下标
-    for (int i = 0; i &lt; in.length; ++i) {
-        if (in[i] == post[post.length - 1]) {
-            //确定这个下标i后，将中序数组分成两部分，后序数组分成两部分
-            int[] inLeft = Arrays.copyOfRange(in, 0, i);
-            int[] inRight = Arrays.copyOfRange(in, i + 1, in.length);
-            int[] postLeft = Arrays.copyOfRange(post, 0, i);
-            int[] postRight = Arrays.copyOfRange(post, i, post.length - 1);
-            //递归处理中序数组左边，后序数组左边
-            root.left = helper(inLeft, postLeft);
-            //递归处理中序数组右边，后序数组右边
-            root.right = helper(inRight, postRight);
-            break;
-        }
-    }
-    return root;
-}
-
+<pre><code class="language-java">public static TreeNode buildTree(int[] inorder, int[] postorder) {    if (inorder == null || postorder == null) {        return null;    }    return helper(inorder, postorder);}private static TreeNode helper(int[] in, int[] post) {    if (in.length == 0) {        return null;    }    //根据后序数组的最后一个元素，创建根节点    TreeNode root = new TreeNode(post[post.length - 1]);    //在中序数组中查找值等于【后序数组最后一个元素】的下标    for (int i = 0; i &lt; in.length; ++i) {        if (in[i] == post[post.length - 1]) {            //确定这个下标i后，将中序数组分成两部分，后序数组分成两部分            int[] inLeft = Arrays.copyOfRange(in, 0, i);            int[] inRight = Arrays.copyOfRange(in, i + 1, in.length);            int[] postLeft = Arrays.copyOfRange(post, 0, i);            int[] postRight = Arrays.copyOfRange(post, i, post.length - 1);            //递归处理中序数组左边，后序数组左边            root.left = helper(inLeft, postLeft);            //递归处理中序数组右边，后序数组右边            root.right = helper(inRight, postRight);            break;        }    }    return root;}
 </code></pre>
 <h2 id="05-lfu-lfu算法">05 <code>LFU &amp; LFU</code>算法</h2>
 <p>https://mp.weixin.qq.com/s?__biz=MzA4NDE4MzY2MA==&amp;mid=2647524319&amp;idx=1&amp;sn=fdca85b7bb34d46e428a0d240f810811&amp;chksm=87d1bcdcb0a635caecf466761bcd224846f9fa93711c0da35115bb25ea904ddfb4b172389a2f&amp;mpshare=1&amp;scene=1&amp;srcid=0522hQRdOsdk14xOj8EYzGDY&amp;sharer_sharetime=1621651227490&amp;sharer_shareid=116ef760e9b961326f61bb96be400660#rd</p>
@@ -2455,6 +2320,172 @@ private static TreeNode helper(int[] in, int[] post) {
 <li>红黑树 AVL树 size-balance-tree  跳表均为有序表</li>
 <li></li>
 </ol>
+<h2 id="07-堆">07 堆</h2>
+<h3 id="0701-数据流问题">07.01 数据流问题</h3>
+<h4 id="滑动窗口最大值">滑动窗口最大值</h4>
+<ul>
+<li>
+<p>最大堆</p>
+<ul>
+<li>
+<p>时间复杂度是 O(N*log K)</p>
+</li>
+<li>
+<pre><code class="language-java">PriorityQueue&lt;Integer&gt; maxHeap = new PriorityQueue&lt;&gt;(Comparator.reverseOrder());
+int[] res = new int[nums.length - k + 1];
+for (int i = 0; i &lt; k; i++) {
+    maxHeap.add(nums[i]);
+}
+res[0]= maxHeap.peek();
+for (int i = 0,j=i+k;j&lt;nums.length;j++,i++) {
+    maxHeap.remove(nums[i]);
+    maxHeap.add(nums[j]);
+    res[i+1]= maxHeap.peek();
+}
+return res;
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>单调队列——&gt;Dqueue 双端队列 队首为最大值 队尾为数据流进入的入口 单向流动的队列</p>
+<ul>
+<li>
+<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20210731171727928.png" alt="image-20210731171727928" loading="lazy"></figure>
+</li>
+<li>
+<p>有效降低复杂度</p>
+</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-java">Deque&lt;Integer&gt; queue = new ArrayDeque&lt;&gt;();
+int index = 0;
+int[] res = new int[nums.length - k + 1];
+for (int i = 0; i &lt; nums.length; i++) {
+    // peekLast 从后面看的最后一个元素
+    while (!queue.isEmpty() &amp;&amp; nums[i] &gt; queue.peekLast()) {
+		// 弹出最后一个元素
+        queue.pollLast();  
+    }
+    queue.addLast(nums[i]);
+    if (i&gt;=k-1) {
+        res[index++] = queue.peekFirst();
+        if (i&gt;=k-1&amp;&amp;nums[i-k+1]==queue.peekFirst()) {
+            queue.removeFirst();
+        }
+    }
+}
+return res;
+</code></pre>
+<h4 id="中位数">中位数</h4>
+<p>大根堆存较小部分 小根堆存较大部分 小根堆长度尽量长</p>
+<p>​	先入大根堆MaxHeap.add(num) 将大根堆的堆顶为较大部分 再讲较大部分入小根堆 MinHeao</p>
+<p>minHeap.add(maxHeap.poll())</p>
+<p>两堆的 size 相同则取 (minHeap.peek()+maxHeap.peek())/2.0</p>
+<p>不等则取 minHeap.peek() (因为保证小根堆较长)</p>
+<pre><code class="language-java">Queue&lt;Integer&gt; minHeap, maxHeap;
+
+public void addNum(int num) {
+    minHeap = new PriorityQueue&lt;&gt;();
+    maxHeap = new PriorityQueue&lt;Integer&gt;(Comparator.reverseOrder());
+    if (minHeap.size() == maxHeap.size()) {
+        maxHeap.add(num); // 利用大根堆过滤出较大的部分maxHeap.poll() 再入小根堆minHeap
+        minHeap.add(maxHeap.poll());
+    } else {
+        minHeap.add(num);
+        maxHeap.add(minHeap.poll());
+    }
+}
+
+public double findMedian() {
+    // 两堆大小相等则取中值 不等为小根堆堆顶
+    return maxHeap.size() == minHeap.size() ? ((minHeap.peek() + maxHeap.peek()) / 2.0) : minHeap.peek();
+
+}
+</code></pre>
+<h2 id="08-单调栈">08 单调栈</h2>
+<p><code>Monotonic Stack</code> 栈中元素按照单调顺序排列 ——&gt; 时间复杂度为线性 O(N) 每个元素遍历一次</p>
+<h3 id="0801-模板">08.01 模板</h3>
+<ul>
+<li>维持递增栈</li>
+<li>放入最后结果</li>
+<li>当前元素入栈</li>
+</ul>
+<p>eg:</p>
+<pre><code class="language-java">private static int[] nextGreaterElemenet(int[] nums) {
+    int[] res = new int[nums.length];
+    Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();
+    for (int i = nums.length - 1; i &gt;= 0; i--) {
+        // 维护单调栈的递增顺序 当要加入的值大于栈顶元素时 抛出栈顶丢弃 保证栈顶最小
+        while (!stack.isEmpty() &amp;&amp; nums[i] &gt;= stack.peek()) {
+            stack.pop();
+        }
+        // add the result to stack
+        res[i] = stack.isEmpty() ? -1 : stack.peek();
+        // action to come in stack
+        stack.push(nums[i]);
+    }
+    return res;
+}
+</code></pre>
+<h3 id="0802-tips">08.02 tips</h3>
+<ul>
+<li>
+<p>最近最大的数——&gt;单调栈的特征</p>
+</li>
+<li>
+<p>循环数组——&gt;</p>
+</li>
+<li>
+<pre><code class="language-java">for (int i = 0; i &lt; 2 * len; i++) {
+	// 遍历值的下标为 i%len
+    int num = nums[i % len];
+    while (!stack.isEmpty() &amp;&amp; nums[stack.peek()] &lt; num) {
+        res[stack.pop()]=num;
+    }
+    if (i&lt;len) {
+        stack.push(i);
+    }
+}
+</code></pre>
+</li>
+<li></li>
+</ul>
+<h2 id="09-滑动窗口">09 滑动窗口</h2>
+<p>连续元素 String subarray  linkedlistst</p>
+<p>min max longest shorte  key word</p>
+<p>本质上是two points 左边是 left 右边是 iterator(i)</p>
+<h3 id="0901-模板">09.01 模板</h3>
+<p>进——&gt;出——&gt;算</p>
+<ul>
+<li>将当前遍历值入窗口</li>
+<li>窗口条件不符合时候 left 持续退出</li>
+<li>窗口有效 valid 情况下 计算结果</li>
+</ul>
+<pre><code class="language-java">public int lengthofLongestSubstringTwoDistinct(String s, int k) {
+    HashMap&lt;Character, Integer&gt; map = new HashMap&lt;&gt;();
+    int left = 0, res = 0;
+    for (int i = 0; i &lt; s.length(); i++) {
+        char cur = s.charAt(i);
+        // 遍历值入窗口
+        map.put(cur, map.getOrDefault(cur, 0) + 1);
+        // 窗口不符合条件 left 持续退出
+        while (map.size() &gt; k) {
+            char c = s.charAt(left);
+            map.put(c, map.get(c) - 1);
+            if (map.get(c) == 0) {
+                map.remove(c);
+            }
+            // size超过窗口大小即left 左移
+            left++;
+        }
+        // 计算子串最值
+        res = Math.max(res, i - left + 1);
+    }
+    return res;
+}
+</code></pre>
 <h2 id="tips"><code>Tips</code></h2>
 <h3 id="01-位移运算">01 位移运算</h3>
 <ul>
@@ -2468,7 +2499,8 @@ private static TreeNode helper(int[] in, int[] post) {
 <p>Java提供的位运算符有：左移( <code>&lt;&lt;</code> )、右移( <code>&gt;&gt;</code> ) 、无符号右移( <code>&gt;&gt;&gt;</code> ) 、位与( <code>&amp;</code> ) 、位或( <code>|</code> )、位非( <code>~</code> )、位异或( <code>^</code> )，除了位非( <code>~</code> )是一元操作符外，其它的都是二元操作符。</p>
 <h4 id="1-左移">1. 左移( &lt;&lt; )</h4>
 <p>a &lt;&lt; b 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向左方向移动 b 位，符号位不变，低位空出来的位补数值 0。</p>
-<p><code>a &lt;&lt; b = a \* (2 ^ b)</code>\</p>
+<pre><code class="language-shell">a &lt;&lt; b = a * (2 ^ b)
+</code></pre>
 <h4 id="2-右移">2. 右移( &gt;&gt; )</h4>
 <p><strong>a &gt;&gt; b</strong> 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向右方向移动 b 位，符号位不变，高位空出来的位补数值 0。</p>
 <pre><code>a &gt;&gt; b = a / ( 2 ^ b )
@@ -2477,7 +2509,11 @@ private static TreeNode helper(int[] in, int[] post) {
 <p>无符号右移运算符&gt;&gt;&gt;和右移运算符&gt;&gt;是一样的，只不过右移时左边是补上符号位，而无符号右移运算符是补上0，也就是说，对于正数移位来说等同于：&gt;&gt;，负数通过此移位运算符能移位成正数。</p>
 <h4 id="4-位与">4. 位与( &amp; )</h4>
 <p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值都是 1，则结果值相应的 bit 就是 1，否则为 0.</p>
-<pre><code class="language-java">0 &amp; 0 = 0,0 &amp; 1 = 0,1 &amp; 1 = 1
+<pre><code class="language-java">0 &amp; 0 = 0,
+
+0 &amp; 1 = 0,
+
+1 &amp; 1 = 1
 </code></pre>
 <h4 id="5-位或">5. 位或( | )</h4>
 <p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值只要 1 个为 1，则结果值相应的 bit 就是 1，否则为 0。</p>
