@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>String 总结 | flyingchase</title>
+<meta name="description" content="记录成长的脚印">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1629444715968">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://flyingchase.github.io">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1629444715968" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://flyingchase.github.io">
+        <h1 class="site-title">flyingchase</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">String 总结</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-08-20</span>
+            
+          </div>
+          <div class="post-content">
+            <h2 id="string">String</h2>
+<pre><code class="language-java">// 1. 基本操作
+    charAt(),substring()
+    ch = st.toCharArray(); // 字符串转换为字符数组.
+// 2. 比较
+    if(!this.name.equals(s1.name)){
+         return this.name.compareTo(s1.name);
+    }
+// 3.StringBuilder比较
+	s1.toString().equals(s2.toString())
+
+</code></pre>
+<ul>
+<li>
+<p><strong>替换/循环移动</strong></p>
+<ul>
+<li>使用 charAt(index)和 subSrting(index)（index 和后直到字符串结尾的整个子串）循环移动子串</li>
+</ul>
+</li>
+<li>
+<p><strong>split</strong></p>
+<ul>
+<li>String[] line =  str.split(“ ”) //以空格划分</li>
+<li>Sting s =line[1].split(“\\.”)  // 以.划分</li>
+</ul>
+</li>
+<li>
+<p><strong>子串后缀链接</strong></p>
+<ul>
+<li>
+<pre><code class="language-java">String temp  =&quot;&quot;;
+// 从后往前遍历 sting 
+for(int i=domains.leng-1;i&gt;=0;i--) {
+    // 保证子串不断增长
+    temp = domains[i] + (temp.equals(&quot;&quot;)?temp:&quot;.&quot;+temp);
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>遍历中使用subString获得后续子串</strong></p>
+<ul>
+<li>
+<pre><code class="language-java">for (String cd : cpdomains) {
+	// ues indexOf 确定''划分的位置下标
+    int i = cd.indexOf(' ');
+    // ues subString 获得空格前的数值 Integer.valueOf 转化
+    int n = Integer.valueOf(cd.substring(0, i));
+    
+    String s = cd.substring(i + 1);
+    for (i = 0; i &lt; s.length(); ++i) {
+        if (s.charAt(i) == '.') {
+            // 获得'.'划分的子缀 正向遍历不丢失后续信息
+            String d = s.substring(i + 1);
+            count.put(d, count.getOrDefault(d, 0) + n);
+        }
+    }
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>筛选：</strong></p>
+<ul>
+<li>LC811</li>
+</ul>
+</li>
+</ul>
+<h3 id="tips">Tips</h3>
+<h4 id="替换字符">替换字符</h4>
+<h5 id="思路">思路</h5>
+<ul>
+<li>
+<p>使用 <code>HashSet</code>保存替换的字典集  Arrays.asList(‘...’)作为参数 保存为 private static final 类型</p>
+<pre><code class="language-java">private static final HashSet&lt;Character&gt; vowels = new HashSet&lt;&gt;(
+        Arrays.asList('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'));
+</code></pre>
+</li>
+<li>
+<p>使用 <code>s.split(“ ”)</code>删除空格字符</p>
+</li>
+<li>
+<p>使用 <code>StringBuilder</code>作为append的新字符串 最后 toString返回</p>
+</li>
+</ul>
+<h5 id="codes">Codes</h5>
+<pre><code class="language-java">private static final HashSet&lt;Character&gt; vowels = new HashSet&lt;&gt;(
+        Arrays.asList('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'));
+
+public String toGoatLatin(String S) {
+    if (S == null || S.length() == 0) {
+        return &quot;&quot;;
+    }
+
+    StringBuilder sb = new StringBuilder();
+    StringBuilder suffix = new StringBuilder(&quot;a&quot;);
+
+    for (String w : S.split(&quot; &quot;)) {
+        // 保证前导“ ”在非第一个字符前出现
+        if (sb.length() != 0) {
+            sb.append(&quot; &quot;);
+        }
+		// 暂存 w 的首字符 判断是否是元音
+        char fChar = w.charAt(0);
+        if (vowels.contains(fChar)) {
+            sb.append(w);
+        } else {
+            // 使用 subString 链接除首字符外的字符串
+            sb.append(w.substring(1));
+            // 再将暂存的首字符追加
+            sb.append(fChar);
+        }
+		// 连续追加
+        sb.append(&quot;ma&quot;).append(suffix);
+		// 保证后缀a 随字符的下标增加
+        suffix.append(&quot;a&quot;);
+    }
+    // System.out.println(&quot;sb.toString() = &quot; + sb.toString());
+    return sb.toString();
+}
+</code></pre>
+<ul>
+<li></li>
+</ul>
+<h3 id="sb">sb</h3>
+<ul>
+<li>
+<p><strong>连续追加</strong></p>
+<ul>
+<li><code>Sb.append(“aa”).append(“string”)</code></li>
+</ul>
+</li>
+<li>
+<p><strong>构建二维 string</strong></p>
+<ul>
+<li>
+<pre><code class="language-java">StringBuffer[] sb = new StringBuffer[len];
+for (int i = 0; i &lt; sb.length; i++) sb[i] = new StringBuffer();
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/array-zong-jie/">
+              <h3 class="post-title">
+                下一篇：Array 总结
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">记录成长的脚印</div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/flyingchase" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+   | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
