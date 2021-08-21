@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-08-20T07:32:55.433Z</updated>
+    <updated>2021-08-21T06:41:24.326Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,64 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[位移运算]]></title>
+        <id>https://flyingchase.github.io/post/wei-yi-yun-suan/</id>
+        <link href="https://flyingchase.github.io/post/wei-yi-yun-suan/">
+        </link>
+        <updated>2021-08-21T06:40:45.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="01-位移运算">01 位移运算</h3>
+<ul>
+<li>
+<p>左移 扩大</p>
+<ul>
+<li>
+<p><code>1&gt;&gt;4</code> 即1 * 2 * 2 * 2 * 2 = 16 左移 4 位即pow（2,4）</p>
+</li>
+<li>
+<p>Java提供的位运算符有：左移( <code>&lt;&lt;</code> )、右移( <code>&gt;&gt;</code> ) 、无符号右移( <code>&gt;&gt;&gt;</code> ) 、位与( <code>&amp;</code> ) 、位或( <code>|</code> )、位非( <code>~</code> )、位异或( <code>^</code> )，除了位非( <code>~</code> )是一元操作符外，其它的都是二元操作符。</p>
+<h4 id="1-左移">1. 左移( &lt;&lt; )</h4>
+<p>a &lt;&lt; b 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向左方向移动 b 位，符号位不变，低位空出来的位补数值 0。</p>
+<pre><code class="language-shell">a &lt;&lt; b = a * (2 ^ b)
+</code></pre>
+<h4 id="2-右移">2. 右移( &gt;&gt; )</h4>
+<p><strong>a &gt;&gt; b</strong> 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向右方向移动 b 位，符号位不变，高位空出来的位补数值 0。</p>
+<pre><code>a &gt;&gt; b = a / ( 2 ^ b )
+</code></pre>
+<h4 id="3-无符号右移">3. 无符号右移( &gt;&gt;&gt; )</h4>
+<p>无符号右移运算符&gt;&gt;&gt;和右移运算符&gt;&gt;是一样的，只不过右移时左边是补上符号位，而无符号右移运算符是补上0，也就是说，对于正数移位来说等同于：&gt;&gt;，负数通过此移位运算符能移位成正数。</p>
+<h4 id="4-位与">4. 位与( &amp; )</h4>
+<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值都是 1，则结果值相应的 bit 就是 1，否则为 0.</p>
+<pre><code class="language-java">0 &amp; 0 = 0,
+
+0 &amp; 1 = 0,
+
+1 &amp; 1 = 1
+</code></pre>
+<h4 id="5-位或">5. 位或( | )</h4>
+<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值只要 1 个为 1，则结果值相应的 bit 就是 1，否则为 0。</p>
+<pre><code class="language-java">0 | 0 = 0,
+
+0 | 1 = 1,
+
+1 | 1 = 1
+</code></pre>
+<h4 id="6-位异或">6. 位异或( ^ )</h4>
+<p>两个操作数进行异或时，对于同一位上，如果数值相同则为 0，数值不同则为 1。</p>
+<pre><code class="language-java">1 ^ 0 = 1,
+
+1 ^ 1 = 0,
+
+0 ^ 0 = 0;
+</code></pre>
+<h4 id="7-位非-~">7. 位非( ~ )</h4>
+<p>对操作数的每一位进行操作，1 变成 0，0 变成 1。</p>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[String 总结]]></title>
         <id>https://flyingchase.github.io/post/string-zong-jie/</id>
@@ -2818,302 +2876,6 @@ public double findMedian() {
 </ul>
 </li>
 </ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[XPS 7590 Hackintosh黑苹果]]></title>
-        <id>https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/</id>
-        <link href="https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/">
-        </link>
-        <updated>2021-05-03T12:20:28.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="xps-7590-hackinosh黑苹果">XPS 7590 Hackinosh黑苹果</h1>
-<h2 id="注意️">注意⚠️</h2>
-<p>本 EFI 适用于 bigsur 11.1-11.2.2  其余版本未经过测试</p>
-<p>仅为个人使用，故 README 写的杂乱，欢迎交流推进 XPS-7590 的 Hackintosh 进程</p>
-<p>部分内容涉及 BIOS 修改 有硬件损坏的风险</p>
-<h2 id="1-参考">1 参考</h2>
-<p>GitHub:</p>
-<ul>
-<li>https://github.com/gorquan/OC-XPS-7590</li>
-<li>https://github.com/Liyunlock/DELL-XPS-15-7590-4K-Touchscreen_OpenCore_Hackintosh</li>
-<li>https://github.com/romancin/Dell-XPS-7590-OpenCore</li>
-<li>https://github.com/kirainmoe/hasee-tongfang-macos/issues/33</li>
-<li>https://github.com/xxxzc/xps15-9570-macos/issues/40</li>
-<li>https://github.com/Drowningfish223/Xps-7590-BigSur</li>
-<li>https://github.com/stakeout55/Dell-XPS-7590-mac-OS-Big-Sur-11.1</li>
-<li>https://github.com/xxxzc/xps15-9570-macos/issues/69</li>
-</ul>
-<h2 id="2-准备">2 准备</h2>
-<h3 id="21-硬件概况">2.1 硬件概况</h3>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">name</th>
-<th>introduction</th>
-<th style="text-align:center">name</th>
-<th style="text-align:center">introduction</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">型号</td>
-<td>XPS15-7590</td>
-<td style="text-align:center">Cpu</td>
-<td style="text-align:center">i7-9750h</td>
-</tr>
-<tr>
-<td style="text-align:center">屏幕</td>
-<td>4k 夏普触控屏</td>
-<td style="text-align:center">网卡</td>
-<td style="text-align:center">Dw1820a(更换)</td>
-</tr>
-<tr>
-<td style="text-align:center">固态</td>
-<td>SN720 512G</td>
-<td style="text-align:center">声卡</td>
-<td style="text-align:center">ALC298(原生)</td>
-</tr>
-<tr>
-<td style="text-align:center">内存</td>
-<td>48G(32+16) 英睿达</td>
-<td style="text-align:center">Bios</td>
-<td style="text-align:center">v1.7.0</td>
-</tr>
-</tbody>
-</table>
-<h3 id="22-bios设置">2.2 Bios设置</h3>
-<p>雷电设置关键</p>
-<h3 id="23-cfg解锁">2.3 CFG解锁</h3>
-<p>setup_var_3 0x789 0x00 to disable overclocking lock</p>
-<p>setup_var_3 0x6ED 0x00 to disable CFG lock</p>
-<p>https://www.imacpc.net/archives/1549</p>
-<p>dvmt-preallocted 设置为 96MB</p>
-<h2 id="3-bug及解决方法备份">3 Bug及解决方法备份</h2>
-<h3 id="31-啰嗦模式问题">3.1 啰嗦模式问题</h3>
-<ul>
-<li>
-<p>OC引导Big Sur卡在<code>IOConsoleUsers: gIOScreenLockState 3, hs 0, bs 0 now</code> 注入苹果显示器EDID 48HZ (45 46字节替换为A6A6 再使用128计算最后一位字节 )</p>
-</li>
-<li>
-<p>DeviceP.. 删除注入EDID</p>
-</li>
-<li>
-<p>现在新版WhateverGreen kexts 可以直接内屏 60Hz——&gt;无须注入 EDID</p>
-</li>
-</ul>
-<h3 id="32-4k内屏闪屏">3.2 4k内屏闪屏</h3>
-<p>使用<code>ioreg -lw0 | grep IODisplayEDID | sed &quot;/[^&lt;]*&lt;/s///&quot; | xxd -p -r | strings -6</code> 查看屏幕的生产型号</p>
-<p>夏普屏幕安装对应的显示器描述文件, 位置<code>/Library/ColorSync/Profiles</code></p>
-<p>外接4k显示器 延迟高 卡顿: 重建缓存解决 <code>sudo kextchache -i\</code></p>
-<p>UI 4K设置: dlcd-max 1400000 UIscale—&gt;02</p>
-<p>目前type-c 低电压输入下首次链接type-c仍然出现</p>
-<h3 id="33-雷电3设备">3.3 雷电3设备</h3>
-<p>BIOS 设置：</p>
-<p>​	ThunderBolt Adapter Configuration：勾选 Thunder 和 NoSecurity 其他关闭</p>
-<p>​	ThunderBolt Auto Switch：取消 AutoSwitch 勾选 Native Enumeration</p>
-<p>​	<br>
-感谢群内大佬！</p>
-<h3 id="35-关于08ghz锁频">3.5 关于0.8ghz锁频</h3>
-<blockquote>
-<p>资讯：</p>
-<p>​	解锁EC�风扇控制位，动态注入风扇控制<br>
-​	目前采用bios关闭DPTF解决此问题</p>
-</blockquote>
-<p>个人尝试：</p>
-<ol>
-<li>
-<p>改造散热VRM后有效 降频次数减少 时间缩短为几秒</p>
-</li>
-<li>
-<p>替换cpufriends 后改善极少出现锁频情况 实现27档变频</p>
-</li>
-<li>
-<p>拔掉电池  按开机键释放主板静电 放置 5mins 后插上电池开机——&gt;无效</p>
-</li>
-<li>
-<p>更改 DVMT 的最大值从 256 到 MAX（BIOS 内pre-allocation 没有 128MB 分配的可选项 最大 64MB） 无效</p>
-</li>
-<li>
-<p>使用 voltageshift 降压后 偶尔出现</p>
-<p>Intel Power Gradget 动态监测在高负载出现 0.78ghz 锁频时插入原装 dell 充电器cpu 频率恢复正常但五秒后再次锁0.8ghz 此时拔出电源又恢复正常 但五秒后重复锁频</p>
-<p>即拔掉电源线以改善性能——&gt;醉了</p>
-</li>
-<li>
-<p>修改 BIOS 中的 Bi-dorectional PROCHOT  关闭——&gt;修改 BIOS 有风险 ⚠️</p>
-<blockquote>
-<p>查找有指出可能是主板上温度传感器出错 使用 5.3 中修改 BIOS 方法<code>setup_var_3 0x724 0x00</code>关闭 BD PROCHOT</p>
-<p><a href="https://zhuanlan.zhihu.com/p/27624654">CPU 风扇停转后发生什么</a></p>
-</blockquote>
-<p>关闭 BD 后仍然出现，但使用电池供电很少出现</p>
-</li>
-<li>
-<p>爬远景评论发现以下几种方式</p>
-<ol>
-<li>拔掉电池 按住开机键 20s 再装上电池 使用电池供电开机后再插上电源</li>
-<li>dell 原装圆孔充电器接口内针口损坏——&gt;使用手电筒照射充电器圆孔内部看不大清，但是本机使用 type-c供电出现0.78ghz锁频的次数更多</li>
-</ol>
-</li>
-<li>
-<p>交流群内提供 BIOS 降压方式：</p>
-<pre><code class="language-shell">0x855 0x01
-0x856 0x01
-0x85B 0x64
-0x85D 0x01
-0xAFF 0x1E
-0xB01 0x01
-</code></pre>
-</li>
-</ol>
-<p>现状：</p>
-<p>​	重 GPU 需求下仍然出现降频 0.8ghz 现象 拔出电源恢复几秒后再次降频 视负载情况恢复正常睿频 大概在 10s-Long 最长有过持续十分钟</p>
-<p>总结：</p>
-<p>​	目前存在可能是主板上元件损坏/原装充电器圆孔内针脚损坏/BIOS需要更新或者刷低版/电池不合格需要更换</p>
-<h3 id="37-lcd亮度调节">3.7 LCD亮度调节</h3>
-<p>改为<code>Fn+S/B</code></p>
-<ul>
-<li>karabiner软件实现快捷键更改</li>
-</ul>
-<h3 id="36-睡眠后蓝牙不可用">3.6 睡眠后蓝牙不可用</h3>
-<p>Q: 睡眠开机后蓝牙显示打开但不可连接设备 不可搜索新设备</p>
-<p>​	1. 将蓝牙内建后+睡眠修复(hackintosh) —&gt;仍然出现</p>
-<pre><code class="language-html">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;
-&lt;plist version=&quot;1.0&quot;&gt;
-&lt;dict&gt;
-	&lt;key&gt;PciRoot(0x0)/Pci(0x1c,0x0)/Pci(0x0,0x0)&lt;/key&gt;
-	&lt;dict&gt;
-		&lt;key&gt;AAPL,slot-name&lt;/key&gt;
-		&lt;string&gt;WLAN&lt;/string&gt;
-		&lt;key&gt;compatible&lt;/key&gt;
-		&lt;string&gt;pci14e4,43a3&lt;/string&gt; // 也有改为43a0的
-		&lt;key&gt;device-type&lt;/key&gt;
-		&lt;string&gt;Airport Extreme&lt;/string&gt;
-		&lt;key&gt;model&lt;/key&gt;
-		&lt;string&gt;DW1820A (BCM4350) 802.11ac Wireless&lt;/string&gt;
-		&lt;key&gt;name&lt;/key&gt;
-		&lt;string&gt;Airport&lt;/string&gt;
-		&lt;key&gt;pci-aspm-default&lt;/key&gt;
-		&lt;integer&gt;0&lt;/integer&gt;
-	&lt;/dict&gt;
-&lt;/dict&gt;
-&lt;/plist&gt;
-
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/lL2kFd.png" alt="lL2kFd" loading="lazy"></figure>
-<p>​	2. 屏蔽背面两脚针后生效</p>
-<h3 id="39-替换主板编号后-12-位后触控板二指失效">3.9 替换主板编号后 12 位后触控板二指失效</h3>
-<p>退出 iCloud 并在其他设备上删除本机，重新修改二码，清除 NVRM 开机重建缓存，设置触控板三指/二指拖 玄学好了。。。</p>
-<h3 id="38-hackintool-中工具无法查看-cfg-信息">3.8 Hackintool 中工具无法查看 CFG 信息</h3>
-<p>总是在安全性与隐私中 允许签名再重启</p>
-<p>https://www.mfpud.com/topics/4303/</p>
-<pre><code class="language-shell"># 进入 Hackintool 程序包内Content-resources-kexts
-sudo chown -R root:wheel AppleIntelInfo.kext
-sudo kextutil AppleIntelInfo.kext
-sudo cat /tmp/AppleIntelInfo.dat
-# 最后取消注入驱动
-sudo kextunload AppleIntelInfo.kext
-</code></pre>
-<h2 id="4-三码更新">4 三码更新</h2>
-<p><a href="https://heipg.cn/tutorial/macserial-and-iservice-opencore.html">三码参考链接-写的很详细很完备</a></p>
-<p>使用<code>opencorepkg</code>下载下来的   <code>macserial</code>内置程序进行PlatformInfo-Generic-MLB和SystemSeriaNumber填写(先在apple序列号保修查询官网确保未使用过)</p>
-<p>重启后:</p>
-<p><code>ioreg -d2 -c IOPlatformExpertDevice | awk -F\&quot; '/IOPlatformUUID/{print $(NF-1)}’</code>获得本机主班的UUID填入SystemUUID</p>
-<p>⚠️：SystemUUID最后的十二位替换为网卡的mac地址 （mac地址中:去除并将所有小写字母大写再去替换）</p>
-<p>​	该法使得 imessage 和 facetime 体验提升巨大</p>
-<p>ROM：修改为en0的网卡mac地址 注意删掉: 最后四位与前面有空格</p>
-<h2 id="5-优化">5 优化</h2>
-<h3 id="51-cpu降压调节">5.1 CPU降压调节</h3>
-<p>使用<code>voltageShif</code>调节，主要参考：</p>
-<p><a href="https://www.insanelymac.com/forum/topic/331775-guide-how-to-undervolt-your-haswell-and-above-cpu/">Guide-undervolt</a></p>
-<p><a href="https://github.com/stakeout55/presigned_VoltageShift_Kext_DellXPS7590">XPS-7590_VoltageShift</a></p>
-<p>感谢！</p>
-<p>更改设置时先执行remove再launchd</p>
-<p><code>sudo ./voltageshift buildlaunchd &lt;CPU&gt; &lt;GPU&gt; &lt;CPUCache&gt; &lt;SA&gt; &lt;AI/O&gt; &lt;DI/O&gt; &lt;turbo&gt; &lt;pl1&gt; &lt;pl2&gt; &lt;remain&gt; &lt;UpdateMins (0 only apply at bootup)&gt;</code></p>
-<p><code>sudo ./voltageshift buildlaunchd -135 -92 -125 -75 0 0 1 75 90 1 60</code></p>
-<p>打开 turbo 并设置 PL1 56w PL2 90w  将 kexts 留在系统中并 60mins 执行一次</p>
-<blockquote>
-<p>https://github.com/syscl/CPUTune</p>
-<p>https://github.com/SeptemberHX/VoltageShift</p>
-<pre><code class="language-shell">sudo chown -R root:wheel VoltageShift.kext
-chmod +x voltageshift
-
-
-# load kexts
-./voltageshift loadkext
-# OR 
-sudo kextutil  -r ./  -b com.sicreative.VoltageShift
-
-# unload kexts 
-./voltageshift unloadkext
-# OR
-sudo kextunload -b com.sicreative.VoltageShift
-
-# 检查是否 load kexts
-kextstat | grep -v com.apple
-
-# 下述两条命令使得 voltageshift 在任意地方均可执行
-sudo cp -r VoltageShift.kext /Library/Extensions/
-sudo cp voltageshift /usr/local/bin
-</code></pre>
-</blockquote>
-<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/TypOYq.png" alt="TypOYq" loading="lazy"></figure>
-<h3 id="52-电池供电睡眠后耳机杂音">5.2 电池供电睡眠后耳机杂音</h3>
-<p>注入ALC守护进程即可</p>
-<h3 id="53-dvmt-offset修改为最大值-max">5.3 DVMT offset修改为最大值 MAX</h3>
-<p>解决4k 内屏/低电压 type-c 输入时外接 4k显示器闪屏</p>
-<ul>
-<li>
-<p>在 Window 下使用 DELL_PFS_Extract 工具实现官网对应本机 BIOS.exe 文件提取.bin 文件 （使用方式为将 bios.exe 直接拖到应用图标上打开即可） 感谢远景论坛网友的分享</p>
-</li>
-<li>
-<p>得到文件中<code>1 -- 1 System BIOS with BIOS Guard.bin</code>为待提取文件</p>
-</li>
-<li>
-<p>使用 UEFI Tool 打开<code>.bin</code>文件</p>
-<ul>
-<li>
-<p>查找<code>DVMT</code>并定位到 PE32<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/hiBhVr.png" alt="hiBhVr" loading="lazy"></p>
-</li>
-<li>
-<p>将 PE32 处导出为 <code>Section_PE32_image_Setup.sct</code>文件 <img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/GET145.png" alt="GET145" loading="lazy"></p>
-<ul>
-<li>
-<p>使用 <code>ifrextract</code>工具将 <code>.sct</code>文件转化为 <code>.txt</code>格式 再查找 CFG/DVMT 等offset 偏移量</p>
-</li>
-<li>
-<p>参考 CFG 解锁制作的 UEFI 引导盘 使用命令<code>setup_var_3 0xA11 0x02/0x03</code> 设置 再使用<code>setup_var_3 0xA10 ***</code>   但是 BIOS 设置无 64MB更大</p>
-<figure data-type="image" tabindex="3"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/FXa9XI.png" alt="FXa9XI" loading="lazy"></figure>
-<figure data-type="image" tabindex="4"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/yKs00E.png" alt="yKs00E" loading="lazy"></figure>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>配合 WEG.kext 设置 dvmt 属性可以有效解决上述问题</p>
-<p>4k 内屏在使用新版 WhateverGreen.kext 基础上配置相应的 framebuffer补丁后，在低电压45/60w 的PD 充电高负载场景、外接 4k 显示器并睡眠唤醒情况下均未出现闪屏现象</p>
-<h2 id="其他待整理">其他待整理</h2>
-<h3 id="acpi整理">ACPI整理：</h3>
-<blockquote>
-<p>笔记本背光亮度调节 SSDT-PNLF.aml SSDT-ALS0.aml<br>
-睡眠秒唤醒 SSDT-GPRW SSDT-UPRW</p>
-</blockquote>
-<p>不通用的ACPI</p>
-<blockquote>
-<p>电量显示0 SSDT-BATT.aml<br>
-节能 SSDT-PLUG<br>
-禁用独显 SSDT-DDGPU.aml<br>
-解除USB端口限制 SSDT-EC.aml<br>
-苹果原生电源管理SSDT-PLUG.aml</p>
-</blockquote>
-<h3 id="网络接口">网络接口</h3>
-<p>wifi 非 en0</p>
-<ol>
-<li>进入系统设置-网络，删除左边列表所有项</li>
-<li>删除 <code>/Library/Preferences/SystemConfiguration/NetworkInterfaces.plist</code></li>
-<li>重启电脑</li>
-<li>进入系统设置-网络，点击左侧的 '+'，将 Wi-Fi 添加回来。</li>
-</ol>
 ]]></content>
     </entry>
 </feed>

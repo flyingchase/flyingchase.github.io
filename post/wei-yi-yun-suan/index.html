@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Git常见问题汇总 | flyingchase</title>
+<title>位移运算 | flyingchase</title>
 <meta name="description" content="记录成长的脚印">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,79 +80,71 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Git常见问题汇总</h2>
+          <h2 class="post-title">位移运算</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-06-28</span>
+            <span><i class="icon-calendar-outline"></i> 2021-08-21</span>
             
           </div>
           <div class="post-content">
-            <blockquote>
-<p>整理收集于互联网</p>
-</blockquote>
-<h3 id="1修改提交信息">1.修改提交信息</h3>
-<p>重写<code>commit</code></p>
-<pre><code class="language-shell">git commit --amend -m &quot;new message&quot;
+            <h3 id="01-位移运算">01 位移运算</h3>
+<ul>
+<li>
+<p>左移 扩大</p>
+<ul>
+<li>
+<p><code>1&gt;&gt;4</code> 即1 * 2 * 2 * 2 * 2 = 16 左移 4 位即pow（2,4）</p>
+</li>
+<li>
+<p>Java提供的位运算符有：左移( <code>&lt;&lt;</code> )、右移( <code>&gt;&gt;</code> ) 、无符号右移( <code>&gt;&gt;&gt;</code> ) 、位与( <code>&amp;</code> ) 、位或( <code>|</code> )、位非( <code>~</code> )、位异或( <code>^</code> )，除了位非( <code>~</code> )是一元操作符外，其它的都是二元操作符。</p>
+<h4 id="1-左移">1. 左移( &lt;&lt; )</h4>
+<p>a &lt;&lt; b 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向左方向移动 b 位，符号位不变，低位空出来的位补数值 0。</p>
+<pre><code class="language-shell">a &lt;&lt; b = a * (2 ^ b)
 </code></pre>
-<h3 id="2添加文件到最后一次提交">2.添加文件到最后一次提交</h3>
-<p><code>git push</code> 后新增文件到最后一次提交</p>
-<pre><code class="language-shell">git add &lt;file_name&gt;git commit --amend HEAD~1
+<h4 id="2-右移">2. 右移( &gt;&gt; )</h4>
+<p><strong>a &gt;&gt; b</strong> 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向右方向移动 b 位，符号位不变，高位空出来的位补数值 0。</p>
+<pre><code>a &gt;&gt; b = a / ( 2 ^ b )
 </code></pre>
-<h3 id="3撤消提交">3.撤消提交</h3>
-<p>如果要撤消最近一次提交但保留更改，可执行以下操作：</p>
-<pre><code class="language-shell">git reset --soft HEAD~1
+<h4 id="3-无符号右移">3. 无符号右移( &gt;&gt;&gt; )</h4>
+<p>无符号右移运算符&gt;&gt;&gt;和右移运算符&gt;&gt;是一样的，只不过右移时左边是补上符号位，而无符号右移运算符是补上0，也就是说，对于正数移位来说等同于：&gt;&gt;，负数通过此移位运算符能移位成正数。</p>
+<h4 id="4-位与">4. 位与( &amp; )</h4>
+<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值都是 1，则结果值相应的 bit 就是 1，否则为 0.</p>
+<pre><code class="language-java">0 &amp; 0 = 0,
+
+0 &amp; 1 = 0,
+
+1 &amp; 1 = 1
 </code></pre>
-<p>如果要撤消提交和更改，可执行以下操作：——&gt;丢弃更改</p>
-<pre><code class="language-shell">git reset --hard HEAD~1
+<h4 id="5-位或">5. 位或( | )</h4>
+<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值只要 1 个为 1，则结果值相应的 bit 就是 1，否则为 0。</p>
+<pre><code class="language-java">0 | 0 = 0,
+
+0 | 1 = 1,
+
+1 | 1 = 1
 </code></pre>
-<p>如果要撤消所有的本地更改，则可以重置为分支的原始版本：</p>
-<pre><code class="language-shell">git reset --hard origin/&lt;branch_name&gt;
+<h4 id="6-位异或">6. 位异或( ^ )</h4>
+<p>两个操作数进行异或时，对于同一位上，如果数值相同则为 0，数值不同则为 1。</p>
+<pre><code class="language-java">1 ^ 0 = 1,
+
+1 ^ 1 = 0,
+
+0 ^ 0 = 0;
 </code></pre>
-<p>如果要撤消提交而不修改现有历史记录，则可以使用 git revert，此命令通过创建新的提交来撤消提交。</p>
-<pre><code class="language-shell">git revert HEAD
-</code></pre>
-<p>撤消已经推送到远程分支的合并提交的安全方法是使用 git revert 命令：</p>
-<pre><code class="language-shell">git revert -m 1 &lt;commit_id&gt;
-</code></pre>
-<p>commit_id 是要还原的合并提交 id。</p>
-<p>注意要点：</p>
-<ol>
-<li>可以撤消任意数量的提交。例如：<code>git reset HEAD~3</code>（返回 HEAD 之前的 3 个提交)；<code>git reset --hard &lt;commit_id&gt;</code>（返回特定的提交）。</li>
-<li>如果尚未推送提交，并且你不想引入糟糕的提交到远程分支，可以使用 git reset。</li>
-<li>使用 git revert 还原已经推送到远程分支的合并提交。</li>
-<li>使用 git log 查看提交历史。</li>
-</ol>
-<pre><code class="language-bash"># 删除 untracked files 
-git clean -f
- 
-# 连 untracked 的目录也一起删掉
-git clean -fd
- 
-# 连 gitignore 的untrack 文件/目录也一起删掉 （慎用，一般这个是用来删掉编译出来的 .o之类的文件用的）
-git clean -xfd
- 
-# 在用上述 git clean 前，墙裂建议加上 -n 参数来先看看会删掉哪些文件，防止重要文件被误删
-git clean -nxfd
-git clean -nf
-git clean -nfd
-</code></pre>
-<h3 id="4-git命令显示中文路径">4. Git命令显示中文路径</h3>
-<pre><code class="language-shell">git config --global core.quotePath false
-</code></pre>
-<h3 id="5-指定文件的历史修改记录">5. 指定文件的历史修改记录</h3>
-<pre><code class="language-shell">git log --follow -p 文件名
-</code></pre>
-<h3 id="6-指定提交的修改记录">6. 指定提交的修改记录</h3>
-<pre><code class="language-shell"># 查看commit提交修改的文件git show --stat &lt;commit的代号&gt;#查看commit提交修改的文件及内容git show &lt;commit的代号&gt;
-</code></pre>
+<h4 id="7-位非-~">7. 位非( ~ )</h4>
+<p>对操作数的每一位进行操作，1 变成 0，0 变成 1。</p>
+</li>
+</ul>
+</li>
+</ul>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://flyingchase.github.io/post/java-ji-he/">
+            <a class="purple-link" href="https://flyingchase.github.io/post/string-zong-jie/">
               <h3 class="post-title">
-                下一篇：Java-集合
+                下一篇：String 总结
               </h3>
             </a>
           </div>
