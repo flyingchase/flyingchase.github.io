@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-08-30T07:04:57.477Z</updated>
+    <updated>2021-08-30T07:14:39.523Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,816 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[GoLang 语法入门笔记]]></title>
+        <id>https://flyingchase.github.io/post/golang-yu-fa-ru-men-bi-ji/</id>
+        <link href="https://flyingchase.github.io/post/golang-yu-fa-ru-men-bi-ji/">
+        </link>
+        <updated>2021-08-30T07:14:18.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="golang语法">GoLang语法</h1>
+<h2 id="0-引入">0 引入</h2>
+<pre><code class="language-go">//firt-in-go.go
+package main
+import &quot;fmt&quot;
+
+func main(){
+  fmt.println(&quot;firt-print-in-go\n&quot;)
+}
+</code></pre>
+<ul>
+<li>
+<p>首行包名必须存在，Go通过包管理命名空间</p>
+</li>
+<li>
+<p><code>import</code>为引入外包；<code>fmt</code>为标准输出输出包；</p>
+</li>
+<li>
+<p><code>func</code>为函数定义的关键字；</p>
+</li>
+</ul>
+<p><strong>Go语言特征：</strong></p>
+<ul>
+<li>默认UTF-8编码；</li>
+<li>标志符区分大小写；</li>
+<li>语句结尾 <code>;</code>可省略；</li>
+<li><em>函数{必须在函数开头同一行；</em></li>
+<li>调用包中方法采用 <code>.</code>访问符；</li>
+<li>mian函数包名需为main；</li>
+<li>强类型的静态编译语言</li>
+</ul>
+<p><strong>格式化输出：</strong></p>
+<pre><code class="language-go">%d          十进制整数
+%x, %o, %b  十六进制，八进制，二进制整数。
+%f, %g, %e  浮点数： 3.141593 3.141592653589793 3.141593e+00
+%t          布尔：true或false
+%c          字符（rune） (Unicode码点)
+%s          字符串
+%q          带双引号的字符串&quot;abc&quot;或带单引号的字符'c'
+%v          变量的自然形式（natural format）
+%T          变量的类型
+%%          字面上的百分号标志（无操作数）
+</code></pre>
+<p><strong>各项零值：</strong></p>
+<pre><code class="language-go">int     0
+int8    0
+int32   0
+int64   0
+uint    0x0
+rune    0 //rune的实际类型是 int32
+byte    0x0 // byte的实际类型是 uint8
+float32 0 //长度为 4 byte
+float64 0 //长度为 8 byte
+bool    false
+string  &quot;&quot;
+</code></pre>
+<p><strong>Notion:</strong></p>
+<ul>
+<li><code>,</code>操作符没有 故而多个操作使用平行赋值 <code>i,j=1,1</code></li>
+<li>查看变量类型 <code>fmt.println(&quot;type is&quot;,reflect.typeOf(var name))</code></li>
+</ul>
+<h2 id="1-语法基础">1 语法基础</h2>
+<h3 id="11-token-词法分析">1.1 Token 词法分析</h3>
+<img src="/Users/qlzhou/Library/Application Support/typora-user-images/image-20201215121911426.png" alt="image-20201215121911426" style="zoom:40%;" />
+<h3 id="12-标志符">1.2 标志符</h3>
+<ul>
+<li>
+<p>规则：</p>
+<p>​	字母和下划线开头，区分大小写；</p>
+</li>
+</ul>
+<p>**数据类型标志符：**20</p>
+<ul>
+<li>
+<p>数值：</p>
+<p>byte int int8 int16 int32 int64 uint uint8 uint16 uint64 uinprt（整数）</p>
+<p>​				不同类型之间必须强制类型转换；</p>
+<p>​				支持算术/位运算 结果仍为整型；</p>
+<p>float32 float64（浮点数）</p>
+<p>​				默认为float64 <code>var a:=1.0</code></p>
+<p>complex64 complex128（复数）</p>
+<p>​				<code>complex real image (构造 返回实部、返回虚部)</code></p>
+<p>​</p>
+<pre><code class="language-go">var v complex64=3.14+5i
+v1:=3.14+5i
+var v2 = complex(3.14,5)
+a:=real(v)//实部
+b:=imag(v)//虚步
+</code></pre>
+</li>
+<li>
+<p>字符 字符串：string rune</p>
+<p>采用UTF-8字符集编码</p>
+<p>字符串不可变 无法通过数字下标修改</p>
+<p>可以使用操作符 **+**来链接字符串</p>
+<p>​</p>
+<pre><code class="language-go">var a =&quot;直接用字符串初始化&quot;
+var emptyString string =&quot;&quot;	//声明空字符串
+//同时声明多个字符串 
+no,yes,may :=&quot;no&quot;,&quot;yes&quot;,&quot;may&quot;
+/*字符串多行声明  使用``*/
+s :=`my
+		love`	//	``包括的字符串为Raw字符串，在代码中形式即为打印出的形式 没有字符转义 换行亦直接输出
+no=&quot;yes&quot;		//常规赋值
+
+
+/*可以数组索引下标值 但不可修改*/
+var b = &quot;abcdef&quot;
+c:=b[0]
+b[0]='1'	//ERROR!!
+/*字符串修改方法*/
+/*- 将字符串转化为[]byte类型*/
+c :=[]byte(a)
+c[0]='1'
+a1 :=string(c)	//再回转为string
+fmt.Println(&quot;%s&quot;,a1)		//输出为1bcdef
+fmt.Printf(&quot;%c&quot;,a1[0])	//输出为1
+fmt.Printf(&quot;%q&quot;,a1[0])	//输出为'1'
+/*- 使用切片操作修改字符串 */
+s :=&quot;mylove&quot;
+s=&quot;y&quot;+s[1:]
+fmt.Printf(&quot;%s\n&quot;,s)
+
+
+/* 字符串尾部不含NULL字符 */
+
+/* “+”操作符链接字符串 可连接多个
+s :=&quot;try&quot;
+s1 :=&quot;it&quot;
+s2 :=&quot;!&quot;
+s3 :=s+s1
+s4 :=s+s1+s2
+fmt.Printf(&quot;%s\n&quot;,s+s1)
+fmt.Printf(&quot;%s\n&quot;,s3)
+fmt.Printf(&quot;%s\n&quot;,s+s1+s2)
+fmt.Printf(&quot;%s\n&quot;,s4)
+</code></pre>
+<p>底层 二元数据结构 指针指向起点+len</p>
+<p>字符串可以拼接+ len()返回长度</p>
+<pre><code class="language-go">a：=&quot;hello&quot;
+b：=&quot;world&quot;
+
+c：=a+b		//可以拼接
+len(a)		//内置函数无需导入
+
+d:=&quot;hello,go!&quot;
+
+for i:=0;i&lt;len(d);i++ {	//数组下标形式访问字符串
+  fmt.println(d[i])
+}
+
+for i,v:=rang d{
+  fmt.println(i,v)
+}
+</code></pre>
+</li>
+<li>
+<p>array slice map</p>
+<ul>
+<li>
+<p>数组 array</p>
+<p>定义方式为<code>var arr [n]type</code> 其中arr为名称 n为数组长度 type为元素类型 n忽略则需要同时赋值 Go会自动计算长度</p>
+<p>Len(arr)可直接计算长度</p>
+<p>支持数组嵌套成为多维数组</p>
+<p>长度不可变 值传递和值赋值</p>
+<pre><code class="language-go">var arr[10]int //长为10的in t类型数组arr 默认为类型的零值
+a[0]=1	//从0开始 直接赋值
+
+/*赋值同时声明 */
+a:=[3]int{1,2,3}
+b:=[...]int{1,2,3}	//省略长度 自动计算长度
+
+/*二维数组*/
+doubleArray:=[2][4]int{[4]int{1,2,3,4},[4]int{1,2,3,4}}
+doubleArray:=[2][4]int{{1,2,3,4},{1,2,3,4}}
+
+</code></pre>
+</li>
+<li>
+<p><strong>slice</strong></p>
+<p>即为动态数组，<code>slice</code>并不是真正意义上的动态数组，而是一个引用类型。<code>slice</code>总是指向一个底层<code>array</code>。</p>
+<pre><code class="language-go">// 和声明array一样，只是少了长度
+var fslice []int
+</code></pre>
+<pre><code class="language-go">slice := []byte {'a', 'b', 'c', 'd'}
+</code></pre>
+<p><code>slice</code>可以从一个数组或一个已经存在的<code>slice</code>中再次声明。<code>slice</code>通过<code>array[i:j]</code>来获取，其中<code>i</code>是数组的开始位置，<code>j</code>是结束位置，但不包含<code>array[j]</code>，它的长度是<code>j-i</code>。</p>
+<pre><code class="language-go">// 声明一个含有10个元素元素类型为byte的数组
+var ar = [10]byte {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'}
+// 声明两个含有byte的slice
+var a, b []byte// a指向数组的第3个元素开始，并到第五个元素结束，
+a = ar[2:5]
+//现在a含有的元素: ar[2]、ar[3]和ar[4]
+// b是数组ar的另一个slice
+b = ar[3:5]
+// b的元素是：ar[3]和ar[4]
+</code></pre>
+<ul>
+<li><code>slice</code>的默认开始位置是0，<code>ar[:n]</code>等价于<code>ar[0:n]</code></li>
+<li><code>slice</code>的第二个序列默认是数组的长度，<code>ar[n:]</code>等价于<code>ar[n:len(ar)]</code></li>
+<li>如果从一个数组里面直接获取<code>slice</code>，可以这样<code>ar[:]</code>，因为默认第一个序列是0，第二个是数组的长度，即等价于<code>ar[0:len(ar)]</code></li>
+<li>对于<code>slice</code>有几个有用的内置函数：
+<ul>
+<li><code>len</code> 获取<code>slice</code>的长度</li>
+<li><code>cap</code> 获取<code>slice</code>的最大容量</li>
+<li><code>append</code> 向<code>slice</code>里面追加一个或者多个元素，然后返回一个和<code>slice</code>一样类型的`slice``</li>
+<li>``copy<code>函数</code>copy<code>从源</code>slice<code>的</code>src<code>中复制元素到目标</code>dst`，并且返回复制的元素的个数</li>
+</ul>
+</li>
+</ul>
+<p>注：<code>append</code>函数会改变<code>slice</code>所引用的数组的内容，从而影响到引用同一数组的其它<code>slice</code>。 但当<code>slice</code>中没有剩余空间（即<code>(cap-len) == 0</code>）时，此时将动态分配新的数组空间。返回的<code>slice</code>数组指针将指向这个空间，而原数组的内容将保持不变；其它引用此数组的<code>slice</code>则不受影响。</p>
+<pre><code class="language-go">// 声明一个数组
+var array = [10]byte{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'}
+// 声明两个slice
+var aSlice, bSlice []byte
+// 演示一些简便操作
+aSlice = array[:3] // 等价于aSlice = array[0:3] aSlice包含元素: a,b,c
+aSlice = array[5:] // 等价于aSlice = array[5:10] aSlice包含元素: f,g,h,i,j
+aSlice = array[:]  // 等价于aSlice = array[0:10] 这样aSlice包含了全部的元素
+// 从slice中获取slice
+aSlice = array[3:7]  // aSlice包含元素: d,e,f,g
+bSlice = aSlice[1:3] // bSlice 包含aSlice[1], aSlice[2] 也就是含有: e,f
+bSlice = aSlice[:3]  // bSlice 包含 aSlice[0], aSlice[1], aSlice[2] 也就是含有: d,e,f
+bSlice = aSlice[0:5] // 对slice的slice可以在cap范围内扩展，此时bSlice包含：d,e,f,g,h
+bSlice = aSlice[:]   // bSlice包含所有aSlice的元素: d,e,f,g
+</code></pre>
+<p>从概念上面来说<code>slice</code>像一个结构体，这个结构体包含了三个元素：</p>
+<ul>
+<li>
+<p>一个指针，指向数组中<code>slice</code>指定的开始位置 即为引用修改</p>
+</li>
+<li>
+<p>长度，即<code>slice</code>的长度</p>
+</li>
+<li>
+<p>最大长度，也就是<code>slice</code>开始位置到数组的最后位置的长度</p>
+<pre><code class="language-go">  Array_a := [10]byte{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'}  
+Slice_a := Array_a[2:5]
+</code></pre>
+</li>
+</ul>
+<h3 id="map">map</h3>
+<pre><code class="language-go">map//也就是Python中字典的概念
+map[keyType]valueType
+// 类似表格 key对应着values 
+</code></pre>
+<p><code>slice</code>的<code>index</code>只能是 <code>int</code> 类型，<code>map</code>是<code>int</code>，可以是<code>string</code>及所有完全定义了<code>==</code>与<code>!=</code>操作的类型。</p>
+<pre><code class="language-go">// 声明一个key是字符串，值为int的字典,这种方式的声明需要在使用之前使用make初始化
+var numbers map[string]int
+// 另一种map的声明方式
+numbers = make(map[string]int)
+numbers[&quot;one&quot;] = 1  //赋值
+numbers[&quot;ten&quot;] = 10 //赋值
+numbers[&quot;three&quot;] = 3
+fmt.Println(&quot;第三个数字是: &quot;, numbers[&quot;three&quot;]) // 读取数据
+// 打印出来如:第三个数字是: 3
+</code></pre>
+<p>Note:</p>
+<ul>
+<li><code>map</code>是无序的，每次打印出来的<code>map</code>都会不一样，它不能通过<code>index</code>获取，而必须通过<code>key</code>获取</li>
+<li><code>map</code>的长度是不固定的，也就是和<code>slice</code>一样，也是一种引用类型</li>
+<li>内置的<code>len</code>函数同样适用于<code>map</code>，返回<code>map</code>拥有的<code>key</code>的数量</li>
+<li><code>map</code>的值可以很方便的修改，通过<code>numbers[&quot;one&quot;]=11</code>可以很容易的把key为<code>one</code>的字典值改为<code>11</code></li>
+<li><code>map</code>有两个返回值，第一个为values第二个为存在否，存在为true，不存在为false</li>
+<li><code>map</code>和其他基本型别不同，它不是thread-safe，在多个go-routine存取时，必须使用mutex lock机制</li>
+</ul>
+<p><code>map</code>的初始化可以通过<code>key:val</code>的方式初始化值，同时<code>map</code>内置有判断是否存在<code>key</code>的方式</p>
+<p>通过<code>delete</code>删除<code>map</code>的元素：</p>
+<pre><code class="language-go">// 初始化一个字典
+rating := map[string]float32{&quot;C&quot;:5, &quot;Go&quot;:4.5, &quot;Python&quot;:4.5, &quot;C++&quot;:2 }
+// map有两个返回值，第二个返回值，如果不存在key，那么ok为false，如果存在ok为true
+csharpRating, ok := rating[&quot;C#&quot;]
+if ok {
+  fmt.Println(&quot;C# is in the map and its rating is &quot;, csharpRating)
+}else {
+  fmt.Println(&quot;We have no rating associated with C# in the map&quot;)
+}
+delete(rating, &quot;C&quot;)  
+// 删除key为C的元素
+</code></pre>
+<p><code>map</code>也是一种引用类型，如果两个<code>map</code>同时指向一个底层，那么一个改变，另一个也相应的改变：</p>
+<pre><code class="language-go">m := make(map[string]string)
+m[&quot;Hello&quot;] = &quot;Bonjour&quot;
+m1 := m
+m1[&quot;Hello&quot;] = &quot;Salut&quot;  // 现在m[&quot;hello&quot;]的值已经是Salut了
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>接口：error</p>
+</li>
+<li>
+<p>布尔：bool</p>
+<p>​				默认false；&amp;&amp; || ! 操作符</p>
+<p>​				仅两值 ture false <code>var ok bool</code>  <code>ok = true</code> //<code>ok:=true</code></p>
+<p>​				表达式/逻辑表达式的结果为bool；if for条件为bool</p>
+</li>
+</ul>
+<p>**内置函数：**15 全局可用 无需导入import</p>
+<p><code>make new lwn cap append copy delete panic recover close complex real image Print Println</code></p>
+<p>**常量标志符：**4</p>
+<p><code>ture false;iota（连续枚举）;nil（指针/引用变量默认值nil）</code></p>
+<p>**空白标志符：**1</p>
+<p><code>_</code></p>
+<pre><code class="language-go">//空白标志符用于去除第一项值
+sum :=0
+for _;value:=range array{
+  sum+=value
+}
+</code></pre>
+<pre><code class="language-go">	var a string = &quot;inital&quot;
+	fmt.Println(a)
+//输出inital
+
+	var b,c int =1,2
+	fmt.Println(b,c)
+//输出1 2
+
+	var d =true
+	fmt.Println(!d)
+//输出false
+
+	var e int
+	fmt.Println(e)
+//输出0 默认int未赋值
+	f :=&quot;one&quot;				//命名方式 无须声明
+	fmt.Println(f)
+</code></pre>
+<pre><code class="language-go">	
+	const s string = &quot;constant&quot;
+	fmt.Println(s)
+
+	const n =50000000
+	const d = 3e20 / n 
+
+	fmt.println(d)
+	fmt.println(int64(d))
+
+	fmt.println(math.Sin(n))
+</code></pre>
+<h3 id="13-变量">1.3 变量</h3>
+<hr>
+<p><code>var 变量名称 类型 = 表达式</code></p>
+<p>其中 类型/表达式可忽略一个 类型忽略自行推倒；表达式忽略初始化0值 数值=0 boolean=false string=&quot;&quot;空 接口。引用（slice 指针 map chan 函数）对应零值=nil</p>
+<p><em>即Go中无未初始化的变量</em></p>
+<pre><code class="language-go">//同时声明多个变量
+var i,j,k int
+var b,f,s=true,3.14,&quot;four&quot;		//bool,float64,string
+var names []string
+i,j:=1,0
+
+</code></pre>
+<p>**:=**是变量声明语句 **=**是赋值操作 <code>i,j=j,i //交换值</code></p>
+<p>:= 其左边变量不一定是第一次声明，如果已经声明 则:=仅用于赋值 <em>但其中至少有一个变量是新声明</em></p>
+<pre><code class="language-go">in ,err :=os.Open(infile)
+out,err :=os.Create(outfile)	//out声明并赋值 err仅赋值
+
+f,err :=os.Open(infile)
+f,err :=os.Create(outfile)	//	error! 至少一个声明
+</code></pre>
+<p><strong>指针：</strong></p>
+<p><code>var x int;p=&amp;x</code>称p指针指向变量x *p表达式为读取p指针指向的变量x的值</p>
+<pre><code class="language-go">x :=1
+p :=&amp;x
+fmt.Println(*p)		//p of type *int,points to x
+*p=2			//equivalent to x=2
+fmt.Println(x)
+</code></pre>
+<h3 id="14-控制结构">1.4 控制结构</h3>
+<hr>
+<p><em>控制结构的左大括号不可另起一行</em> 否则会自动在大括号前插入;</p>
+<p>reason: Go正式语法以; 分号结束语句 词法分析器自动插入分号  故而源码中不必使用;</p>
+<p>​				词法分析器插入规则：新行前最后一个标记为标志符、数值、字符串常量 或者 <code>break continue fallthrough return ++ -- ) }</code>等将在该标记后插入;</p>
+<p>​				新行前的标记为语句末尾 则插入分号; 分号还可在闭括号之前省略 <code>go func() { for {dst &lt;- &lt;-src}} ()</code></p>
+<p>**关键字 keywords：**25个</p>
+<ul>
+<li>
+<p>引导程序整体结构：8</p>
+<p>​	<code>package、import、const、var（变量声明关键字）、func、defer(延迟执行)、go(并发语法关键字)、return</code></p>
+</li>
+<li>
+<p>复合数据结构：4</p>
+<p>​	<code>struct、interface(接口类型)、map(声明/创建map)、chan(声明/创建通道)</code></p>
+</li>
+<li>
+<p>控制程序结构：13</p>
+<p>​	<code>if eles、for range break continue(循环)、switch select type case default fallthroug(select/switch语句关键字)、goto</code></p>
+</li>
+</ul>
+<p><strong>if</strong></p>
+<p><strong>if...else...</strong></p>
+<p>​	条件表达式的值必须为boolean 可以省略括号 左花括号不可另起一行</p>
+<p>​	条件表达式可以定义局部变量 初始化函数**（作用域为if/else块）** 可接受初始化语句</p>
+<pre><code class="language-go">if x&gt;0 {
+  return y
+}
+//初始化语句
+if err:=file.Chmod(0664);err!=nil{
+  log.Print(err)
+  return err
+}
+</code></pre>
+<p><strong>go to</strong></p>
+<p><code>goto</code>跳转必须在函数内定义的标签</p>
+<pre><code class="language-go">func main(){  i:=0  Here:  fmt.Printf(i)  i++  goto Here}
+</code></pre>
+<p><strong>For</strong></p>
+<p>可以循环又可以控制逻辑作为while使用</p>
+<p><code>for expression1;expression2;expression3{}</code>e1\e3均为变量声明 函数调用返回值 e2判断条件 e1在循环开始前调用 e3在每轮循环结束后调用</p>
+<p>e1 e3可省略 for e2{}即为仅仅判断e2的条件 相当于while使用 <code>break</code>跳出所有循环 <code>continue</code>结束本次循环 继续下一次</p>
+<p>无 <code>,</code>操作符 多变量使用平行赋值</p>
+<pre><code class="language-go">//for的三种用法for init;condition;post{}		//类似Cfor condition {}		//类似C中的whilefor{}		//类似C中for(;;)sum:=0for i:=0;i&lt;10;i++{  sum+=i}//遍历数组 切片 字符串 映射 信道读取 使用rangfor key,value:=range oldMap {  newMap[key] =value}//range在字符串中解析utf-8 独立的Unicode码点分离出来 错误编码占据一个字节 以U+FFFD代替1																		`1`for pos, char := range &quot;日本\x80語&quot; { // \x80 在 UTF-8 编码中是一个非法字符    fmt.Printf(&quot;character %#U starts at byte position %d\n&quot;, char, pos)}//go无,逗号操作符 在for中多个变量应该采用平行赋值 for i,j:=0,len(a)-1;i&lt;j;i,j=i+1,j-1{  a[i],a[j]=a[j],a[i]}
+</code></pre>
+<p><strong>Switch：</strong></p>
+<pre><code class="language-go">//使用说明switch sExpr{  case e1:  		s1  case e2:  		s2}
+</code></pre>
+<ul>
+<li>其中switch sExpr必须和e1 e2为同一类型 sExpr无表达式为true</li>
+<li>默认case 带有break；可使用 <code>fallthroug</code>强制执行后续case</li>
+</ul>
+<p><strong>make new使用：</strong></p>
+<p>make用于内建类型（map slice channel）内存分配；new可以用于全部内存分配</p>
+<p><strong>new(Type)</strong> 分配零值的Type类型的内存空间，返回地址为*Type 返回指针，指向新分配的类型Type的零值</p>
+<p>New(T) make(T,args)</p>
+<p><em>new返回指针</em>	<em>make返回初始化后非零值</em></p>
+<pre><code class="language-go">
+</code></pre>
+<h3 id="15-函数">1.5 函数</h3>
+<ul>
+<li>
+<p>保留函数 <code>init main</code> 不存在参数和返回值</p>
+</li>
+<li>
+<p><code>import</code></p>
+<ul>
+<li>
+<p>支持相对和绝对路径的导入，<code>import &quot;./model&quot;</code>当前文件同目录下 <code>import &quot;short/model&quot;</code>加载footpath/src/short/model</p>
+</li>
+<li>
+<p><code>import ( .&quot;fmt)</code> 使得调用包内函数可以忽略包名 <code>fmt.Println(&quot;&quot;)</code>——&gt;<code>Println(&quot;&quot;)</code></p>
+</li>
+<li>
+<pre><code class="language-go">// 将包别名化 使用为f.Println()
+import (
+  f &quot;fmt&quot;
+)
+
+// _操作 
+impot (
+	&quot;database/sql&quot;
+  _&quot;gihub.com/ziutek/mymysql/godrv&quot;	//_操作为引入包但不直接食用包内函数，调用包内init函数
+)
+
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>func关键字声明;</p>
+<pre><code class="language-go">func funcName(input1 type, inpute2 type)(output1 type,output type){
+  
+  return v1,v2
+}
+</code></pre>
+<ul>
+<li>多参输入 <code>,</code>分隔 多个返回值；</li>
+<li>返回值声明变量 output1 output2可忽略</li>
+<li>可接受变参</li>
+</ul>
+<pre><code class="language-go">func SumAndProduct(A,B int)(int,int) {
+	return A+B , A*B
+	
+}
+
+func main(){
+	x:=3
+	y:=5
+
+	x1,x2:=SumAndProduct(x,y)
+
+	fmt.Printf(&quot;%d+%d=%d\n&quot;,x,y,x1)
+	fmt.Printf(&quot;%d*%d=%d\n&quot;,x,y,x2)
+
+  }
+</code></pre>
+<ul>
+<li>
+<p>支持变参输入</p>
+<p><code>func myFunc(arg ...int){}</code> arg ...int即为不定参数的int输入 arg则为int的slice</p>
+</li>
+</ul>
+<p><strong>延迟 defer:</strong></p>
+<p><strong>函数作为值和类型：</strong></p>
+<p>在函数中传递函数类型</p>
+<h3 id="16-struct-结构体">1.6 Struct 结构体</h3>
+<pre><code class="language-go">//定义和使用
+type person struct {
+	name string
+	age  int
+}
+var P person
+func main() {
+  /*逐个赋值 */
+	P.name = &quot;hello&quot;
+	P.age = 22
+  P.name,P.age=&quot;qq&quot;,01
+  /* 直接使用并赋值 */
+  P1:=person{&quot;world&quot;,18}
+	fmt.Printf(&quot;%s\n %d\n&quot;, P.name, P.age)
+  //错误使用 
+  fmt.Printf(&quot;%s\n&quot;,P1)   // {world %!s (int=18)}
+  
+  /*通过field:value初始化任意顺序 */
+  P3:=person{age:24,name:&quot;aaa&quot;}
+  
+  /* new函数分配指针 类型为*person */
+  P4:=new(person)
+}
+</code></pre>
+<p><strong>匿名字段</strong></p>
+<p>将多个结构体中公共部分字段拿出来单独作为结构体，使之嵌套在其他结构体中，可以略过中间结构体名</p>
+<p>外在结构体可以直接访问内在结构体的属性 同样可以多重嵌套</p>
+<pre><code class="language-go">type Point struct {		x, y int	}	type Circle struct {		Point		Radius int	}	type Wheel struct {		Circle		spokes int	}	var w Wheel//多层嵌套，同时赋值	w = Wheel{Circle{Point{1, 1}, 1}, 1}	fmt.Println(w)
+</code></pre>
+<h3 id="17-面向对象-method">1.7 面向对象 -method</h3>
+<p><code>func (recv ReceiverType) methName(parameters)(results)</code></p>
+<p>可认为是特殊类型的函数 recv.Method()</p>
+<pre><code class="language-go">package mainimport &quot;fmt&quot;//&quot;github.com/sqs/goreturns/returns&quot;//	&quot;time&quot;type TwoInts struct {	a, b int}func (tn *TwoInts) AddThem() int {	return tn.a + tn.b}func (tn *TwoInts) AddtoParam(param int) int {	return tn.a + tn.b + param}/*以上需在main之外声明 */func main() {	two1 := new(TwoInts)	two1.a, two1.b = 12, 10	fmt.Printf(&quot;sum %d\n&quot;, two1.AddThem())	fmt.Printf(&quot;add this to param %d\n&quot;, two1.AddtoParam(20))	two2 := TwoInts{3, 4}	fmt.Printf(&quot;sum %d\n&quot;, two2.AddThem())}
+</code></pre>
+<ul>
+<li>函数&amp;方法比较：
+<ul>
+<li>函数参数为变量 <code>fuc(recv)</code> 方法在变量上被调用 <code>recv.emthod()</code></li>
+<li>接受者为指针时 方法可以改值 函数引用调用亦可</li>
+<li>接受者必须有显式名称 名称必须被调用 receivertype 必须在方法相同的包内被声明</li>
+</ul>
+</li>
+</ul>
+<h3 id="18-接口-interface">1.8 接口 interface</h3>
+<ul>
+<li>利于代码与特定实现分离</li>
+</ul>
+<h3 id="19-go-module">1.9 go module</h3>
+<p>go弃用了gopath模式 转向gomodule</p>
+<p>Go mod 常用命令</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>go mod init</td>
+<td>生成 go.mod 文件</td>
+</tr>
+<tr>
+<td>go mod download</td>
+<td>下载 go.mod 文件中指明的所有依赖</td>
+</tr>
+<tr>
+<td>go mod tidy</td>
+<td>整理现有的依赖</td>
+</tr>
+<tr>
+<td>go mod graph</td>
+<td>查看现有的依赖结构</td>
+</tr>
+<tr>
+<td>go mod edit</td>
+<td>编辑 go.mod 文件</td>
+</tr>
+<tr>
+<td>go mod vendor</td>
+<td>导出项目所有的依赖到vendor目录</td>
+</tr>
+<tr>
+<td>go mod verify</td>
+<td>校验一个模块是否被篡改过</td>
+</tr>
+<tr>
+<td>go mod why</td>
+<td>查看为什么需要依赖某模块</td>
+</tr>
+</tbody>
+</table>
+<p>终端查看:</p>
+<p><code>go env</code> 查看go相关环境变量</p>
+<p><code>go env -w</code> 修改 +对应</p>
+<p>开关 go env -w GO111MODULE=on</p>
+<h4 id="初始化项目">初始化项目</h4>
+<p>在完成 Go modules 的开启后，我们需要创建一个示例项目来进行演示，执行如下命令：</p>
+<pre><code>$ mkdir -p $HOME/eddycjy/module-repo 
+$ cd $HOME/eddycjy/module-repo
+</code></pre>
+<p>然后进行Go modules的初始化，如下：</p>
+<pre><code>$ go mod init github.com/eddycjy/module-repo
+go: creating new go.mod: module github.com/eddycjy/module-repo
+</code></pre>
+<p>在执行 <code>go mod init</code> 命令时，我们指定了模块导入路径为 <code>github.com/eddycjy/module-repo</code>。接下来我们在该项目根目录下创建 main.go 文件，如下：</p>
+<pre><code>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;github.com/eddycjy/mquote&quot;
+)
+
+func main() {
+	fmt.Println(mquote.GetHello())
+}
+</code></pre>
+<p>然后在项目根目录执行 <code>go get github.com/eddycjy/mquote</code> 命令，如下：</p>
+<pre><code>$ go get github.com/eddycjy/mquote 
+go: finding github.com/eddycjy/mquote latest
+go: downloading github.com/eddycjy/mquote v0.0.0-20200220041913-e066a990ce6f
+go: extracting github.com/eddycjy/mquote v0.0.0-20200220041913-e066a990ce6f
+</code></pre>
+<h4 id="查看gomod-文件">查看go.mod 文件</h4>
+<p>在初始化项目时，会生成一个 go.mod 文件，是启用了 Go modules 项目所必须的最重要的标识，同时也是GO111MODULE 值为 auto 时的识别标识，它描述了当前项目（也就是当前模块）的元信息，每一行都以一个动词开头。</p>
+<p>在我们刚刚进行了初始化和简单拉取后，我们再次查看go.mod文件，基本内容如下：</p>
+<pre><code>module github.com/eddycjy/module-repo
+
+go 1.15.2
+
+require (
+	github.com/eddycjy/mquote v0.0.0-20200220041913-e066a990ce6f
+)
+</code></pre>
+<p>为了更进一步的讲解，我们模拟引用如下：</p>
+<pre><code>module github.com/eddycjy/module-repo
+
+go 1.15.2
+
+require (
+    example.com/apple v0.1.2
+    example.com/banana v1.2.3
+    example.com/banana/v2 v2.3.4
+    example.com/pear // indirect
+    example.com/strawberry // incompatible
+)
+
+exclude example.com/banana v1.2.4
+replace example.com/apple v0.1.2 =&gt; example.com/fried v0.1.0 
+replace example.com/banana =&gt; example.com/fish
+</code></pre>
+<ul>
+<li>module：用于定义当前项目的模块路径。</li>
+<li>go：用于标识当前模块的 Go 语言版本，值为初始化模块时的版本，目前来看还只是个标识作用。</li>
+<li>require：用于设置一个特定的模块版本。</li>
+<li>exclude：用于从使用中排除一个特定的模块版本。</li>
+<li>replace：用于将一个模块版本替换为另外一个模块版本。</li>
+</ul>
+<p>另外你会发现 <code>example.com/pear</code> 的后面会有一个 indirect 标识，indirect 标识表示该模块为间接依赖，也就是在当前应用程序中的 import 语句中，并没有发现这个模块的明确引用，有可能是你先手动 <code>go get</code> 拉取下来的，也有可能是你所依赖的模块所依赖的，情况有好几种。</p>
+<h4 id="查看gosum文件">查看go.sum文件</h4>
+<p>在第一次拉取模块依赖后，会发现多出了一个 go.sum 文件，其详细罗列了当前项目直接或间接依赖的所有模块版本，并写明了那些模块版本的 SHA-256 哈希值以备 Go 在今后的操作中保证项目所依赖的那些模块版本不会被篡改。</p>
+<pre><code>github.com/eddycjy/mquote v0.0.1 h1:4QHXKo7J8a6J/k8UA6CiHhswJQs0sm2foAQQUq8GFHM=
+github.com/eddycjy/mquote v0.0.1/go.mod h1:ZtlkDs7Mriynl7wsDQ4cU23okEtVYqHwl7F1eDh4qPg=
+github.com/eddycjy/mquote/module/tour v0.0.1 h1:cc+pgV0LnR8Fhou0zNHughT7IbSnLvfUZ+X3fvshrv8=
+github.com/eddycjy/mquote/module/tour v0.0.1/go.mod h1:8uL1FOiQJZ4/1hzqQ5mv4Sm7nJcwYu41F3nZmkiWx5I=
+...
+</code></pre>
+<p>我们可以看到一个模块路径可能有如下两种：</p>
+<pre><code>github.com/eddycjy/mquote v0.0.1 h1:4QHXKo7J8a6J/k8UA6CiHhswJQs0sm2foAQQUq8GFHM=
+github.com/eddycjy/mquote v0.0.1/go.mod h1:ZtlkDs7Mriynl7wsDQ4cU23okEtVYqHwl7F1eDh4qPg=
+</code></pre>
+<p>h1 hash 是 Go modules 将目标模块版本的 zip 文件开包后，针对所有包内文件依次进行 hash，然后再把它们的 hash 结果按照固定格式和算法组成总的 hash 值。</p>
+<p>而 h1 hash 和 go.mod hash 两者，要不就是同时存在，要不就是只存在 go.mod hash。那什么情况下会不存在 h1 hash 呢，就是当 Go 认为肯定用不到某个模块版本的时候就会省略它的 h1 hash，就会出现不存在 h1 hash，只存在 go.mod hash 的情况。</p>
+<h4 id="查看全局缓存">查看全局缓存</h4>
+<p>我们刚刚成功的将 <code>github.com/eddycjy/mquote</code> 模块拉取了下来，其拉取的结果缓存在 <code>$GOPATH/pkg/mod</code>和 <code>$GOPATH/pkg/sumdb</code> 目录下，而在<code>mod</code>目录下会以 <code>github.com/foo/bar</code> 的格式进行存放，如下：</p>
+<pre><code>mod
+├── cache
+├── github.com
+├── golang.org
+├── google.golang.org
+├── gopkg.in
+...
+</code></pre>
+<p>需要注意的是同一个模块版本的数据只缓存一份，所有其它模块共享使用。如果你希望清理所有已缓存的模块版本数据，可以执行 <code>go clean -modcache</code> 命令。</p>
+<h3 id="110-error接口">1.10 error接口</h3>
+<p>error为预定义的类型 interface</p>
+<pre><code class="language-go">type error interface {
+    Error() string
+}
+</code></pre>
+<p>调用errors.new函数即可利用传入的错误信息返回新的error</p>
+<p>整个errors包仅只有4行：</p>
+<pre><code class="language-go">package errors
+
+func New(text string) error { return &amp;errorString{text} }
+
+type errorString struct { text string }
+
+func (e *errorString) Error() string { return e.text }
+</code></pre>
+<p>承载errorString的类型是一个结构体</p>
+<pre><code class="language-go">package syscall
+
+type Errno uintptr // operating system error code
+
+var errors = [...]string{
+    1:   &quot;operation not permitted&quot;,   // EPERM
+    2:   &quot;no such file or directory&quot;, // ENOENT
+    3:   &quot;no such process&quot;,           // ESRCH
+    // ...
+}
+
+func (e Errno) Error() string {
+    if 0 &lt;= int(e) &amp;&amp; int(e) &lt; len(errors) {
+        return errors[e]
+    }
+    return fmt.Sprintf(&quot;errno %d&quot;, e)
+}
+</code></pre>
+<h3 id="111-reflect">1.11 reflect</h3>
+<p>反射是由 reflect 包提供的。它定义了两个重要的类型，Type 和 Value。一个 Type 表示一个Go类型。它是一个接口，有许多方法来区分类型以及检查它们的组成部分，例如一个结构体的成员或一个函数的参数等。唯一能反映 reflect.Type 实现的是接口的类型描述信息（§7.5），也正是这个实体标识了接口值的动态类型。</p>
+<p>函数 reflect.TypeOf 接受任意的 interface{} 类型，并以 reflect.Type 形式返回其动态类型：</p>
+<pre><code class="language-Go">t := reflect.TypeOf(3)  // a reflect.Type
+fmt.Println(t.String()) // &quot;int&quot;
+fmt.Println(t)          // &quot;int&quot;
+</code></pre>
+<p>其中 TypeOf(3) 调用将值 3 传给 interface{} 参数。回到 7.5节 的将一个具体的值转为接口类型会有一个隐式的接口转换操作，它会创建一个包含两个信息的接口值：操作数的动态类型（这里是 int）和它的动态的值（这里是 3）。</p>
+<p>因为 reflect.TypeOf 返回的是一个动态类型的接口值，它总是返回具体的类型。因此，下面的代码将打印 &quot;*os.File&quot; 而不是 &quot;io.Writer&quot;。稍后，我们将看到能够表达接口类型的 reflect.Type。</p>
+<pre><code class="language-Go">var w io.Writer = os.Stdout
+fmt.Println(reflect.TypeOf(w)) // &quot;*os.File&quot;
+</code></pre>
+<p>要注意的是 reflect.Type 接口是满足 fmt.Stringer 接口的。因为打印一个接口的动态类型对于调试和日志是有帮助的， fmt.Printf 提供了一个缩写 %T 参数，内部使用 reflect.TypeOf 来输出：</p>
+<pre><code class="language-Go">fmt.Printf(&quot;%T\n&quot;, 3) // &quot;int&quot;
+</code></pre>
+<p>reflect 包中另一个重要的类型是 Value。一个 reflect.Value 可以装载任意类型的值。函数 reflect.ValueOf 接受任意的 interface{} 类型，并返回一个装载着其动态值的 reflect.Value。和 reflect.TypeOf 类似，reflect.ValueOf 返回的结果也是具体的类型，但是 reflect.Value 也可以持有一个接口值。</p>
+<pre><code class="language-Go">v := reflect.ValueOf(3) // a reflect.Value
+fmt.Println(v)          // &quot;3&quot;
+fmt.Printf(&quot;%v\n&quot;, v)   // &quot;3&quot;
+fmt.Println(v.String()) // NOTE: &quot;&lt;int Value&gt;&quot;
+</code></pre>
+<p>和 reflect.Type 类似，reflect.Value 也满足 fmt.Stringer 接口，但是除非 Value 持有的是字符串，否则 String 方法只返回其类型。而使用 fmt 包的 %v 标志参数会对 reflect.Values 特殊处理。</p>
+<p>对 Value 调用 Type 方法将返回具体类型所对应的 reflect.Type：</p>
+<pre><code class="language-Go">t := v.Type()           // a reflect.Type
+fmt.Println(t.String()) // &quot;int&quot;
+</code></pre>
+<p>reflect.ValueOf 的逆操作是 reflect.Value.Interface 方法。它返回一个 interface{} 类型，装载着与 reflect.Value 相同的具体值：</p>
+<pre><code class="language-Go">v := reflect.ValueOf(3) // a reflect.Value
+x := v.Interface()      // an interface{}
+i := x.(int)            // an int
+fmt.Printf(&quot;%d\n&quot;, i)   // &quot;3&quot;
+</code></pre>
+<p>reflect.Value 和 interface{} 都能装载任意的值。所不同的是，一个空的接口隐藏了值内部的表示方式和所有方法，因此只有我们知道具体的动态类型才能使用类型断言来访问内部的值（就像上面那样），内部值我们没法访问。相比之下，一个 Value 则有很多方法来检查其内容，无论它的具体类型是什么。让我们再次尝试实现我们的格式化函数 format.Any。</p>
+<p>我们使用 reflect.Value 的 Kind 方法来替代之前的类型 switch。虽然还是有无穷多的类型，但是它们的 kinds 类型却是有限的：Bool、String 和 所有数字类型的基础类型；Array 和 Struct 对应的聚合类型；Chan、Func、Ptr、Slice 和 Map 对应的引用类型；interface 类型；还有表示空值的 Invalid 类型。（空的 reflect.Value 的 kind 即为 Invalid。）</p>
+<pre><code class="language-Go">package format
+
+import (
+    &quot;reflect&quot;
+    &quot;strconv&quot;
+)
+
+// Any formats any value as a string.
+func Any(value interface{}) string {
+    return formatAtom(reflect.ValueOf(value))
+}
+
+// formatAtom formats a value without inspecting its internal structure.
+func formatAtom(v reflect.Value) string {
+    switch v.Kind() {
+    case reflect.Invalid:
+        return &quot;invalid&quot;
+    case reflect.Int, reflect.Int8, reflect.Int16,
+        reflect.Int32, reflect.Int64:
+        return strconv.FormatInt(v.Int(), 10)
+    case reflect.Uint, reflect.Uint8, reflect.Uint16,
+        reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+        return strconv.FormatUint(v.Uint(), 10)
+    // ...floating-point and complex cases omitted for brevity...
+    case reflect.Bool:
+        return strconv.FormatBool(v.Bool())
+    case reflect.String:
+        return strconv.Quote(v.String())
+    case reflect.Chan, reflect.Func, reflect.Ptr, reflect.Slice, reflect.Map:
+        return v.Type().String() + &quot; 0x&quot; +
+            strconv.FormatUint(uint64(v.Pointer()), 16)
+    default: // reflect.Array, reflect.Struct, reflect.Interface
+        return v.Type().String() + &quot; value&quot;
+    }
+}
+</code></pre>
+<p>到目前为止，我们的函数将每个值视作一个不可分割没有内部结构的物品，因此它叫 formatAtom。对于聚合类型（结构体和数组）和接口，只是打印值的类型，对于引用类型（channels、functions、pointers、slices 和 maps），打印类型和十六进制的引用地址。虽然还不够理想，但是依然是一个重大的进步，并且 Kind 只关心底层表示，format.Any 也支持具名类型。例如：</p>
+<pre><code class="language-Go">var x int64 = 1
+var d time.Duration = 1 * time.Nanosecond
+fmt.Println(format.Any(x))                  // &quot;1&quot;
+fmt.Println(format.Any(d))                  // &quot;1&quot;
+fmt.Println(format.Any([]int64{x}))         // &quot;[]int64 0x8202b87b0&quot;
+fmt.Println(format.Any([]time.Duration{d})) // &quot;[]time.Duration 0x8202b87e0&quot;
+</code></pre>
+<h3 id="112单元测试">1.12单元测试</h3>
+<p><code>go test</code> 使用该命令时以 <code>_test.go</code>后缀的源文件在<code>gobuild</code>时不会成为包的一部分</p>
+<p>遍历所有 <code>*_test.go</code>的文件</p>
+<p><strong>测试函数</strong></p>
+<p><code>func TestName (t *testing.T){}</code></p>
+<p>必须以Test开头 后缀名可选且必须大写字母</p>
+<p><code>e.g. func TestSin(t *testing.T){}</code> t参数用于报告测试失败和附加日志</p>
+<pre><code class="language-go">
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[# idea 单元测试]]></title>
         <id>https://flyingchase.github.io/post/idea-dan-yuan-ce-shi/</id>
@@ -1788,130 +2598,6 @@ telnet IP 地址 端口</p>
 </tr>
 </tbody>
 </table>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Docker基础笔记]]></title>
-        <id>https://flyingchase.github.io/post/docker-ji-chu-bi-ji/</id>
-        <link href="https://flyingchase.github.io/post/docker-ji-chu-bi-ji/">
-        </link>
-        <updated>2021-05-03T12:25:14.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="00-虚拟化容器介绍">00 虚拟化容器介绍</h2>
-<ul>
-<li>
-<p>虚拟机的不足之处在于对物理服务器资源的消耗，当我们在物理服务器创建一台虚拟机时，便需要虚拟出一套硬件并在上面运行完整的操作系统，每台虚拟机都占用许多的服务器资源。</p>
-</li>
-<li>
-<p>传统虚拟机技术是虚拟出一套硬件后，在其上运行一个完整操作系统，在该系统上再运行所需应用进程；而容器内的应用进程直接运行于宿主的内核，容器内没有自己的内核，而且也没有进行硬件虚拟。</p>
-</li>
-<li>
-<p><code>Docker</code>是使用时下很火的<code>Golang</code>语言进行开发的，其技术核心是<code>Linux</code>内核的<code>Cgroup</code>,<code>Namespace</code>和<code>AUFS</code>类的<code>Union FS</code>等技术，这些技术都是<code>Linux</code>内核中早已存在很多年的技术，所以严格来说<code>Docker</code>并不是一个完全创新的技术，<code>Docker</code>通过这些底层的<code>Linux</code>技术，对<code>Linux</code>进程进行封装隔离，而被隔离的进程也被称为容器，完全独立于宿主机的进程。</p>
-</li>
-<li>
-<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/aTm088.png" alt="aTm088" loading="lazy"></figure>
-</li>
-<li>
-<p>Docker &amp; 虚拟机 比较</p>
-<figure data-type="image" tabindex="2"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20210401175039725.png" alt="image-20210401175039725" loading="lazy"></figure>
-</li>
-</ul>
-<p>0</p>
-<h2 id="01-docker基本概念">01 Docker基本概念</h2>
-<h3 id="0101-镜像-image">01.01 镜像 Image</h3>
-<ul>
-<li>
-<p>Root 文件系统 提供容器运行时的程序 库 资源 配置等文件和配置参数</p>
-<pre><code class="language-bash"># 列出镜像
-docker image ls
-# 拉取镜像
-docker pull [选项] [Docker Registry 地址[:端口号]/]仓库名[:标签]
-# 拉取一个镜像，需要指定Docker Registry的地址和端口号，默认是Docker Hub，还需要指定仓库名和标签，仓库名和标签唯一确定一个镜像，而标签是可能省略，如果省略，则默认使用latest作为标签名，另外，仓库名则由作者名和软件名组成。
-# 运行镜像
-docker run -it centos /bin/bash
-# image_name表示镜像名，image_id表示镜像id
-dockere image rm image_name/image_id
-
-</code></pre>
-</li>
-<li>
-<p><code>docker images</code> ：列出 docker host 机器上的镜像，可以使用 <code>-f</code> 进行过滤</p>
-</li>
-<li>
-<p><code>docker build</code>：从 Dockerfile 中构建出一个镜像</p>
-</li>
-<li>
-<p><code>docker history</code>：列出某个镜像的历史</p>
-</li>
-<li>
-<p><code>dockerimport</code>：从 tarball 中创建一个新的文件系统镜像</p>
-</li>
-<li>
-<p><code>docker pull</code>：从 docker registry 拉去镜像</p>
-</li>
-<li>
-<p><code>docker push</code>：把本地镜像推送到 registry</p>
-</li>
-<li>
-<p><code>docker rmi</code>：删除镜像</p>
-</li>
-<li>
-<p><code>docker save</code>：把镜像保存为 tar 文件</p>
-</li>
-<li>
-<p><code>docker search</code>：在 docker hub 上搜索镜像</p>
-</li>
-<li>
-<p><code>docker tag</code>：为镜像打上 tag 标记</p>
-</li>
-</ul>
-<h3 id="0102-容器-container">01.02 容器 container</h3>
-<p>镜像是生成容器的模版</p>
-<p><strong>镜像&amp;&amp;容器</strong></p>
-<p>​	面向对象中的 类与对象的关系</p>
-<pre><code class="language-bash"># 查看容器
-docker container ls
-docker ps
-# 删除容器
-docker rm container_id # (docker ps 可以看见container_id)
-# 进入容器
-docker exec -it container_id command
-
-</code></pre>
-<h3 id="0103-仓库-repository">01.03 仓库 Repository</h3>
-<p>类似GitHub进行集中储存和分发镜像的服务</p>
-<p>默认Docker Hub <code>hub.docker.com</code></p>
-<h3 id="0104-docker架构">01.04 Docker架构</h3>
-<p>使用C/S模型 通过客客户端调用服务端 Docker 客户端与 Docker 服务器进行交互，Docker服务端负责构建、运行和分发 Docker 镜像。</p>
-<figure data-type="image" tabindex="3"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20210401182157890.png" alt="image-20210401182157890" loading="lazy"></figure>
-<p>Docker Daemon 是服务器组建 为守护进程 响应客户端的请求并翻译为系统调用完成容器的管理操作</p>
-<h2 id="02-打包程序">02 打包程序</h2>
-<p>**普通打包方式: **</p>
-<p>以js打包为例</p>
-<ul>
-<li>start with an OS</li>
-<li>Install Node</li>
-<li>Copy app files</li>
-<li>Run node app.js</li>
-</ul>
-<p><strong>Dockerfileff打包:</strong></p>
-<ul>
-<li>首字母D大写 其他均小写 无后缀</li>
-<li>FROM 镜像文件</li>
-</ul>
-<pre><code class="language-shell">docker build -t hellodocker .
-docker images
-docker image ls //列举出来的tag可以进行版本公职 versioning 
-
-</code></pre>
-<pre><code class="language-shell"># 回顾基础Linux操作commad
-# 查看文件前2行
-head -n 2 *.txt
-# 查看文件最后2行
-tail -n 2 *.txt
-# less more查看长文件
-# 重定向 &gt;
-cat # 串联+合并 
-</code></pre>
 ]]></content>
     </entry>
 </feed>
