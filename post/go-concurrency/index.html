@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Go Concurrency | flyingchase</title>
+<meta name="description" content="记录成长的脚印">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1630638333494">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://flyingchase.github.io">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1630638333494" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://flyingchase.github.io">
+        <h1 class="site-title">flyingchase</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Go Concurrency</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-09-03</span>
+            
+          </div>
+          <div class="post-content">
+            <h2 id="concurrency">Concurrency</h2>
+<ul>
+<li>通过通信来共享而非通过共享来通信</li>
+<li>goroutine 运行在相同的地址空间</li>
+</ul>
+<h4 id="channel">channel</h4>
+<ul>
+<li>
+<p>channel 必须使用 make 创建并定义发送到 channel 的类型</p>
+</li>
+<li>
+<p>cap 可以读取 channel 的缓存容量</p>
+<ul>
+<li>
+<pre><code class="language-go">ch:=make(chan int) // 定义同时规定发送到 chan 的类型
+v:=1
+ch&lt;-v 	// 将 v 发送到 chan
+w:=&lt;-ch	// 从 ch中读取并赋值给 w
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>默认无缓存chan 接受和发送是阻塞的  除非另外一端准备好</p>
+<ul>
+<li>
+<p><code>value:&lt;-c</code> 读取会被阻塞 直到有数据接受</p>
+</li>
+<li>
+<p><code>ch&lt;-5</code> 发送会被阻塞 直到有被读取</p>
+</li>
+<li>
+<pre><code class="language-go">func sum(a []int, c chan int)  {
+   total:=0
+   for _,v:=range a{
+      total+=v
+   }
+   c&lt;-total
+
+}
+func main() {
+   a:=[...]int {1, 2, 3,4,5,6,7,8,9,0}
+   c:=make(chan int)
+   go sum(a[:len(a)/2],c)
+   go sum(a[len(a)/2:],c)
+   x,y:=&lt;-c,&lt;-c
+   fmt.Println(x,y,x+y)
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>Buffer channel 带缓存的 channel</p>
+<ul>
+<li>
+<p><code>ch；=make(chan type,cap)</code> 在 cap 内的读写是无阻塞的 超过 cap 时候需要等待其他 goroutine 从 channel 中读取元素 释放空间</p>
+</li>
+<li>
+<p><code>for i:=rang c</code> 可以不断读取 channel 直到 channel 被显示关闭</p>
+</li>
+<li>
+<p><code>close</code>关闭 channel 无法发送数据 但可以在消费方通过<code>v,ok:=c;ok</code><em>断言</em>来测试是否关闭 channel</p>
+<ul>
+<li>在生产者方关闭 channle  在消费者方容易产生 panic</li>
+<li>结束 range 循环/无数据需要发送时候关闭 channel 才使用 close显式关闭</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-go">func fibonacc(n int, c chan int)  {
+   x,y:=1,1
+   for i:=0;i&lt;n;i++ {
+      c&lt;-x
+      x,y=y,x+y
+   }
+   close(c)	// 显示关闭 channel
+}
+func main() {
+   c:=make(chan int, 10)
+   go fibonacc(cap(c),c)
+   for i:=range c {
+      fmt.Println(i)
+   }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>多 channel 下 <em>select</em></p>
+<ul>
+<li>
+<p>select 关键字监听 channel 上的数据流动</p>
+</li>
+<li>
+<p>默认是阻塞的  只有监听的 channel 上数据流动才运行  多个 channel 准备好时select 随机选择执行</p>
+</li>
+<li>
+<p>类似 switch 有 <code>default</code>   可设置超时来退出循环</p>
+</li>
+<li>
+<pre><code class="language-go">func fibonacc(c, quit chan int) {
+   x, y := 1, 1
+   for {
+      select {		// 类似 switch  监听 channel 上的数据流动
+      case c &lt;- x:
+         x, y  = y, x+y
+      case &lt;-quit:
+         fmt.Println(&quot;quit&quot;)
+         return
+      case &lt;-time.After(5*time.Second) // 阻塞超过5 s情况
+          fmpl(&quot;timeOut&quot;)
+          break;
+      }
+   }
+}
+
+func main() {
+   c := make(chan int)
+   quit:=make(chan int)
+   go func() {
+      for i := 0; i &lt; 10; i++ {
+         fmt.Println(&lt;-c)
+      }
+      quit&lt;-0
+   }()
+   fibonacc(c,quit)
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>Goexit</code></p>
+<ul>
+<li>退出当前 Goroutine 但defer 仍调用</li>
+</ul>
+</li>
+<li>
+<p><code>Gosched</code></p>
+<ul>
+<li>让出 goRoutine 权限</li>
+</ul>
+</li>
+<li>
+<p><code>NumCPU</code> <code>NumGoroutine</code></p>
+<ul>
+<li>返回 cpu数目</li>
+<li>返回执行和排队的任务总数</li>
+</ul>
+</li>
+<li>
+<p><code>GOMAXPROCS</code></p>
+<ul>
+<li>并行计算的 cpu 核数最大值 返回之前的核数值</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/golang-yu-fa-ru-men-bi-ji/">
+              <h3 class="post-title">
+                下一篇：GoLang 语法入门笔记
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">记录成长的脚印</div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/flyingchase" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+   | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

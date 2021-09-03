@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-08-30T09:34:43.646Z</updated>
+    <updated>2021-09-03T03:05:41.739Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,172 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[Go Concurrency]]></title>
+        <id>https://flyingchase.github.io/post/go-concurrency/</id>
+        <link href="https://flyingchase.github.io/post/go-concurrency/">
+        </link>
+        <updated>2021-09-03T03:05:18.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="concurrency">Concurrency</h2>
+<ul>
+<li>通过通信来共享而非通过共享来通信</li>
+<li>goroutine 运行在相同的地址空间</li>
+</ul>
+<h4 id="channel">channel</h4>
+<ul>
+<li>
+<p>channel 必须使用 make 创建并定义发送到 channel 的类型</p>
+</li>
+<li>
+<p>cap 可以读取 channel 的缓存容量</p>
+<ul>
+<li>
+<pre><code class="language-go">ch:=make(chan int) // 定义同时规定发送到 chan 的类型
+v:=1
+ch&lt;-v 	// 将 v 发送到 chan
+w:=&lt;-ch	// 从 ch中读取并赋值给 w
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>默认无缓存chan 接受和发送是阻塞的  除非另外一端准备好</p>
+<ul>
+<li>
+<p><code>value:&lt;-c</code> 读取会被阻塞 直到有数据接受</p>
+</li>
+<li>
+<p><code>ch&lt;-5</code> 发送会被阻塞 直到有被读取</p>
+</li>
+<li>
+<pre><code class="language-go">func sum(a []int, c chan int)  {
+   total:=0
+   for _,v:=range a{
+      total+=v
+   }
+   c&lt;-total
+
+}
+func main() {
+   a:=[...]int {1, 2, 3,4,5,6,7,8,9,0}
+   c:=make(chan int)
+   go sum(a[:len(a)/2],c)
+   go sum(a[len(a)/2:],c)
+   x,y:=&lt;-c,&lt;-c
+   fmt.Println(x,y,x+y)
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>Buffer channel 带缓存的 channel</p>
+<ul>
+<li>
+<p><code>ch；=make(chan type,cap)</code> 在 cap 内的读写是无阻塞的 超过 cap 时候需要等待其他 goroutine 从 channel 中读取元素 释放空间</p>
+</li>
+<li>
+<p><code>for i:=rang c</code> 可以不断读取 channel 直到 channel 被显示关闭</p>
+</li>
+<li>
+<p><code>close</code>关闭 channel 无法发送数据 但可以在消费方通过<code>v,ok:=c;ok</code><em>断言</em>来测试是否关闭 channel</p>
+<ul>
+<li>在生产者方关闭 channle  在消费者方容易产生 panic</li>
+<li>结束 range 循环/无数据需要发送时候关闭 channel 才使用 close显式关闭</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-go">func fibonacc(n int, c chan int)  {
+   x,y:=1,1
+   for i:=0;i&lt;n;i++ {
+      c&lt;-x
+      x,y=y,x+y
+   }
+   close(c)	// 显示关闭 channel
+}
+func main() {
+   c:=make(chan int, 10)
+   go fibonacc(cap(c),c)
+   for i:=range c {
+      fmt.Println(i)
+   }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>多 channel 下 <em>select</em></p>
+<ul>
+<li>
+<p>select 关键字监听 channel 上的数据流动</p>
+</li>
+<li>
+<p>默认是阻塞的  只有监听的 channel 上数据流动才运行  多个 channel 准备好时select 随机选择执行</p>
+</li>
+<li>
+<p>类似 switch 有 <code>default</code>   可设置超时来退出循环</p>
+</li>
+<li>
+<pre><code class="language-go">func fibonacc(c, quit chan int) {
+   x, y := 1, 1
+   for {
+      select {		// 类似 switch  监听 channel 上的数据流动
+      case c &lt;- x:
+         x, y  = y, x+y
+      case &lt;-quit:
+         fmt.Println(&quot;quit&quot;)
+         return
+      case &lt;-time.After(5*time.Second) // 阻塞超过5 s情况
+          fmpl(&quot;timeOut&quot;)
+          break;
+      }
+   }
+}
+
+func main() {
+   c := make(chan int)
+   quit:=make(chan int)
+   go func() {
+      for i := 0; i &lt; 10; i++ {
+         fmt.Println(&lt;-c)
+      }
+      quit&lt;-0
+   }()
+   fibonacc(c,quit)
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>Goexit</code></p>
+<ul>
+<li>退出当前 Goroutine 但defer 仍调用</li>
+</ul>
+</li>
+<li>
+<p><code>Gosched</code></p>
+<ul>
+<li>让出 goRoutine 权限</li>
+</ul>
+</li>
+<li>
+<p><code>NumCPU</code> <code>NumGoroutine</code></p>
+<ul>
+<li>返回 cpu数目</li>
+<li>返回执行和排队的任务总数</li>
+</ul>
+</li>
+<li>
+<p><code>GOMAXPROCS</code></p>
+<ul>
+<li>并行计算的 cpu 核数最大值 返回之前的核数值</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[GoLang 语法入门笔记]]></title>
         <id>https://flyingchase.github.io/post/golang-yu-fa-ru-men-bi-ji/</id>
@@ -1679,828 +1845,6 @@ final int compare(Object k1, Object k2) {
 <p>快速生成类的构造器和get set等常见方法</p>
 <p>重写toString/hashCode/equal等常见方法</p>
 <figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/ry6AzG.png" alt="ry6AzG" loading="lazy"></figure>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Linux操作命令笔记]]></title>
-        <id>https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/</id>
-        <link href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">
-        </link>
-        <updated>2021-05-03T12:25:39.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="to-do-list"><strong>TO DO LIST</strong></h1>
-<ul>
-<li>top命令</li>
-<li>ps命令</li>
-<li>netstat命令</li>
-<li>awk命令</li>
-<li>find命令</li>
-<li>grep命令</li>
-<li>wc命令</li>
-<li>sed命令</li>
-<li>head和tail命令</li>
-<li>正则表达式</li>
-<li>如何查找出现频率最高的100个IP地址</li>
-<li>linux如何统计文件中某个字符串出现的频率</li>
-<li>linux启动的第一个进程</li>
-<li>linux查看端口占用</li>
-<li>linux查看CPU和内存使用</li>
-<li>Linux查看系统负载命令</li>
-<li>Linux调试程序</li>
-<li>Linux硬链接和软连接</li>
-<li>core dump</li>
-<li>cmake和makefile</li>
-<li>Shell脚本基本语法和使用</li>
-</ul>
-<h1 id="linux网络编程">Linux网络编程</h1>
-<ul>
-<li>孤儿进程、僵尸进程和守护进程</li>
-<li>进程间通信方式signal、file、pipe、shm、sem、msg、socket</li>
-<li>线程同步机制线程：互斥量、锁机制、条件变量、信号量、读写锁</li>
-<li>fork返回值</li>
-<li>五大IO模型：阻塞I/O、非阻塞I/O、I/O复用、信号驱动I/O、异步I/O</li>
-<li>IO复用机制</li>
-<li>epoll与select/poll</li>
-<li>LT水平触发和ET边缘触发</li>
-<li>Reactor和Proactor模式</li>
-<li>反向代理、负载均衡</li>
-</ul>
-<h1 id="linux操作指令-笔记">Linux操作指令-笔记</h1>
-<h2 id="1-文件权限">1 文件权限</h2>
-<h3 id="11-ls命令">1.1 ls命令</h3>
-<p>帮助 <code>man ls</code> <code>info ls</code></p>
-<p><code>ls -al</code> ——&gt;list all include those hided</p>
-<p>e.g:</p>
-<p><code>-rwxr-xr-x 1 qlzhou staff 5797544 12 21 15:59 impl</code></p>
-<p>第一列10个字符 文件类型和权限</p>
-<p>​	1 - 代表文件 d代表文件夹</p>
-<p>​	234拥有者权限 rwx 可读可写可执行</p>
-<p>​	567 同用户组权限 r-x 可读可执行</p>
-<p>​	8910 其他用户权限 r-x 可读可执行</p>
-<pre><code>其中r w x顺序不变 不存在该权限则为- 
-</code></pre>
-<p>第二列 1代表多少文件名连接到此节点i-node</p>
-<p>第三列 qlzhou代表所有者账号</p>
-<p>第四列 表示文件所属用户组</p>
-<p>第五列 文件大小 默认单位B</p>
-<p>第六列 修改日期</p>
-<p>​	完整时间显示 <code>ls -l --full-time</code></p>
-<p>第七列 文件名 隐藏文件前含.</p>
-<h3 id="12-文件权限修改">1.2 文件权限修改</h3>
-<p>使用cp复制时会保留原有的用户权限 从而他人无法修改</p>
-<ul>
-<li>
-<p>chgrp修改所属用户组</p>
-<p>change group简写</p>
-<p>-R递归 recursive 持续修改 包括子目录下文件 目录</p>
-</li>
-<li>
-<p>Chown修改文件所有者</p>
-<p><code>chown username filename/dirname</code> 可加-R</p>
-</li>
-<li>
-<p>Chmod</p>
-</li>
-</ul>
-<h2 id="man-获得帮助"><strong>man - 获得帮助</strong></h2>
-<pre><code class="language-text">man ls        # 许多Linux自带命令可以通过man查看使用帮助
-ls --help     # 有些程序可以通过-h, --help查看使用帮助
-</code></pre>
-<h2 id="ls-显示目录内容"><strong>ls - 显示目录内容</strong></h2>
-<pre><code class="language-bash">ls                      # 显示目录内容
-ls -l                   # 以列表显示形式显示目录内容，通常在~/.bashrc文件中增加一行：alias ll='ls -l'
-                        # 以后就可以直接使用别名ll了，更方便
-ll -h                   # 以人类可读的方式显示文件大小
-ll -t                   # 以文件的修改时间排序，最新修改的在最前面
-ll -tr                  # 以文件的修改时间排序，最新修改的在最后面
-watch -n 3 -dc ls -l    # 追踪目录内容的变化，每3秒刷新一次
-</code></pre>
-<h2 id="pwd-显示当前目录"><strong>pwd - 显示当前目录</strong></h2>
-<pre><code class="language-bash">pwd                 # 显示当前目录的绝对路径
-ls `pwd`/file       # 显示文件的绝对路径
-</code></pre>
-<h2 id="cd-切换目录"><strong>cd - 切换目录</strong></h2>
-<pre><code class="language-bash">cd dir    # 切换到目录dir
-cd        # 切换到用户的HOME目录
-cd ~      # 同cd，~表示HOME目录
-cd ..     # 切换到上一级目录；一个点.表示当前目录，两个点..表示上一级目录
-cd -      # 切换到进入当前目录之前所在的目录
-</code></pre>
-<h2 id="mkdir-创建目录"><strong>mkdir - 创建目录</strong></h2>
-<pre><code class="language-bash">mkdir dir           # 创建dir目录
-mkdir -p dir1/dir2  # 递归创建目录，如dir1不存在，会先创建dir1
-</code></pre>
-<h2 id="cat-合并文件按行"><strong>cat - 合并文件（按行）</strong></h2>
-<pre><code class="language-bash">cat file              # 合并一个或多个文件至标准输出，当只有一个文件时，相当于显示所有文件内容
-cat file1 file2       # 合并file1和file2的内容，并在屏幕上输出
-cat R1.fq.gz R2.fq.gz # 可以合并gzip压缩文件，如测序数据原始reads的合并
-</code></pre>
-<h2 id="paste-合并文件按列"><strong>paste - 合并文件（按列）</strong></h2>
-<pre><code class="language-bash">paste -d ' ' file1 file2    # 按列对列的方式一行一行合并文件。默认列中间加TAB键， -d参数可以改变列之间的分隔符
-</code></pre>
-<h2 id="split-分割文件"><strong>split - 分割文件</strong></h2>
-<pre><code class="language-bash">split -d -l 10000 file chunk_   # 按行数分割文件，每个文件最多10000行，分割成的文件名为chunk_01, chunk_02。。。
-split -d -b 100m file chunk_    # 按大小分割文件，每个文件最多100m，分割成的文件名为chunk_01, chunk_02。。。
-</code></pre>
-<h2 id="cut-剪切文件"><strong>cut - 剪切文件</strong></h2>
-<pre><code class="language-bash">cut -f 1 file                   # 剪切文件的第1列
-cut -f 1,2                      # 剪切文件的第1，2列
-cut -f 3-                       # 剪切第3列及之后的所有列
-cut -d ' ' -f 1 file            # 剪切第1列，但以空格作为列与列之间的分隔符。默认以TAB作为分隔符
-grep '^&gt;' test.fa | cut -c 2-   # 得到fasta文件中的序列名称（去掉了&gt;符号）
-</code></pre>
-<h2 id="less-head-tail-显示文件内容"><strong>less, head, tail - 显示文件内容</strong></h2>
-<pre><code class="language-bash">less file       # 分屏显示文件内容，按空格键显示下一页，按下/后可以搜索内容
-less -SN file   # 显示文件的行号，并且截断太长的行 
-
-head file       # 默认显示文件前10行
-head -n 20 file # 显示文件前20行
-
-tail file       # 默认显示文件后10行
-tail -n 20 file # 显示文件后20行
-tail -n +2 file # 跳过第1行，显示从第2行开始的所有行，可用于跳过文件的标题行
-tail -f file    # 当文件的内容还在增加时，实时显示末尾增加的内容，常用于查看日志文件的更新情况
-</code></pre>
-<h2 id="wc-统计文件内容"><strong>wc - 统计文件内容</strong></h2>
-<pre><code class="language-bash">wc -l file      # 统计文件行数
-</code></pre>
-<h2 id="touch-创建文件"><strong>touch - 创建文件</strong></h2>
-<pre><code class="language-bash">touch file                  # 创建一个空文件
-touch {file1,file2,file3}   # 同时创建3个文件
-</code></pre>
-<h2 id="cp-mv-rm-文件目录的复制移动删除"><strong>cp, mv, rm- 文件/目录的复制，移动，删除</strong></h2>
-<pre><code class="language-bash">scp file1 file2     # 将file1复制一份，命名为file2，复制目录要加-r参数：scp -r
-mv file1 dir1/      # 将file1移动到dir1/目录下
-mv file1 file2      # 重命名：即将file1移动成为file2
-rm file             # 删除文件，删除目录要加-r参数：rm -r
-rm -f file          # 文件若不存在，删除时会报错，加-f参数就不会报错
-</code></pre>
-<h2 id="tar-文件打包压缩"><strong>tar - 文件打包/压缩</strong></h2>
-<pre><code class="language-bash"># 平时tar基本上就能完成打包、压缩、解压的任务了
-tar czvf file.tar.gz files  # 打包并压缩
-tar xvf file.tar.gz         # 解包，解压缩
-
-gzip file                   # 压缩
-gunzip file.gz              # 解压
-</code></pre>
-<h2 id="chmod-改变文件目录权限"><strong>chmod - 改变文件/目录权限</strong></h2>
-<pre><code class="language-bash">chmod +x file   # 增加[本人]可执行权限
-chmod -x file   # 取消[本人]可执行权限
-chmod a+x file  # 增加[所有人]可执行权限
-chmod a-x file  # 取消[所有人]可执行权限
-</code></pre>
-<h2 id="chown-改变文件目录归属"><strong>chown - 改变文件/目录归属</strong></h2>
-<pre><code class="language-bash">chown jianzuoyi:jianzuoyi file      # 将文件的所有权给jianzuoyi
-chown -R jianzuoyi:jianzuoyi dirname    # 将目录以及目录内的文件的所有权给jianzuoyi
-</code></pre>
-<h2 id="sort-uniq-排序去重"><strong>sort, uniq - 排序，去重</strong></h2>
-<pre><code class="language-bash">sort file				# 默认按字典序对文件进行排序
-sort -k2,2 -k3,3 file	# 先按第2列排序，第2列相同，再按第3列排序
-sort -k2,2n file		# 按第2列排序，且第2列是数字，升序
-sort -k2,2nr file		# 按第2列排序，且第2列是数字，降序
-sort -u file			# 先排序文件，然后去除相邻的重复行，只保留一条记录
-sort file | uniq		# 去除相信的重复行，只保留一条记录，相当于： sort -u file
-
-# 利用sort, uniq取两个文件的交、并、补集
-sort a b | uniq			# 并集
-sort a b | uniq -d &gt; c	# 交集
-sort a c | uniq -u 		# 补集
-</code></pre>
-<h2 id="wget-下载文件"><strong>wget - 下载文件</strong></h2>
-<pre><code class="language-bash">wget https://repo.anaconda.com/archive/Anaconda3-2020.07-Linux-x86_64.sh	# 下载文件到当前目录，文件名保持不变
-</code></pre>
-<h2 id="ssh-远程登录"><strong>ssh - 远程登录</strong></h2>
-<pre><code class="language-bash">ssh username@host					 # ssh 远程连接至服务器
-</code></pre>
-<h2 id="scp-远程文件传输"><strong>scp - 远程文件传输</strong></h2>
-<pre><code class="language-bash">scp username@host:/path/to/file .	 # 将远程服务器上的文件传输到当前目录，文件名保持不变，复制目录加参数-r
-scp file username@host:/path/to/dir/ # 将本地文件复制到远程服务器，文件名保持不变，复制目录加参数-r
-</code></pre>
-<h2 id="rsync-远程文件拷贝"><strong>rsync - 远程文件拷贝</strong></h2>
-<p>rsync与scp不同，它只是做增量更新且支持断点续传，也就是要复制的文件存在于目标文件夹且内容与当前要复制的相同，则不会复制。</p>
-<pre><code class="language-bash">rsync -azvP dir1 dir2					# 将dir1的内容同步至dir2
-rsync -azvP --delete dir1 dir2			# 同步dir2与dir1，dir1中删除的文件，dir2中也要跟着删除
-rsync -azvP --exclude 'file' dir1 dir2  # 同步dir2与dir2，且将file排除在外
-</code></pre>
-<h2 id="df-du-free-查看磁盘内存使用情况"><strong>df, du, free - 查看磁盘/内存使用情况</strong></h2>
-<pre><code class="language-bash">df -h		# 查看磁盘使用情况，-h表示以人类可读的方式显示容量大小
-du -sh		# 查看当前目录使用了多少磁盘空间
-du -sh *	# 查看当前目录下各文件或文件夹使用的磁盘空间
-free -h		# 查看内存使用情况
-</code></pre>
-<h2 id="top-htop-ps-kill-任务管理"><strong>top, htop, ps, kill - 任务管理</strong></h2>
-<pre><code class="language-bash">top -c		# 查看CPU，内存的使用情况
-htop		# top的完美替代品，Linux系统不自带，需要安装， ubuntu系统：apt install htop
-ps aut		# 查看后台任务运行情况，第2列是任务的PID号
-kill -9 PID # 删除编号为PID的任务
-</code></pre>
-<h2 id="nohupdisown-远程任务管理"><strong>nohup，disown - 远程任务管理</strong></h2>
-<pre><code class="language-bash">nohup ./run.sh &amp;&gt; run.sh.o &amp;	# 远程SSH登录服务器，在后台运行任务，断开远程连接后任务仍然在后台跑
-</code></pre>
-<ul>
-<li>如果运行任务时没有加nohup命令，但任务运行时间长，但又必须断开（比如快下班了），若不想让任务因为断开远程连接而中断，可以用disown命令补救</li>
-</ul>
-<pre><code class="language-bash">./run.sh	# 假如任务是直接这样开始跑的
-ctrl + z	# 按ctrl + z，将任务放到后台
-jobs		# 输入jobs命令，回车，可以看到任务是暂停的： [1]+  Stopped(SIGTSTP)        bash run.sh
-bg			# 让后台暂停的任务开始运行
-jobs		# 再次运行jobs，可以看到任务已经跑起来了：   [1]+  Running                 bash run.sh &amp;
-disown -r 	# 从当前shell中移除运行中的作业，至此，可以关掉终端回家了
-</code></pre>
-<h2 id="-管道"><strong>| - 管道</strong></h2>
-<p>管道，将前一个命令的输出作为后一个命令的输入</p>
-<pre><code class="language-bash">command1 | command2
-</code></pre>
-<h2 id="-输入输出重定向"><strong>&gt;, &gt;&gt; - 输入输出重定向</strong></h2>
-<p>Linux中常用重定向操作符有：</p>
-<ol>
-<li>标准输入（/dev/stdin）：代码为0， 使用&lt;或&lt;&lt;</li>
-<li>标准输出（/dev/stdout）：代码为1，使用&gt;（覆盖）或&gt;&gt;（追加）</li>
-<li>标准错误输出（/dev/stderr）：代码为2，使用2&gt;或2&gt;&gt;</li>
-<li>&amp;&gt; 标准输出和错误输出同时重定向</li>
-<li>/dev/null 代表垃圾箱，不想要保存的东西都可以重定向到这里</li>
-</ol>
-<ul>
-<li>输出重定向就是将命令的结果重定向到文件，而不是输出到屏幕，通常用于保存命令的结果</li>
-</ul>
-<pre><code class="language-bash">./run.sh &gt; run.sh.o		# 标准输出到run.sh.o日志文件
-./run.sh 2&gt; run.sh.e	# 标准错误输出到run.sh.e错误日志文件
-./run.sh &amp;&gt; run.sh.log	# 标准输出和标准错误都输出到定一个文件
-./run.sh &amp;&gt; /dev/null	# 丢弃标准输出和标准错误信息
-</code></pre>
-<ul>
-<li>输入重定向是将文件作为输入的来源，而不是键盘</li>
-</ul>
-<pre><code class="language-bash">command &lt; file			# 将file的内容作为command的输入 
-command &lt;&lt; END			# 从标准输入（键盘）中读取数据，直到遇到分界符END时停止（分界符用户可以自定义）
-command &lt;file1 &gt; file2	# 将file1作为command的输入，并将处理结果输出到file2
-</code></pre>
-<ul>
-<li>综合运用</li>
-</ul>
-<pre><code class="language-bash">#!/bin/bash
-
-while read line
-do
-    do something
-done &lt; file.txt &gt; result.txt
-</code></pre>
-<p>逐行读入file.txt的内容，处理之后，将结果保存到result.txt文件中。</p>
-<h2 id="find-locate-which-文件查找"><strong>find, locate, which - 文件查找</strong></h2>
-<pre><code class="language-bash">find -name file					# 在当前目录查找名为file的文件
-find dir/ -name file			# 在dir/目录下查找名为file的文件
-find dir/ -name '*file*'		# 在dir/目录下查找包含file关键词的文件，-name参数支持正则表达式
-find dir/ -name file -delete	# 查找文件并删除
-
-locate file						# 查找文件
-which command					# 显示命令的绝对路径
-</code></pre>
-<h2 id="xargs-命令组合工具"><strong>xargs - 命令组合工具</strong></h2>
-<pre><code class="language-bash">cat file | xargs		# 将file的内容显示成一行
-cat file | xargs -n3	# 将file的内容每3列一行进行输出
-find /ifs/result -name '*.fq.gz' | xargs -n1 -I{} cp {} /ifs/data/	# 查找fq.gz文件并复制到/ifs/data目录下
-find /ifs/result -name '*.fq.gz' | xargs tar czvf all.fq.gz			# 查找fq.gz文件并打包在一起
-find . -type f -name '*.log' -print0 | xargs -0 rm -f				# 当rm文件过多时，可以这样删除
-find . -type f -name '*.py' -print0 | xargs -0 wc -l				# 统计一个目录中所有python文件的行数
-</code></pre>
-<h2 id="parallel-并行工具"><strong>parallel - 并行工具</strong></h2>
-<p>parallel是增强版的xargs。假如一个脚本文件中有4条命令：</p>
-<pre><code class="language-bash"># cat run.sh
-echo a
-echo b
-echo c
-echo d
-
-# 同时执行4个任务，生信中常通过这种方式并行执行多个任务
-cat run.sh | parallel -j 4	
-find *.fq | parallel -j 12 &quot;fastqc {} --outdir .&quot;	# 同时执行12个Fastqc任务
-find *.bam | parallel --dry-run 'samtools index {}' # 同时执行samtools index任务，--dry-run显示任务命令但不实际执行，用于命令检查
-</code></pre>
-<h2 id="useradd-添加用户"><strong>useradd - 添加用户</strong></h2>
-<pre><code class="language-bash">useradd -m username	# 创建用户并为其在/home下创建一个以其名称命名的目录
-</code></pre>
-<h2 id="passwd-更改密码"><strong>passwd - 更改密码</strong></h2>
-<pre><code class="language-bash">passwd	    	   # 更改当前用户的密码
-passwd username	   # 更改指定用户的密码
-</code></pre>
-<h2 id="dos2unix-文件格式转换"><strong>dos2unix - 文件格式转换</strong></h2>
-<p>Linux很多工具都是针对纯文本文件的，并且需要是Unix-like格式的文本文件。但是很多时候文件是从Windows或Mac系统上传到Linux服务器上的，这可能导致文件格式不兼容，原因是不同平台生成的文本文件的换行符不一样。</p>
-<table>
-<thead>
-<tr>
-<th>操作系统</th>
-<th>符号</th>
-<th>正则表达式</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Mac</td>
-<td>^M</td>
-<td>\r</td>
-</tr>
-<tr>
-<td>Linux</td>
-<td>$</td>
-<td>\n</td>
-</tr>
-<tr>
-<td>Windows</td>
-<td>^M$</td>
-<td>\r\n</td>
-</tr>
-</tbody>
-</table>
-<pre><code class="language-bash">cat -A file			# 查看文件换行符情况
-dos2unix file			# Windows格式转换成Unix-like格式
-</code></pre>
-<h2 id="grep"><strong>grep</strong></h2>
-<p><strong>用于查找文件里符合条件的字符串。</strong></p>
-<pre><code class="language-bash">grep [-abcEFGhHilLnqrsvVwxy][-A&lt;显示列数&gt;][-B&lt;显示列数&gt;][-C&lt;显示列数&gt;][-d&lt;进行动作&gt;][-e&lt;范本样式&gt;][-f&lt;范本文件&gt;][--help][范本样式][文件或目录...]
-grep pattern files			 # 搜索文件中包含pattern的行
-grep -v pattern files		 # 搜索文件中不包含pattern的行
-
-grep -f pattern.txt files	 # 搜索的pattern来自于文件中
-grep -i pattern files		 # 不区分大小写。默认搜索是区分大小写的
-grep -i pattern files		 # 只匹配整个单词，而不是字符串的一部分（如搜索hello，不会匹配到helloworld）
-grep -n pattern files		 # 显示行号信息
-grep -c pattern files		 # 显示匹配的行数
-grep -l pattern files		 # 只显示匹配的文件名
-grep -L pattern files		 # 显示不匹配的文件名
-grep -C number pattern files     # 额外显示匹配行的上下[number]行
-grep pattern1 | grep pattern2 files     # 显示既匹配pattern1，又匹配pattern2的行
-grep -E &quot;pattern1|pattern2&quot; files	# 显示匹配pattern1或者pattern2的行, grep -E相当于egrep
-
-# 用于搜索的特殊字符
-^: 表示行前
-$: 表示行尾
-
-grep '^#' result.vcf		# 显示VCF文件的表头信息
-grep '^hello$' files		# 显示只包含hello的行
-grep -v '^\s*$' file		# 删除空白行
-</code></pre>
-<h2 id="sed"><strong>sed</strong></h2>
-<p>sed是stream editor的缩写，中文称之为“流编辑器”。</p>
-<pre><code class="language-bash">sed command file
-</code></pre>
-<ul>
-<li>command部分，针对每行要进行的处理</li>
-<li>file，要处理的文件</li>
-</ul>
-<h3 id="actions"><strong>Actions</strong></h3>
-<ul>
-<li>d：删除该行</li>
-<li>p：打印该行</li>
-<li>i：在行的前面插入新行</li>
-<li>a：在行的后面插入新行</li>
-<li>r：读取指定文件的内容。</li>
-<li>w：写入指定文件。</li>
-</ul>
-<pre><code class="language-bash">sed -n '10p' file		# 显示第10行
-sed -n '10,20p' file	# 显示第10到20之间的行
-sed -n '/pattern/p' file# 显示含有pattern的行
-sed -n '/pattern1/,/pattern2/p' file # 显示patter1与pattern2之间的行
-
-sed '10d' file			# 删除第10行
-sed '10,20d' file		# 删除第10到20之间的行
-sed '/pattern/d'		# 删除匹配pattern的行
-sed '/^\s*$/d' file		# 删除空白行
-sed 's/^\s*//' file		# 删除行前的空白：空格，制表符
-sed 's/\s*$//' file		# 删除行尾的空白：空格，制表符
-sed 's/^\s*//;s/\s*$//' file # 删除行首和行尾的空白：空格，制表符
-
-sed 's/AA/BB/' file		# 将文件中的AA替换成BB，只替换一行中第一次出现的AA，替换后的结果输出到屏幕
-sed 's/AA/BB/g' file	# 将文件中的所有AA都替换成BB，替换后的结果输出到屏幕
-sed -i 's/AA/BB/g' file # 将文件中的所有AA都替换成BB，直接更改文件的内容
-sed '/CC/s/AA/BB/g' file# 只替换那些含有CC的行
-sed 's/pattern/&amp;XXXX/' file	# 在pattern之后加上XXXX。&amp;表示之前被匹配的内容
-sed 's/pattern.*/&amp;XXXX' file# 在匹配pattern的行尾加上XXXX。pattern.*表示包含pattern的整行内容
-
-sed -n '1~4s/^@/&gt;/p;2~4p' file.fq &gt; file.fa	# Fastq文件转Fasta文件
-sed -n '2~4p' file.fq		# 提取Fastq文件的序列
-
-sed 'y/ABC/XYZ/' file	# 将ABC逐字替换成XYZ
-
-sed '1i\hello' file		# 在第1行前面插入一行，内容为hello，通常用来为文件增加标题
-sed '1a\hello' file		# 在第1行后面插入一行，内容为hello
-sed '1r file2' file1	# 在第1行后面读入file2的内容
-sed '/pattern/w file2' file1 # 将匹配的行写入file2中
-</code></pre>
-<h2 id="awk"><strong>awk</strong></h2>
-<p>Awk是一个强大的文本分析工具，它每次读入一条记录，并把每条记录切分成字段后进行分析。Awk官方文档是非常好的学习材料，通过<code>man awk</code>查看。</p>
-<pre><code class="language-bash">awk 'BEGIN { action } pattern { action } END { action }'
-</code></pre>
-<p><strong>Awk程序通常是一系列 pattern {action}对：</strong></p>
-<p><code>pattern</code>，表示模式匹配，只处理匹配的行。pattern可以省略，表示匹配所有行</p>
-<p><code>action</code>，表示对匹配行所做的动作。{actions}可以省略，表示{ print }。<code>BEGIN</code>和<code>END</code>的{action}不能省略</p>
-<p><strong>pattern可能是：</strong></p>
-<p><code>BEGIN</code>， 执行初始化操作，程序开始时执行一次</p>
-<p><code>END</code>，执行收尾工作，程序结束时执行一次</p>
-<p><code>expression</code>，一个表达式，既可以是判断语句，也可以是正则表达式</p>
-<h3 id="常用参数"><strong>常用参数</strong></h3>
-<ul>
-<li><code>-F value</code> 设置域分隔符，相当于给FS内置变量赋值</li>
-<li><code>-v var=value</code> 将变量value的值赋给程序变量var，-v可以多次使用</li>
-</ul>
-<h3 id="记录与字段"><strong>记录与字段</strong></h3>
-<p>记录是一次读入的内容，通常是文件的一行，保存在字段变量$0中，记录可以被分割成字段，保存在变量$1，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mi mathvariant="normal">，</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">，</mi></mrow><annotation encoding="application/x-tex">2，...，</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">2</span><span class="mord cjk_fallback">，</span><span class="mord">.</span><span class="mord">.</span><span class="mord">.</span><span class="mord cjk_fallback">，</span></span></span></span>NF中。</p>
-<h3 id="表达式与操作符"><strong>表达式与操作符</strong></h3>
-<p>Awk表达式的符号与C语言的类似，基本的表达式有数字，字符串，变量，字段，数组以及函数调用。变量无需声明，它们在首次使用时被初始化为<code>null</code>。</p>
-<pre><code class="language-bash">assignment          =  +=  -=  *=  /=  %=  ^=
-conditional         ?  :
-logical and         &amp;&amp;
-logical or          ||
-logical not         !
-array membership    in
-matching       		~   !~
-relational          &lt;  &gt;   &lt;=  &gt;=  ==  !=
-concatenation       (no explicit operator)
-add ops             +  -
-mul ops             *  /  %
-unary               +  -
-exponentiation      ^
-inc and dec         ++ -- (both post and pre)
-field               $
-</code></pre>
-<h3 id="正则表达式"><strong>正则表达式</strong></h3>
-<p>在Awk中语言中，通常测试一个记录、字段或字符串是否与一个正则表达式匹配，匹配返回1，不匹配返回0。正则表达式用两个反斜杠<code>/</code>包围。</p>
-<pre><code class="language-bash">expr ~ /r/							 # 评估expr是否与r匹配。匹配的意思是expr的一个子串是否在正则表达式r定义的字符串集中。
-
-/r/ { action }, $0 ~ /r/ { action }	 # 两者相同， /r/ 等于 $0 ~ /r/
-</code></pre>
-<p>任何表达式都可以放到<code>~</code>和<code>!~</code>右边或者内建的需要正则表达式的地方。在必要的时候，该表达式会被转变成字符串，然后作为一个正则表达式来解释。以下三行awk命令完成同样的功能：输出第5列为10的的行。</p>
-<pre><code class="language-bash">seq 20 | xargs -n5 &gt; file
-# cat file
-1 2 3 4 5
-6 7 8 9 10
-11 12 13 14 15
-16 17 18 19 20
-
-awk '$5 ~ /10/' file
-awk '$5 ~ &quot;10&quot;' file
-awk '$5 ~ 10' file
-</code></pre>
-<h3 id="数组"><strong>数组</strong></h3>
-<p>Awk支持一维数组。其表示方法为<code>array[expr]</code>，<code>expr</code>在内部被统一转换成字符串类型，因此A[1]，与A[&quot;1&quot;]相同，事实上索引都是“1”。索引为字符串的数组被称为关联数组。<code>expr in array</code>用于判断数组元素array[expr]是否存在。</p>
-<pre><code class="language-bash">for ( var in array ) statement
-</code></pre>
-<h3 id="控制语句"><strong>控制语句</strong></h3>
-<pre><code class="language-bash">if ( expr ) statement
-if ( expr ) statement else statement
-while ( expr ) statement
-do statement while ( expr )
-for ( opt_expr ; opt_expr ; opt_expr ) statement
-for ( var in array ) statement
-continue
-break
-</code></pre>
-<h3 id="内置变量"><strong>内置变量</strong></h3>
-<ul>
-<li><code>NR</code> - 当前行数</li>
-<li><code>NF</code> - 当前行的列数</li>
-<li><code>RS</code>，行分隔符，默认是换行符</li>
-<li><code>FS</code>，列分隔符，默认是空格和制表符</li>
-<li><code>ORS</code>，输出行分隔符，默认为换行符</li>
-<li><code>OFS</code>，输出列分隔符，默认为空格</li>
-<li><code>FILENAME</code>，当前文件名</li>
-</ul>
-<h3 id="内置函数"><strong>内置函数</strong></h3>
-<h3 id="字符串函数"><strong>字符串函数</strong></h3>
-<p>sub()、substr()、gsub()，sprintf()，index()，length()， match()，split()，tolower(), toupper()</p>
-<h3 id="数学函数"><strong>数学函数</strong></h3>
-<p>sin()，cos(), ...</p>
-<h3 id="输入输出"><strong>输入输出</strong></h3>
-<p>有两个输出语句，<code>print</code>和<code>printf</code></p>
-<pre><code class="language-python">print							# 打印整条记录到标准输出，相当于print $0
-print expr1, expr2, ..., exprn	# 打印指定字段到标准输出
-printf format, expr-list		# C语言printf函数的重用
-</code></pre>
-<p>输入函数getline有以下几种形式：</p>
-<pre><code class="language-bash">getline							# 读取下一条记录到$0，更新NF，NR和FNR
-getline var						# 读取下一条记录到var，更新NR和FNR
-getline &lt; file					# 从文件读取记录到$0，更新NF
-getline var &lt; file				# 从文件读取记录到var
-command | getline				# 通过管道传递command的结果到$0，更新NF
-command | getline var			# 通过管道传递command的结果到var
-seq 10 | awk '{print $0;getline}'					  # 显示奇数行
-seq 10 | awk '{getline; print $0}'					  # 显示偶数行
-seq 10 | awk '{getline tmp; print tmp; print $0}'	  # 奇偶行对调
-
-awk 'BEGIN {&quot;date&quot; | getline;close(&quot;date&quot;);print $0}' # 得到系统当前时间
-
-# fastq转换成fasta
-awk '{getline seq; getline comment; getline quality; sub(&quot;@&quot;, &quot;&gt;&quot;, $0); print $0&quot;\n&quot;seq}' file
-</code></pre>
-<h3 id="示例"><strong>示例</strong></h3>
-<pre><code class="language-bash">awk '{print $0}' file	# 打印整行
-awk '{print $1}' file	# 打印第一列
-awk '{print $2}' file	# 打印第二列
-awk '{print $NF}' file	# 打印最后一列
-awk '{print $(NF-1)}' file#打印倒数第二列
-awk -F ';' -v OFS='\t' '{print $1,$2,$NF}' file	# 读入的文件以逗号;分隔列，打印第1列，第2列和最后一列，并且打印时以制表符作为列的分隔符
-number=10;awk -v n=$number '{print n}' file	# number的值被传给了程序变量n
-awk '$2 &gt; 100' file		# 打印第2列大于100的行
-awk 'NR&gt;1 &amp;&amp; NR&lt;4' file # 打印第2~3行
-
-awk '/EGFR/' file		# 打印含有EGFR的行，相当于grep EGFR file
-awk '$1 ~ /EGFR/' file	# 打印第1列含有EGFR的列
-
-# 按指定列去除重复行
-# cat file
-1 2 3 4 5
-6 2 8 9 10
-11 12 13 14 15
-16 17 18 19 20
-awk '!a[$2]++' file		# 第二列出现两次2，只保留第一次出现的那一行，结果如下：
-1 2 3 4 5
-11 12 13 14 15
-16 17 18 19 20
-
-awk '{sum+=$1} END {print sum}' file	# 累加文件的第一列
-awk '{sum+=$1} END {print sum/NR}' file	# 求第一列的平均数
-
-# 从含有多条fasta序列的文件中提取指定序列
- awk -v RS=&quot;&gt;&quot; '/chr1/ {print $0}' hg19.fa	# 提取chr1的序列
- awk -v RS=&quot;&gt;&quot; '/chr1|chr2/ {print $0}' hg19.fa	# 提取chr1和chr2的序列
-</code></pre>
-<h2 id="bash脚本模板"><strong>Bash脚本模板</strong></h2>
-<pre><code class="language-bash">#!/bin/bash
-
-command1
-
-command2
-
-...
-</code></pre>
-<p><code>chmod +x run.sh</code> 给run.sh脚本增加可执行权限</p>
-<p>执行脚本，以下三种方式都可以：</p>
-<pre><code class="language-bash"># 脚本在前台执行，标准输出和标准错误输出到屏幕
-./run.sh
-bash run.sh
-sh run.sh		# 前提sh链接到了bash，如果没有，需要root权限执行命令：ln -sf /bin/bash /bin/sh
-
-# 脚本在前台执行，标准输出和标准错误保存到文件
-./run.sh &amp;&gt; run.sh.o
-
-# 脚本在后台执行，在最后加上一个&amp;符号
-./run.sh &amp;&gt; run.sh.o &amp;
-
-# 脚本在后台执行，并且防断线（长时间运行任务时使用）
-nohup ./run.sh &amp;&gt; run.sh.o &amp;
-</code></pre>
-<h2 id="其他命令"><strong>其他命令</strong></h2>
-<pre><code class="language-bash">echo $PATH		# 显示环境变量
-time command	# 显示命令执行时间
-date			# 显示日期和时间
-history			# 显示历史命令
-export PATH=$PATH:/path/to/bin	# 将路径加入环境变量中
-ln -s file file2# 为file文件创建软链接，名称为file2
-exit			# 退出登录
-Tab键自动补全	 # Tab键可以补全命令或文件路径，输入部分命令或路径时，尝试按Tab键补全
-Ctrl + c		# 中止当前命令的执行
-seq 10			# 产生1到10的整数
-md5sum			# 生成，或验证文件的MD5值
-</code></pre>
-<hr>
-<h2 id="1-帮助命令">1. 帮助命令</h2>
-<p>1.1 <code>man 命令名称</code>，man 的意思是 manual，即手册，对于大多数命令都可以使用这个命令来查看其使用的方法。</p>
-<p>1.2 <code>help 命令名称</code> 或者 <code>命令名称 --help</code>，可以查看命令的使用帮助。</p>
-<h2 id="2-目录操作">2. 目录操作</h2>
-<p>2.1 <code>pwd</code>，查看当前所在的目录路径。</p>
-<p>2.2 <code>ls 路径</code>，查看指定路径下的文件列表，可以加上多个路径，例如：<code>ls /usr /etc</code>，分别显示根目录下的 user 目录和 etc 目录。</p>
-<p>ls 命令的常用参数有：</p>
-<ul>
-<li><code>-a</code>，显示隐藏的目录或文件</li>
-<li><code>-l</code>，显示文件的详细信息，<code>ls -l</code> 等价于 <code>ll</code></li>
-<li><code>-h</code>，格式化显示文件的大小，如 1K，3M，1G，方便阅读</li>
-<li><code>-t</code>，以修改时间排序文件列表</li>
-<li><code>-r</code>，反序排序列表</li>
-<li><code>-R</code>，递归显示所有子文件夹的内容</li>
-<li><code>-S</code>，大写的 S，以文件的大小排序</li>
-</ul>
-<p>2.3 <code>cd 路径</code>，cd 的意思是 change directory，改变路径。</p>
-<p>2.4 <code>mkdir 目录名称</code>，创建目录，可以加多个参数创建多个目录，例如 <code>mkdir /tmp/a /tmp/b</code>。</p>
-<p>常用参数：<code>-p</code>，表示创建多级不存在的目录。</p>
-<p>2.5 <code>rmdir 目录</code>，删除目录，注意只能删除空目录。</p>
-<p>2.6 <code>cp</code>，复制文件或者目录的命令，例如将一个文件复制到另一个目录中：<code>cp test.txt /usr/local/</code></p>
-<p>常用参数：</p>
-<ul>
-<li><code>-r</code>，用于复制目录，递归目录中的所有内容</li>
-<li><code>-v</code>，显示复制的详细信息</li>
-</ul>
-<p>2.7 <code>mv</code>，这个命令有两个功能，一是重命名文件或文件夹，例如 <code>mv a.txt b.txt</code>，二是移动文件，例如将文件 a.txt 移动至 root 目录下 <code>mv a.txt /root/</code>。</p>
-<h2 id="3-查看文件">3. 查看文件</h2>
-<p>3.1 <code>cat 文件名</code>，查看文件的全部内容，常用参数 <code>-n</code>，可显示文件的行号。</p>
-<p>3.2 <code>head 文件名</code>，查看文件头部的内容，默认显示前 10 行，可加参数 <code>-行数</code> 查看前 n 行，例如 <code>head -30 文件名</code>。</p>
-<p>3.3 <code>tail 文件名</code>，查看文件尾部的内容，默认显示最后 10 行，常用参数 <code>-f</code>，可查看追加的文件内容。</p>
-<p>3.4 <code>wc 文件名</code>，查看文件的统计信息，常用参数：</p>
-<ul>
-<li><code>-l</code>，显示文件的行数</li>
-<li><code>-w</code>，显示文件内的总单词数</li>
-<li><code>-c</code>，文件的字节数大小</li>
-</ul>
-<h2 id="4-压缩解压">4. 压缩解压</h2>
-<p>4.1 打包命令：<code>tar cf 打包后存放路径和文件名 源文件</code>，例如打包根目录下的 /etc，命令：<code>tar cf /temp/etc-backup.tar /etc</code>，使用这个参数打包，不用压缩源文件。</p>
-<p>4.1 压缩打包：</p>
-<ul>
-<li>gz 格式：<code>tar czf /temp/etc-backup.tar.gz /etc</code></li>
-<li>bz2 格式：<code>tar cjf /temp/etc-backup.tar.bz2 /etc</code></li>
-</ul>
-<p>两种格式的区别：gz 格式压缩速度更快，bz2 个格式压缩后的文件更小。</p>
-<p>.tar.gz 可以缩写为 <strong>.tgz</strong>，.tar.bz2 可以缩写为 <strong>.tbz2</strong>。</p>
-<p>4.2 解压命令：</p>
-<ul>
-<li>解压 <strong>.tar</strong> 格式的文件：<code>tar xf 文件名</code>，可加参数 -C，指定解压后的存储路径</li>
-<li>解压 <strong>.tar.gz</strong> 格式的文件：<code>tar zxf 文件名</code></li>
-<li>解压 <strong>.tar.bz2</strong> 格式的文件：<code>tar jxf 文件名</code></li>
-</ul>
-<h2 id="5-权限操作">5. 权限操作</h2>
-<p>5.1 添加用户：<code>useradd 用户名</code>。</p>
-<p>5.2 修改用户密码：<code>passwd 用户名</code>，不加用户名的话，则默认修改当前用户的密码。</p>
-<p>5.3 删除用户：<code>userdel 用户名</code>，可加参数 -f 强制删除，-r 删除用户主目录。</p>
-<p>5.4 新建用户组：<code>groupadd 用户组名称</code>。</p>
-<p>5.5 将某个用户加入到某个用户组中：<code>usermod -g 用户组名称 用户名</code></p>
-<p>5.6 修改文件权限，文件权限的表示为 r（可读），w（可写），x（可执行），数字表示分别是 4， 2，1。</p>
-<p><code>chmod u+x a.txt</code>，表示对文件 a.txt 添加可执行权限，选项 u 表示所属用户，类似的有 g（属组）、a（全部）；+ 表示添加权限，- 表示删除权限</p>
-<p>5.7 修改文件的属主和属组权限：<code>chown root:root a.txt</code>，其中 : 前面的表示所属用户，后面的表示所属用户组。</p>
-<p>也可以单独改变属主和属组的权限：</p>
-<ul>
-<li><code>chown root a.txt</code>，改变所属用户。</li>
-<li><code>chown :root a.txt</code>，改变所属用户组。</li>
-</ul>
-<h2 id="6-软件安装">6. 软件安装</h2>
-<p>6.1 rpm 包管理，文件后缀一般是以 .rpm 结尾的。</p>
-<ul>
-<li>安装的命令：<code>rpm -i xxx.rpm</code>，如果安装的包需要有其他的依赖，则会提示先手动安装依赖。</li>
-<li>查看安装的软件包：<code>rpm -qa</code>，可加管道过滤想查询的软件包，<code>rpm -qa | grep mysql</code> 。</li>
-<li>卸载软件包命令：<code>rpm -e 软件包名称</code>，注意这里必须输入软件包的名字全程。常加参数 <code>--nodeps</code> 表示卸载时不检查依赖。</li>
-</ul>
-<p>6.2 yum 是一个基于 rpm 的包管理器，可以自己检查依赖，维护包的升级移除，更加的自动化，在实际中的使用也更多。</p>
-<ul>
-<li>安装软件包：<code>yum install 软件包名称</code></li>
-<li>卸载：<code>yum remove 软件包名称</code></li>
-<li>查看安装的软件：<code>yum list</code></li>
-</ul>
-<p>6.3 Linux 上安装软件的第三种方式是源代码编译安装，在下载好的源代码中一般有一个 configure 文件，安装的步骤为：</p>
-<ul>
-<li>进入软件包目录，执行 configure 文件，<code>./configure --prefix=/软件包安装路径</code></li>
-<li>然后执行命令 <code>make</code>，或者按照指示执行 <code>gmake</code>，两者是类似的命令</li>
-<li>然后再执行 <code>make install</code>命令</li>
-</ul>
-<h2 id="7-vim命令">7. Vim命令</h2>
-<p>Vim 是在 Linux 上经常使用的一个文本编辑器，熟练使用 Vim 的常用命令也是有必要的。</p>
-<p>7.1 输入 <code>vim 文件名</code> 则进入了 vim 的正常模式，常用命令如下：</p>
-<ul>
-<li>插入：
-<ul>
-<li>i（光标处前一个字符编辑），I（大写的 i，光标所处行首编辑）</li>
-<li>a（光标处后一个字符编辑），A（光标所处行尾编辑）</li>
-<li>o（光标处向下新建一行编辑），O（大写的 o，光标处向上新建一行编辑）</li>
-</ul>
-</li>
-<li>复制：
-<ul>
-<li>复制单行：光标处所处行按 YY，然后在目标行按 P</li>
-<li>复制多行：按数字 + YY，例如复制 3 行，在光标处按 3 YY，然后在目标行按 P</li>
-</ul>
-</li>
-<li>剪切：
-<ul>
-<li>剪切单行：光标所在行按 DD</li>
-<li>剪切多行：数字 + DD</li>
-</ul>
-</li>
-<li>撤销：按 U</li>
-<li>删除光标所处的字符：X</li>
-<li>替换光标所处的字符：按 R 后输入新的字符</li>
-<li>光标移动至某行：行数 + GG</li>
-<li>显示文件行数：按 ：后输入命令 <code>set nu</code></li>
-<li>移动至文件的第一行：GG</li>
-<li>移动至文件最后一行：shift + G</li>
-<li>移动至一行的开头：shift + 6</li>
-<li>移动至一行的末尾：shift + 4</li>
-</ul>
-<p>7.2 vim 的命令模式：</p>
-<ul>
-<li>
-<p><code>:w /usr/local/a.txt</code>，w 表示保存，后面可以跟上保存的路径和文件名称</p>
-</li>
-<li>
-<p><code>:wq</code> 表示保存并退出，<code>:q!</code> 表示强制退出，不保存修改</p>
-</li>
-<li>
-<p><code>:! 其他Linux命令</code>，输入 ! 可以进入临时的命令模式，在编辑文件的时候执行其他的命令，按 Enter 键回到正在编辑的文件中</p>
-</li>
-<li>
-<pre><code>/ 字符
-</code></pre>
-<p>，可以搜索文件中的内容，搜索后，匹配的文本会高亮显示，按 N 移动至下一个匹配的结果，按 shift + N 移动至上一个。</p>
-<ul>
-<li>搜索后的文件会高亮显示，如果需要取消高亮显示，输入命令：<code>:set nohlsearch</code>，如果需要重新高亮显示，去掉命令中的 no 即可：<code>:set hlsearch</code></li>
-</ul>
-</li>
-<li>
-<p>替换搜索到的内容：<code>:s/原文本/新的内容</code>，默认只会替换光标所在行的第一处搜索匹配的内容</p>
-</li>
-<li>
-<p>全局替换搜索到的内容：<code>:%s/原文本/新的内容</code></p>
-</li>
-<li>
-<p>如果匹配的内容有连续的，则全局替换时需要加参数 g：<code>:%s/原文本/新文件/g</code></p>
-</li>
-<li>
-<p>替换某行的内容：<code>m,ns/原文本/新的内容</code>， m、n 分别表示起始行和结束行，同理也可加参数 /g 替换有连续匹配的内容。</p>
-</li>
-</ul>
-<h1 id="考题">考题</h1>
-<hr>
-<h2 id="00-平常用什么-linux-命令比较多如何打开文件并进行查找某个单词怎么在某个目录下找到包含-txt-的文件">00 平常用什么 linux 命令比较多？如何打开文件并进行查找某个单词？怎么在某个目录下找到包含 txt 的文件？</h2>
-<p>pwd：显示当前所在位置</p>
-<p>sudo + 其他命令：以系统管理者的身份执行指令，也就是说，经由 sudo 所执行的指令就好像是 root 亲自执行。</p>
-<p>grep：要搜索的字符串 要搜索的文件 --color ： 搜索命令，--color 代表高亮显示</p>
-<p>ps - ef/ps aux： 这两个命令都是查看当前系统正在运行进程，两者的区别是展示格式不同。如果想要查看特定的进程可以使用这样的格式：</p>
-<pre><code class="language-shell"> ps aux|grep redis
-</code></pre>
-<p>（查看包括redis的进程），也可使用</p>
-<pre><code class="language-shell">pgrep redis -a
-</code></pre>
-<p>注意：如果直接用ps（（Process Status））命令，会显示所有进程的状态，通常结合 grep 命令查看某进程的状态。</p>
-<p>kill -9 进程的 pid ： 杀死进程（-9 表示强制终止），先用 ps 查找进程，然后用 kill 杀掉。</p>
-<p>find 目录 参数 ： 寻找目录（查）。在/home目录下查找以 .txt 结尾的文件名:</p>
-<pre><code class="language-shell">find /home -name &quot;*.txt&quot;
-</code></pre>
-<p>ls 或者 ll :（ll 是 ls -l 的别名，ll 命令可以看到该目录下的所有目录和文件的详细信息）： 查看目录信息。</p>
-<p>free : 显示系统内存的使用情况，包括物理内存、交换内存(swap)和内核缓冲区内存。</p>
-<p>tar -zcvf 打包压缩后的文件名 要打包压缩的文件 : 打包并压缩文件，一般情况下打包和压缩是一起进行的，打包并压缩后的文件的后缀名一般 .tar.gz。c：压缩。</p>
-<p>tar -xvf 压缩文件 - C 解压的位置 : 解压压缩包。x: 解压。</p>
-<p>wget : 是从远程下载的工具。</p>
-<p>vmstat : 虚拟内存性能监控、CPU 监控。</p>
-<p>top : 常用来监控Linux的系统状况，比如CPU、内存的使用，显示系统上正在运行的进程。load average：系统负载，就是进程队列的长度。当这个值&gt;cpu核心数的时候就说明有进程在等待处理了，是负载过重。</p>
-<p>2.18 用过 ping 命令么？简单介绍一下。TTL 是什么意思？<br>
-ping : 查看与某台机器的连接情况。TTL：生存时间。数据报被路由器丢弃之前允许通过的网段数量。</p>
-<p>2.19 怎么判断一个主机是不是开放某个端口？<br>
-telnet IP 地址 端口</p>
-<pre><code class="language-shell">telnet  127.0.0.1 3389 
-</code></pre>
-<h2 id="快捷键">快捷键</h2>
-<p>接下来是大家很熟悉的一个环节了，许多软件都内置了快捷键供用户使用，Linux/Shell 也不例外，熟悉这些快捷键可以极大提高我们的工作效率，我尤其推荐那些用来“移动光标”的命令。有时候我们输入的命令很长，会遇到一些“卡在中间、进退两难”的情况，这时候它们可能会发挥大的作用哦：</p>
-<table>
-<thead>
-<tr>
-<th>快捷键名</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>CTRL+A</td>
-<td>把光标移到命令行开头</td>
-</tr>
-<tr>
-<td>CTRL+E</td>
-<td>把光标移到命令行结尾</td>
-</tr>
-<tr>
-<td>CTRL+C</td>
-<td>强制终止当前命令</td>
-</tr>
-<tr>
-<td>CTRL+L</td>
-<td>清屏，相当于clear命令</td>
-</tr>
-<tr>
-<td>CTRL+U</td>
-<td>删除/剪切当前行、光标前的内容</td>
-</tr>
-<tr>
-<td>CTRL+K</td>
-<td>删除/剪切当前行、光标后的内容</td>
-</tr>
-<tr>
-<td>CTRL+Y</td>
-<td>粘贴CTRL+U/K中剪切的内容</td>
-</tr>
-<tr>
-<td>CTRL+R</td>
-<td>在历史命令中搜索</td>
-</tr>
-<tr>
-<td>CTRL+D</td>
-<td>退出当前终端</td>
-</tr>
-<tr>
-<td>CTRL+Z</td>
-<td>刮起当前进程</td>
-</tr>
-<tr>
-<td>CTRL+S</td>
-<td>暂停屏幕输出</td>
-</tr>
-<tr>
-<td>CTRL+Q</td>
-<td>恢复屏幕输出</td>
-</tr>
-</tbody>
-</table>
 ]]></content>
     </entry>
 </feed>
