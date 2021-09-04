@@ -1,0 +1,633 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Go cheatsheet | flyingchase</title>
+<meta name="description" content="记录成长的脚印">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1630767810173">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://flyingchase.github.io">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1630767810173" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://flyingchase.github.io">
+        <h1 class="site-title">flyingchase</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Go cheatsheet</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-09-04</span>
+            
+          </div>
+          <div class="post-content">
+            <h1 id="go-cheatsheet">Go cheatsheet</h1>
+<h2 id="variables">Variables</h2>
+<ul>
+<li>短声明不可在函数外部
+<ul>
+<li>短声明至少一个新变量</li>
+</ul>
+</li>
+<li>常量 const
+<ul>
+<li>可忽略类型 也可指定类型</li>
+</ul>
+</li>
+</ul>
+<p><strong>关键字</strong></p>
+<ol>
+<li><code>break default func interface select</code></li>
+<li><code>case defer go map struct</code></li>
+<li><code>chan else goto package switch</code></li>
+<li><code>const fallthrough if range type</code></li>
+<li><code>continue for import return var</code></li>
+</ol>
+<h3 id="iota">iota</h3>
+<ul>
+<li>
+<p>枚举使用  为 const 常量赋值</p>
+</li>
+<li>
+<p>按照 const 内的行数从 0 递增  同一行的值相等</p>
+</li>
+<li>
+<p>每次遇见 const 重置为 0</p>
+</li>
+</ul>
+<p>rune 是 unit32 别称</p>
+<p>byte 是 unit8 别称</p>
+<h3 id="make-new">make new</h3>
+<h4 id="make">make</h4>
+<ul>
+<li>内建 map slices channel 的内存分配</li>
+<li>返回有初始值的 T类型 非*T 指针</li>
+</ul>
+<h4 id="new">new</h4>
+<ul>
+<li>各种类型的内存分配</li>
+<li>返回指针 指向新分配的类型的零值</li>
+</ul>
+<h2 id="basic-types">Basic types</h2>
+<h3 id="strings">Strings</h3>
+<pre><code class="language-go">// 不会将换行符\n 转化 直接输出换行
+str:=`Multiline
+string`
+</code></pre>
+<ul>
+<li>字符串不可变
+<ul>
+<li>改变需要转化为<code>[]byte</code>类型</li>
+<li>+和切片操作可以更改  <code>s=“c”+s[1:]</code></li>
+</ul>
+</li>
+<li>再强转 string(ch)即可</li>
+<li>可使用<code>+</code>链接</li>
+<li></li>
+</ul>
+<h3 id="numbers">Numbers</h3>
+<pre><code class="language-go">num1:=3
+num2:=3.1
+num3:=3+4i
+num4:=byte('a') // byte 底层为alias unit8 
+
+fmt.Printf(&quot;reflect.TypeOf(num1): %v\n&quot;, reflect.TypeOf(num1))
+fmt.Printf(&quot;reflect.TypeOf(num2): %v\n&quot;, reflect.TypeOf(num2))
+fmt.Printf(&quot;reflect.TypeOf(num3): %v\n&quot;, reflect.TypeOf(num3))
+fmt.Printf(&quot;reflect.TypeOf(num4): %v\n&quot;, reflect.TypeOf(num4))
+
+// reflect.TypeOf(num1): int
+// reflect.TypeOf(num2): float64
+// reflect.TypeOf(num3): complex128
+// reflect.TypeOf(num4): uint8
+</code></pre>
+<h3 id="array">Array</h3>
+<pre><code class="language-go">numbers:=[...]int{1,2,3,4,5} // 忽略数组长度 直接按照后续初始化计长
+for _,num:=range numbers{
+  println(num)
+}
+</code></pre>
+<h3 id="slices">Slices</h3>
+<ul>
+<li><code>var slice []byte</code>
+<ul>
+<li>Slice[ : ：] 第一个默认位置为<code>0</code> 第二个默认位置是 len 第三个位置是容量的最后一个对应数组的下标 则 cap=(最后一位-第一位)
+<ul>
+<li>前闭后开</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>类似结构体 内含有 <em>指针（指向 数组中slice 的开始位置）、len（代表 slice长度）、cap（代表 slice 开始位置到对应数组的最后位置长度）</em>
+<ul>
+<li>append 追加——&gt;指针 会影响slice 指向的数组
+<ul>
+<li>当 slices(cap-len==0) 时slices 分配新的空间 返回新的数组指针 原数组内容不变</li>
+</ul>
+</li>
+<li>len 长度</li>
+<li>cap 容量</li>
+<li>copy 复制到目标 dst 返回复制元素个数</li>
+</ul>
+</li>
+</ul>
+<h3 id="pointers">Pointers</h3>
+<h3 id="map">map</h3>
+<ul>
+<li>字典无序 长度不固定，是引用类型</li>
+<li>len 获取 key 的数量</li>
+<li>不存在 k 对应的 v 返回为 bool</li>
+<li><em>API</em>
+<ul>
+<li>delete 删除 delete(map,key)</li>
+<li>v</li>
+</ul>
+</li>
+</ul>
+<h2 id="flow-control">Flow control</h2>
+<ul>
+<li>if内声明的变量作用域仅在代码块内</li>
+<li>无 while</li>
+<li>Switch 中 case 默认带 break 需要 <code>fallthrough</code></li>
+</ul>
+<h3 id="conditional">Conditional</h3>
+<h4 id="siwtch">siwtch</h4>
+<ul>
+<li>switch中 Expr 与 case 的各个 expr判断必须是同类型的</li>
+<li>switch 无表达式则默认为 <code>true</code></li>
+<li></li>
+</ul>
+<h3 id="goto">Goto</h3>
+<p>与 <code>Here:</code>标签搭配  必须跳转到当前函数内定义的标签</p>
+<ul>
+<li>标签名大小写敏感</li>
+<li></li>
+</ul>
+<h2 id="functions">Functions</h2>
+<ul>
+<li>
+<p>函数可作为参数传递</p>
+<ul>
+<li>成为嵌套函数  在函数中调用其他函数</li>
+</ul>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+// 首先需要定义函数类型 作为其它函数的传入参数
+type testInt func(int) bool
+// 按照函数类型来编写函数
+func isOdd(integer int) bool {
+   if integer%2 == 0 {
+      return false
+   }
+   return true
+}
+func isEven(integer int) bool {
+   if integer%2 != 0 {
+      return false
+   }
+   return true
+}
+func filter(slice []int, f testInt) []int {
+   var res []int
+   for _, val := range slice {
+      if f(val) {
+         res = append(res, val)
+      }
+   }
+   return res
+}
+func main() {
+   slice := []int{1, 2, 3, 4, 5, 6, 7}
+   fmt.Println(slice)
+   odd := filter(slice, isOdd) // 将函数作为参数传入函数
+   fmt.Println(odd)
+   even := filter(slice, isEven)
+   fmt.Println(even)
+}
+</code></pre>
+<ul>
+<li>将函数作为参数传递要求
+<ul>
+<li>定义函数类型</li>
+<li>要作为参数传递的函数类型与定义的函数类型相同</li>
+</ul>
+</li>
+</ul>
+<h4 id="variadic-functions-可变参数">Variadic Functions 可变参数</h4>
+<ul>
+<li>
+<pre><code class="language-go">func funcName (nums ...int) {  // 不指定参数个数
+    fmpl(nums)
+    for _,num:=rang nums{
+        sum+=num;
+    }
+    fmpl(sum)
+}
+func main() {
+    sum(1,2)
+    sum(1,2,3)
+    nums:=[]int{1,2,3,4}
+    sum(nums...)
+}
+</code></pre>
+</li>
+</ul>
+<h4 id="closures-返回func">Closures 返回func</h4>
+<ul>
+<li>
+<pre><code class="language-go">func intSeq() func() int{    // 函数返回值为函数
+   i:=0
+   return func() int {
+       i++
+       return i
+   }
+}
+func main() {
+   nextIntL:=intSeq()
+   fmt.Println(nextIntL()) // 1
+   fmt.Println(nextIntL()) //2
+   fmt.Println(nextIntL())//3
+   newIntL:=intSeq()
+   fmt.Println(newIntL()) //1 
+}
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="recursion">Recursion</h4>
+<pre><code class="language-go">func fact (n int) int{
+	if n==0 {
+		return 1
+	}
+	return n* fact(n-1)  
+}
+
+func main(){
+	fmt.Println(fact(7))  
+
+	var fib func(n int) int  // 将函数定义为变量 
+
+	fib=func (n int) int {
+		if n&lt;2 {
+			return n
+		}
+		return fib(n-1)+fib(n-2)
+	}
+	fmt.Println(fib(7))
+}
+</code></pre>
+<h3 id="lambda">Lambda</h3>
+<p><code>arg …int</code>表示函数接受不定数量的变参</p>
+<p>Func myFunc (arg ..int) int{}</p>
+<h3 id="defer">defer</h3>
+<ul>
+<li>函数执行到最后return 后  defer 逆序执行 最后返回值退出</li>
+<li></li>
+</ul>
+<h2 id="packages">Packages</h2>
+<p>两个保留函数 main 和 init</p>
+<ul>
+<li><code>main 函数</code>只能用于<code>package main</code> <code>init函数</code>可用于各个 package</li>
+<li>两者无参数和返回值</li>
+</ul>
+<h3 id="点操作">点操作</h3>
+<p><strong>. “packhageName”：</strong></p>
+<ul>
+<li>点操作含义是调用该包内函数时 可忽略前缀包名
+<ul>
+<li><code>fmt.Println()</code>可简写为<code>Println()</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="别名操作">别名操作</h3>
+<ul>
+<li>将包名在本文件内作为自定义名称</li>
+<li>防止冲突/易于记忆包名</li>
+</ul>
+<h3 id="_操作">_操作</h3>
+<ul>
+<li>导入该包但不直接使用包内函数 调用包内的 <code>init函数</code></li>
+</ul>
+<h2 id="error-control">Error control</h2>
+<p>panic 和 recover 机制</p>
+<h2 id="structs">Structs</h2>
+<ul>
+<li>
+<p>匿名字段可包含对应 struct 的所有内容</p>
+</li>
+<li>
+<p>内置类型 Int 等也可以作为匿名字段</p>
+</li>
+<li>
+<p>内外层有重复的字段 优先访问最外层的字段</p>
+</li>
+</ul>
+<h2 id="methods">Methods</h2>
+<ul>
+<li>
+<p>附属在给定的 struct 上 在函数基础上加上 receiver</p>
+</li>
+<li>
+<p>方法可与在任何自定义的类型、内置类型、struct 上</p>
+<ul>
+<li>type typeName typeLiteral   称 typeName 为自定义类型</li>
+<li>struct 是自定义中的一种</li>
+</ul>
+</li>
+<li>
+<p>继承</p>
+<ul>
+<li>匿名字段的 method 可被继承 包含该匿名字段的 struct 可调用期内的 methods</li>
+</ul>
+</li>
+<li>
+<p>重写 override</p>
+<ul>
+<li>外部 struct 可重写内部 struct 的 methods</li>
+</ul>
+</li>
+</ul>
+<h2 id="interfaces">Interfaces</h2>
+<ul>
+<li>
+<p>interface 可被任意对象实现</p>
+</li>
+<li>
+<p>一个对象可实现多个 interface</p>
+</li>
+<li>
+<p>任意类型都实现了空 interface</p>
+</li>
+<li>
+<p>是一抽象方法的集合</p>
+</li>
+</ul>
+<h4 id="变量存储类型">变量存储类型</h4>
+<ul>
+<li>断言<code>Comma-ok</code>
+<ul>
+<li><code>value,ok:=element(T)</code> ok 是 bool 类型 true 代表是该类型 多在 if-else 使用</li>
+<li><code>switch</code> 使用<code>element.(type)</code> 作为判断和 case</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-go">type Element interface {
+} // 可作用在任何类型上
+type List[] Element // element 为空接口并将其自定义名称为 List[]
+type Person struct {
+   name string
+   age int
+}
+
+func (p *Person) String() string {
+   return p.name+strconv.Itoa(p.age)
+
+}
+func main() {
+list:=make(List,3)
+list[0] = 1
+list[1] = &quot;hello&quot;
+list[2]=Person{name : &quot;w&quot;,age :100}
+for index,element:=range list {
+   if value, ok := element.(int); ok {
+      fmt.Println(index, value)
+   }else if value, ok := element.(Person); ok {
+      fmt.Println(index,value)
+   }else if value, ok := element.(string); ok {
+
+      fmt.Println(index,value)
+   }else {
+      fmt.Println(index)
+   }
+}
+</code></pre>
+<p>函数赋值给变量 函数内是空接口</p>
+<pre><code class="language-go">whatAmI := func(i interface{}) {  switch t := i.(type) {  case bool:     fmt.Println(&quot;bool&quot;)  case int:     fmt.Println(&quot;int&quot;)  default:     fmt.Println(reflect.TypeOf(t))  }}whatAmI(&quot;1&quot;)whatAmI(true)whatAmI(1)whatAmI(Studnet{})
+</code></pre>
+<h2 id="concurrency">Concurrency</h2>
+<ul>
+<li>通过通信来共享而非通过共享来通信</li>
+<li>goroutine 运行在相同的地址空间</li>
+</ul>
+<h4 id="channel">channel</h4>
+<ul>
+<li>
+<p>channel 必须使用 make 创建并定义发送到 channel 的类型</p>
+</li>
+<li>
+<p>cap 可以读取 channel 的缓存容量</p>
+<ul>
+<li>
+<pre><code class="language-go">ch:=make(chan int) // 定义同时规定发送到 chan 的类型v:=1ch&lt;-v 	// 将 v 发送到 chanw:=&lt;-ch	// 从 ch中读取并赋值给 w
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>默认无缓存chan 接受和发送是阻塞的  除非另外一端准备好</p>
+<ul>
+<li>
+<p><code>value:&lt;-c</code> 读取会被阻塞 直到有数据接受</p>
+</li>
+<li>
+<p><code>ch&lt;-5</code> 发送会被阻塞 直到有被读取</p>
+</li>
+<li>
+<pre><code class="language-go">func sum(a []int, c chan int)  {   total:=0   for _,v:=range a{      total+=v   }   c&lt;-total}func main() {   a:=[...]int {1, 2, 3,4,5,6,7,8,9,0}   c:=make(chan int)   go sum(a[:len(a)/2],c)   go sum(a[len(a)/2:],c)   x,y:=&lt;-c,&lt;-c   fmt.Println(x,y,x+y)}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>Buffer channel 带缓存的 channel</p>
+<ul>
+<li>
+<p><code>ch；=make(chan type,cap)</code> 在 cap 内的读写是无阻塞的 超过 cap 时候需要等待其他 goroutine 从 channel 中读取元素 释放空间</p>
+</li>
+<li>
+<p><code>for i:=rang c</code> 可以不断读取 channel 直到 channel 被显示关闭</p>
+</li>
+<li>
+<p><code>close</code>关闭 channel 无法发送数据 但可以在消费方通过<code>v,ok:=c;ok</code><em>断言</em>来测试是否关闭 channel</p>
+<ul>
+<li>在生产者方关闭 channle  在消费者方容易产生 panic</li>
+<li>结束 range 循环/无数据需要发送时候关闭 channel 才使用 close显式关闭</li>
+</ul>
+</li>
+<li>
+<pre><code class="language-go">func fibonacc(n int, c chan int)  {   x,y:=1,1   for i:=0;i&lt;n;i++ {      c&lt;-x      x,y=y,x+y   }   close(c)	// 显示关闭 channel}func main() {   c:=make(chan int, 10)   go fibonacc(cap(c),c)   for i:=range c {      fmt.Println(i)   }}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>多 channel 下 <em>select</em></p>
+<ul>
+<li>
+<p>select 关键字监听 channel 上的数据流动</p>
+</li>
+<li>
+<p>默认是阻塞的  只有监听的 channel 上数据流动才运行  多个 channel 准备好时select 随机选择执行</p>
+</li>
+<li>
+<p>类似 switch 有 <code>default</code>   可设置超时来退出循环</p>
+</li>
+<li>
+<pre><code class="language-go">func fibonacc(c, quit chan int) {   x, y := 1, 1   for {      select {		// 类似 switch  监听 channel 上的数据流动      case c &lt;- x:         x, y  = y, x+y      case &lt;-quit:         fmt.Println(&quot;quit&quot;)         return      case &lt;-time.After(5*time.Second) // 阻塞超过5 s情况          fmpl(&quot;timeOut&quot;)          break;      }   }}func main() {   c := make(chan int)   quit:=make(chan int)   go func() {      for i := 0; i &lt; 10; i++ {         fmt.Println(&lt;-c)      }      quit&lt;-0   }()   fibonacc(c,quit)}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><code>Goexit</code></p>
+<ul>
+<li>退出当前 Goroutine 但defer 仍调用</li>
+</ul>
+</li>
+<li>
+<p><code>Gosched</code></p>
+<ul>
+<li>让出 goRoutine 权限</li>
+</ul>
+</li>
+<li>
+<p><code>NumCPU</code> <code>NumGoroutine</code></p>
+<ul>
+<li>返回 cpu数目</li>
+<li>返回执行和排队的任务总数</li>
+</ul>
+</li>
+<li>
+<p><code>GOMAXPROCS</code></p>
+<ul>
+<li>并行计算的 cpu 核数最大值 返回之前的核数值</li>
+</ul>
+</li>
+</ul>
+<h2 id="references">References</h2>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/go-web-ji-chu/">
+              <h3 class="post-title">
+                下一篇：Go web 基础
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">记录成长的脚印</div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/flyingchase" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+   | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
