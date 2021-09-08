@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-09-04T15:03:33.237Z</updated>
+    <updated>2021-09-08T10:27:58.759Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,71 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[Joplin 介绍]]></title>
+        <id>https://flyingchase.github.io/post/joplin-jie-shao/</id>
+        <link href="https://flyingchase.github.io/post/joplin-jie-shao/">
+        </link>
+        <updated>2021-09-08T10:27:44.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="joplin-介绍">Joplin 介绍</h1>
+<h2 id="特色">特色</h2>
+<ul>
+<li>
+<p>同步方式多种多样 全平台支持</p>
+<ul>
+<li>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20210908170712113.png" alt="image-20210908170712113" style="zoom:50%;" />
+</li>
+</ul>
+</li>
+<li>
+<p>网页剪辑</p>
+</li>
+<li>
+<p>开源支持 社区很好 不怕跑路 笔记加密</p>
+</li>
+<li>
+<p>支持调用外部 mkdown编辑器</p>
+</li>
+<li>
+<p>目录树  tag</p>
+</li>
+<li>
+<p>to-do 模式</p>
+</li>
+<li>
+<p>支持附件插入 地理位置</p>
+</li>
+<li>
+<p>笔记历史版本</p>
+</li>
+</ul>
+<h2 id="同步">同步</h2>
+<p>采用 AWS S3 同步  腾讯云和阿里云对象存储均支持</p>
+<ul>
+<li>腾讯云
+<ul>
+<li>同步的储存桶名称包括 id  url 形式为<code>https://cos.whereisyourbucket.myqclound.com</code></li>
+<li>秘钥和密码为私有用户权限的 API</li>
+</ul>
+</li>
+</ul>
+<h2 id="定制">定制</h2>
+<ul>
+<li>实现[toc]右侧鼠标悬浮 <code>cmd</code>可点击跳转</li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/C5Yjiz.png" alt="C5Yjiz" loading="lazy"></figure>
+<p>参考：<a href="https://lightzhan.xyz/index.php/2020/11/22/joplin-toc-customizing/">Joplin实现炫酷的侧边栏目录</a></p>
+<ul>
+<li>
+<p>利用 typora 的 css 格式 复制到<code>~/.config/joplin-desktop</code> 即可在设置中应用（改为默认名称 userstyle.name）</p>
+</li>
+<li>
+<p>使用 vscode Joplin 插件实现 vscode 打开 joplin 编辑 mkdown 文件</p>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Go cheatsheet]]></title>
         <id>https://flyingchase.github.io/post/go-cheatsheet/</id>
@@ -1057,8 +1122,9 @@ func main() {
         <updated>2021-09-03T03:05:18.000Z</updated>
         <content type="html"><![CDATA[<h2 id="concurrency">Concurrency</h2>
 <ul>
-<li>通过通信来共享而非通过共享来通信</li>
+<li>通过通信来共享而非通过共享来通信 并发模型采用 CSP communicating Seqyential process</li>
 <li>goroutine 运行在相同的地址空间</li>
+<li>底层也是通过共享内存的加锁来实现  抽象级别层级更高</li>
 </ul>
 <h4 id="channel">channel</h4>
 <ul>
@@ -1111,7 +1177,7 @@ func main() {
 <p>Buffer channel 带缓存的 channel</p>
 <ul>
 <li>
-<p><code>ch；=make(chan type,cap)</code> 在 cap 内的读写是无阻塞的 超过 cap 时候需要等待其他 goroutine 从 channel 中读取元素 释放空间</p>
+<p><code>ch：=make(chan type,cap)</code> 在 cap 内的读写是无阻塞的 超过 cap 时候需要等待其他 goroutine 从 channel 中读取元素 释放空间</p>
 </li>
 <li>
 <p><code>for i:=rang c</code> 可以不断读取 channel 直到 channel 被显示关闭</p>
@@ -1186,28 +1252,80 @@ func main() {
 </code></pre>
 </li>
 </ul>
+<h5 id="channel-通信">channel 通信</h5>
+<pre><code class="language-go">func testAppendA(t *testing.T) {
+   x := []int{1, 2, 3}
+   appendA(x)
+   fmt.Printf(&quot;main %v\n&quot;, x)
+}
+
+func appendA(x []int) {
+   x[0] = 100
+   fmt.Printf(&quot;appendA %v\n&quot;, x)
+}
+func main() {
+   ch := make(chan struct{})
+
+   go func() {
+      for i := 1; i &lt; 11; i++ {
+         ch &lt;- struct{}{}
+         if i%2 == 1 {
+            fmt.Println(&quot;奇数&quot;, i)
+         }
+      }
+   }()
+   go func() {
+      for i := 0; i &lt; 11; i++ {
+         &lt;-ch
+         if i%2 == 0 {
+            fmt.Println(&quot;偶数&quot;, i)
+         }
+      }
+   }()
+   time.Sleep(10 * time.Second)
+}
+</code></pre>
 </li>
-<li>
-<p><code>Goexit</code></p>
+</ul>
+<h5 id="广播通信">广播通信</h5>
+<pre><code class="language-go">func main() {
+   notify := make(chan struct{})
+
+   for i := 0; i &lt; 10; i++ {
+      go func(i int) {
+         for {
+            select {
+            case &lt;-notify:
+               fmt.Println(&quot;done...&quot;, i)
+            case &lt;-time.After(1 * time.Second):
+               fmt.Println(&quot;wait notify&quot;, i)
+            }
+         }
+      }(i)
+   }
+   time.Sleep(1 * time.Second)
+   close(notify)
+   time.Sleep(3 * time.Second)
+}
+</code></pre>
+<ul>
+<li><code>Goexit</code>
 <ul>
 <li>退出当前 Goroutine 但defer 仍调用</li>
 </ul>
 </li>
-<li>
-<p><code>Gosched</code></p>
+<li><code>Gosched</code>
 <ul>
 <li>让出 goRoutine 权限</li>
 </ul>
 </li>
-<li>
-<p><code>NumCPU</code> <code>NumGoroutine</code></p>
+<li><code>NumCPU</code> <code>NumGoroutine</code>
 <ul>
 <li>返回 cpu数目</li>
 <li>返回执行和排队的任务总数</li>
 </ul>
 </li>
-<li>
-<p><code>GOMAXPROCS</code></p>
+<li><code>GOMAXPROCS</code>
 <ul>
 <li>并行计算的 cpu 核数最大值 返回之前的核数值</li>
 </ul>
@@ -2398,72 +2516,6 @@ public static List&lt;Integer&gt; postOrderTraversalBT(TreeNode root) {
     Collections.reverse(res);
     return res;
 }
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Git常见问题汇总]]></title>
-        <id>https://flyingchase.github.io/post/git-chang-jian-wen-ti-hui-zong/</id>
-        <link href="https://flyingchase.github.io/post/git-chang-jian-wen-ti-hui-zong/">
-        </link>
-        <updated>2021-06-28T06:08:25.000Z</updated>
-        <content type="html"><![CDATA[<blockquote>
-<p>整理收集于互联网</p>
-</blockquote>
-<h3 id="1修改提交信息">1.修改提交信息</h3>
-<p>重写<code>commit</code></p>
-<pre><code class="language-shell">git commit --amend -m &quot;new message&quot;
-</code></pre>
-<h3 id="2添加文件到最后一次提交">2.添加文件到最后一次提交</h3>
-<p><code>git push</code> 后新增文件到最后一次提交</p>
-<pre><code class="language-shell">git add &lt;file_name&gt;git commit --amend HEAD~1
-</code></pre>
-<h3 id="3撤消提交">3.撤消提交</h3>
-<p>如果要撤消最近一次提交但保留更改，可执行以下操作：</p>
-<pre><code class="language-shell">git reset --soft HEAD~1
-</code></pre>
-<p>如果要撤消提交和更改，可执行以下操作：——&gt;丢弃更改</p>
-<pre><code class="language-shell">git reset --hard HEAD~1
-</code></pre>
-<p>如果要撤消所有的本地更改，则可以重置为分支的原始版本：</p>
-<pre><code class="language-shell">git reset --hard origin/&lt;branch_name&gt;
-</code></pre>
-<p>如果要撤消提交而不修改现有历史记录，则可以使用 git revert，此命令通过创建新的提交来撤消提交。</p>
-<pre><code class="language-shell">git revert HEAD
-</code></pre>
-<p>撤消已经推送到远程分支的合并提交的安全方法是使用 git revert 命令：</p>
-<pre><code class="language-shell">git revert -m 1 &lt;commit_id&gt;
-</code></pre>
-<p>commit_id 是要还原的合并提交 id。</p>
-<p>注意要点：</p>
-<ol>
-<li>可以撤消任意数量的提交。例如：<code>git reset HEAD~3</code>（返回 HEAD 之前的 3 个提交)；<code>git reset --hard &lt;commit_id&gt;</code>（返回特定的提交）。</li>
-<li>如果尚未推送提交，并且你不想引入糟糕的提交到远程分支，可以使用 git reset。</li>
-<li>使用 git revert 还原已经推送到远程分支的合并提交。</li>
-<li>使用 git log 查看提交历史。</li>
-</ol>
-<pre><code class="language-bash"># 删除 untracked files 
-git clean -f
- 
-# 连 untracked 的目录也一起删掉
-git clean -fd
- 
-# 连 gitignore 的untrack 文件/目录也一起删掉 （慎用，一般这个是用来删掉编译出来的 .o之类的文件用的）
-git clean -xfd
- 
-# 在用上述 git clean 前，墙裂建议加上 -n 参数来先看看会删掉哪些文件，防止重要文件被误删
-git clean -nxfd
-git clean -nf
-git clean -nfd
-</code></pre>
-<h3 id="4-git命令显示中文路径">4. Git命令显示中文路径</h3>
-<pre><code class="language-shell">git config --global core.quotePath false
-</code></pre>
-<h3 id="5-指定文件的历史修改记录">5. 指定文件的历史修改记录</h3>
-<pre><code class="language-shell">git log --follow -p 文件名
-</code></pre>
-<h3 id="6-指定提交的修改记录">6. 指定提交的修改记录</h3>
-<pre><code class="language-shell"># 查看commit提交修改的文件git show --stat &lt;commit的代号&gt;#查看commit提交修改的文件及内容git show &lt;commit的代号&gt;
 </code></pre>
 ]]></content>
     </entry>

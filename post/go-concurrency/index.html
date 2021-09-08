@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1630767810173">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1631096876178">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://flyingchase.github.io">
-        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1630767810173" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1631096876178" alt="" width="32px" height="32px">
       </a>
       <a href="https://flyingchase.github.io">
         <h1 class="site-title">flyingchase</h1>
@@ -88,8 +88,9 @@
           <div class="post-content">
             <h2 id="concurrency">Concurrency</h2>
 <ul>
-<li>通过通信来共享而非通过共享来通信</li>
+<li>通过通信来共享而非通过共享来通信 并发模型采用 CSP communicating Seqyential process</li>
 <li>goroutine 运行在相同的地址空间</li>
+<li>底层也是通过共享内存的加锁来实现  抽象级别层级更高</li>
 </ul>
 <h4 id="channel">channel</h4>
 <ul>
@@ -142,7 +143,7 @@ func main() {
 <p>Buffer channel 带缓存的 channel</p>
 <ul>
 <li>
-<p><code>ch；=make(chan type,cap)</code> 在 cap 内的读写是无阻塞的 超过 cap 时候需要等待其他 goroutine 从 channel 中读取元素 释放空间</p>
+<p><code>ch：=make(chan type,cap)</code> 在 cap 内的读写是无阻塞的 超过 cap 时候需要等待其他 goroutine 从 channel 中读取元素 释放空间</p>
 </li>
 <li>
 <p><code>for i:=rang c</code> 可以不断读取 channel 直到 channel 被显示关闭</p>
@@ -217,28 +218,80 @@ func main() {
 </code></pre>
 </li>
 </ul>
+<h5 id="channel-通信">channel 通信</h5>
+<pre><code class="language-go">func testAppendA(t *testing.T) {
+   x := []int{1, 2, 3}
+   appendA(x)
+   fmt.Printf(&quot;main %v\n&quot;, x)
+}
+
+func appendA(x []int) {
+   x[0] = 100
+   fmt.Printf(&quot;appendA %v\n&quot;, x)
+}
+func main() {
+   ch := make(chan struct{})
+
+   go func() {
+      for i := 1; i &lt; 11; i++ {
+         ch &lt;- struct{}{}
+         if i%2 == 1 {
+            fmt.Println(&quot;奇数&quot;, i)
+         }
+      }
+   }()
+   go func() {
+      for i := 0; i &lt; 11; i++ {
+         &lt;-ch
+         if i%2 == 0 {
+            fmt.Println(&quot;偶数&quot;, i)
+         }
+      }
+   }()
+   time.Sleep(10 * time.Second)
+}
+</code></pre>
 </li>
-<li>
-<p><code>Goexit</code></p>
+</ul>
+<h5 id="广播通信">广播通信</h5>
+<pre><code class="language-go">func main() {
+   notify := make(chan struct{})
+
+   for i := 0; i &lt; 10; i++ {
+      go func(i int) {
+         for {
+            select {
+            case &lt;-notify:
+               fmt.Println(&quot;done...&quot;, i)
+            case &lt;-time.After(1 * time.Second):
+               fmt.Println(&quot;wait notify&quot;, i)
+            }
+         }
+      }(i)
+   }
+   time.Sleep(1 * time.Second)
+   close(notify)
+   time.Sleep(3 * time.Second)
+}
+</code></pre>
+<ul>
+<li><code>Goexit</code>
 <ul>
 <li>退出当前 Goroutine 但defer 仍调用</li>
 </ul>
 </li>
-<li>
-<p><code>Gosched</code></p>
+<li><code>Gosched</code>
 <ul>
 <li>让出 goRoutine 权限</li>
 </ul>
 </li>
-<li>
-<p><code>NumCPU</code> <code>NumGoroutine</code></p>
+<li><code>NumCPU</code> <code>NumGoroutine</code>
 <ul>
 <li>返回 cpu数目</li>
 <li>返回执行和排队的任务总数</li>
 </ul>
 </li>
-<li>
-<p><code>GOMAXPROCS</code></p>
+<li><code>GOMAXPROCS</code>
 <ul>
 <li>并行计算的 cpu 核数最大值 返回之前的核数值</li>
 </ul>

@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Mac配置指南 | flyingchase</title>
+<title>Joplin 介绍 | flyingchase</title>
 <meta name="description" content="记录成长的脚印">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,53 +80,78 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Mac配置指南</h2>
+          <h2 class="post-title">Joplin 介绍</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-05-03</span>
+            <span><i class="icon-calendar-outline"></i> 2021-09-08</span>
             
           </div>
           <div class="post-content">
-            <h2 id="前言">前言</h2>
-<p>升级Big sur时替换硬盘使用Time Machine只恢复一月前备份,故将配置流程记录</p>
-<p>教训:</p>
+            <h1 id="joplin-介绍">Joplin 介绍</h1>
+<h2 id="特色">特色</h2>
 <ul>
-<li>做好多处备份, 机械和固态多个备份, 在升级和较多本地内容变动时加强备份频率;</li>
-<li>少折腾多干活, 黑苹果不要追求太完美, 现有的版本能稳定运行即可, 多刷题多学习, 不要花时间过于折腾;</li>
+<li>
+<p>同步方式多种多样 全平台支持</p>
+<ul>
+<li>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20210908170712113.png" alt="image-20210908170712113" style="zoom:50%;" />
+</li>
 </ul>
-<h2 id="系统设置">系统设置</h2>
-<h4 id="触控板">触控板</h4>
-<p>Bettertouch</p>
-<h2 id="开发工具">开发工具</h2>
-<h4 id="idea系列">IDEA系列</h4>
-<h5 id="自动补全">自动补全</h5>
-<p><strong>快速输出</strong></p>
-<p>List.sout——&gt;System.out.println(list);</p>
-<p><strong>定义局部变量</strong></p>
-<p>new ArrayList&lt;&gt;().var;</p>
-<p><strong>判断空与否</strong></p>
-<p>List.null——&gt;if(List==null)</p>
-<p>List.notnull——&gt;if(List!=null)</p>
-<p><strong>快速取反:</strong></p>
-<p>​	输入 .not 可以让布尔值快速取反，再输入 .if 可快速生成 if 判断语句块。</p>
-<p>![2021-05-1311.47.57](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.47.57.gif)</p>
-<p><strong>快速遍历集合:</strong></p>
-<p>collection.for/.forr/.fori</p>
-<p>![2021-05-1311.51.59](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.51.59.gif)</p>
-<p><strong>快速返回:</strong></p>
-<p>Object.return——&gt;return Object;</p>
-<h5 id="重构生成">重构/生成</h5>
-<p>快速生成类的构造器和get set等常见方法</p>
-<p>重写toString/hashCode/equal等常见方法</p>
-<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/ry6AzG.png" alt="ry6AzG" loading="lazy"></figure>
+</li>
+<li>
+<p>网页剪辑</p>
+</li>
+<li>
+<p>开源支持 社区很好 不怕跑路 笔记加密</p>
+</li>
+<li>
+<p>支持调用外部 mkdown编辑器</p>
+</li>
+<li>
+<p>目录树  tag</p>
+</li>
+<li>
+<p>to-do 模式</p>
+</li>
+<li>
+<p>支持附件插入 地理位置</p>
+</li>
+<li>
+<p>笔记历史版本</p>
+</li>
+</ul>
+<h2 id="同步">同步</h2>
+<p>采用 AWS S3 同步  腾讯云和阿里云对象存储均支持</p>
+<ul>
+<li>腾讯云
+<ul>
+<li>同步的储存桶名称包括 id  url 形式为<code>https://cos.whereisyourbucket.myqclound.com</code></li>
+<li>秘钥和密码为私有用户权限的 API</li>
+</ul>
+</li>
+</ul>
+<h2 id="定制">定制</h2>
+<ul>
+<li>实现[toc]右侧鼠标悬浮 <code>cmd</code>可点击跳转</li>
+</ul>
+<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/C5Yjiz.png" alt="C5Yjiz" loading="lazy"></figure>
+<p>参考：<a href="https://lightzhan.xyz/index.php/2020/11/22/joplin-toc-customizing/">Joplin实现炫酷的侧边栏目录</a></p>
+<ul>
+<li>
+<p>利用 typora 的 css 格式 复制到<code>~/.config/joplin-desktop</code> 即可在设置中应用（改为默认名称 userstyle.name）</p>
+</li>
+<li>
+<p>使用 vscode Joplin 插件实现 vscode 打开 joplin 编辑 mkdown 文件</p>
+</li>
+</ul>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">
+            <a class="purple-link" href="https://flyingchase.github.io/post/go-cheatsheet/">
               <h3 class="post-title">
-                下一篇：Linux操作命令笔记
+                下一篇：Go cheatsheet
               </h3>
             </a>
           </div>
