@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-09-08T10:30:41.637Z</updated>
+    <updated>2021-09-27T06:36:07.155Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,58 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[Golang error 包]]></title>
+        <id>https://flyingchase.github.io/post/golang-error-bao/</id>
+        <link href="https://flyingchase.github.io/post/golang-error-bao/">
+        </link>
+        <updated>2021-09-27T06:35:47.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="error-包">error 包</h1>
+<p>Golang 使用 error 类型返回函数执行中遇到的错误</p>
+<p><code>nil</code>表示未遇到错误，否则会返回字符串说明返回的错误信息</p>
+<ul>
+<li>error 只是一个接口 可以使用任意类型去实现</li>
+</ul>
+<pre><code class="language-go">type error interface {
+    Error() interface
+}
+</code></pre>
+<ul>
+<li>
+<p>error 不一定代表错误</p>
+<ul>
+<li>io 包内的 error 类型 io.EOF 代表数据读取结束</li>
+<li>path/filepath包内 error 类型的 filepath.SkipDir 表示跳过当前目录</li>
+</ul>
+</li>
+<li>
+<p><code>errors</code>包实现最简单的 error 类型 只包含字符串</p>
+<ul>
+<li><code>func New(text string) error</code> New 函数生成简单的 error 对象</li>
+</ul>
+</li>
+<li>
+<p>可自定义 error 类型</p>
+<pre><code class="language-go">type myError struct {
+    err string
+    time time.Time
+    count int
+}
+func (m *myError)Error() string {
+    return fmt.Sprintf(&quot;%s %d count, time is %v&quot;, m.err,m.count,m.time)
+} 
+func newError (s string , i int) {
+    return &amp;myError{
+        err:s,
+        time:time.Now(),
+        count:i,
+    }
+}
+</code></pre>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Joplin 介绍]]></title>
         <id>https://flyingchase.github.io/post/joplin-jie-shao/</id>
@@ -2428,93 +2480,6 @@ public void swap(int[] A, int i, int j) {
 
 public void reverse(int[] A, int i, int j) {
     while(i &lt; j) swap(A, i++, j--);
-}
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[二叉树的非递归遍历算法]]></title>
-        <id>https://flyingchase.github.io/post/er-cha-shu-de-fei-di-gui-bian-li-suan-fa/</id>
-        <link href="https://flyingchase.github.io/post/er-cha-shu-de-fei-di-gui-bian-li-suan-fa/">
-        </link>
-        <updated>2021-07-02T10:13:16.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="非递归遍历二叉树">非递归遍历二叉树</h2>
-<hr>
-<p>递归本质上就是栈 由于二叉树提供节点只能向下访问 无法返回 故而使用栈结构实现返回</p>
-<pre><code class="language-java">public static List&lt;Integer&gt; inOrderTraversalBT(TreeNode root) {
-    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
-    //空树则直接返回null的res
-    if (root == null) {
-        return res;
-    }
-    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
-    // 保存root
-    TreeNode cur = root;
-    while (cur != null || !stack.isEmpty()) {
-        // 向树的最左侧走 并不断压栈
-        while (cur != null) {
-            stack.push(cur);
-            cur = cur.left;
-        }
-        // 走完最左侧后弹栈顶
-        TreeNode node = stack.pop();
-        res.add(node.val);
-        // 往上层的右边去再重复找最左侧
-        cur = node.right;
-    }
-    return res;
-}
-
-
-public static List&lt;Integer&gt; preOrderTraversalBT(TreeNode root) {
-    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
-    //空树则直接返回null的res
-    if (root == null) {
-        return res;
-    }
-    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
-    // 保存root
-    TreeNode cur = root;
-    while (cur != null || !stack.isEmpty()) {
-        // 向树的最左侧走 并不断压栈入数组
-        while (cur != null) {
-            res.add(cur.val);
-            stack.push(cur);
-            cur = cur.left;
-        }
-        // 走完最左侧后弹栈顶 无须入组 cur循环内已经入组
-        TreeNode node = stack.pop();
-        // 往上层的右边去 再重复找最左侧
-        cur = node.right;
-    }
-
-    return res;
-}
-
-
-public static List&lt;Integer&gt; postOrderTraversalBT(TreeNode root) {
-    List&lt;Integer&gt; res = new ArrayList&lt;&gt;();
-    //空树则直接返回null的res
-    if (root == null) {
-        return res;
-    }
-    Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;();
-    // 保存root
-    TreeNode cur = root;
-    while (cur != null || !stack.isEmpty()) {
-        // 向树的最右侧走 并不断压栈入数组
-        while (cur != null) {
-            res.add(cur.val);
-            stack.push(cur);
-            cur = cur.right; // 使得reverse后正常左在前
-        }
-        // 走完最右侧后弹栈顶 无须入组 cur循环内已经入组
-        TreeNode node = stack.pop();
-        // 往上层的左边去 再重复找最右侧
-        cur=node.left;
-    }
-    Collections.reverse(res);
-    return res;
 }
 </code></pre>
 ]]></content>
