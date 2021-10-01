@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-09-27T09:09:16.514Z</updated>
+    <updated>2021-10-01T03:56:11.522Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,167 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[Golang context 包]]></title>
+        <id>https://flyingchase.github.io/post/golang-context-bao/</id>
+        <link href="https://flyingchase.github.io/post/golang-context-bao/">
+        </link>
+        <updated>2021-10-01T03:55:53.000Z</updated>
+        <content type="html"><![CDATA[<p>context 包</p>
+<h1 id="context包">context包</h1>
+<p>控制并发的方式：</p>
+<p>​	<code>WaitGroup</code> <code>Context</code></p>
+<p><strong>waitGroup</strong></p>
+<ul>
+<li>并发启动多个子协程，等待所有的 goroutine 完成任务 <code>wg.Wait()</code>等待所有的子协程完成后再执行后续代码</li>
+<li>无法主动通知子协程的退出</li>
+</ul>
+<p>使用<code>channel</code>和<code>select</code>通知 goroutine 的处理</p>
+<p>子协程使用 for 循环定时轮询，<code>stop</code>信道有值（可读）则退出</p>
+<pre><code class="language-go">select {
+    case &lt;-stop :
+    	...
+    	return
+	default :
+    	...
+  
+}
+</code></pre>
+<p>背景：</p>
+<p>​	网络请求Request 需要开启 goroutine 需要去跟踪 goroutine 的方案 从而进行控制	即 goroutine 的上下文</p>
+<h2 id="context"><strong>Context</strong></h2>
+<ul>
+<li>通知子协程退出（正常和超时）</li>
+<li>传递必要参数</li>
+</ul>
+<p><strong>使用原则：</strong></p>
+<ul>
+<li>以参数形式传递 Context 且位于入口请求和出口请求链路的每个函数的首位</li>
+<li>函数方法传递 Context 不可传递 nil ——&gt;tarce 追踪时断掉</li>
+<li>Context 线程安全</li>
+<li>Context 可传递给任意个数的 goroutine 子协程受根 context 控制</li>
+</ul>
+<h3 id="控制单协程">控制单协程</h3>
+<p>将 chan stop 转化为 Context 追踪 goroutine</p>
+<pre><code class="language-go">	// Background 返回空的 Context 作为整个 context 树的根节点
+// WithCanclel(parent) 创建可取消的子 context 作为参数传递给 goroutine 进行跟踪
+	ctx,cancel:=context.WithCancel(context.Background())
+
+	go func(ctx context.Context) {
+		for  {
+			select {
+                // Done()判断接收到值则结束
+			case &lt;-ctx.Done():
+				fmt.Println(&quot;quit &quot;)
+				return
+			default:
+				fmt.Println(&quot;goroutine is under control&quot;)
+				time.Sleep(2*time.Second)
+			}
+		}
+	}(ctx)
+	time.Sleep(10*time.Second)
+	fmt.Println(&quot;it is time to tell ctx stop control&quot;)
+
+	cancel()
+	time.Sleep(5*time.Second)
+</code></pre>
+<ul>
+<li><code>context.Backgroud()</code>创建根 Context 作为顶层的 Context</li>
+<li><code>context.WithCancle(parent)</code> 创建可取消的子 Context 返回函数 <code>cancel</code></li>
+<li>子协程中使用<code>select</code>调用<code>&lt;-ctx.Done()</code> 判断是否需要退出</li>
+<li>主协程使用<code>cancle()</code>函数通知子协程退出</li>
+</ul>
+<h3 id="控制多协程">控制多协程</h3>
+<pre><code class="language-go">ctx,cancle:=context.WithCancel(context.Background())
+go reqTask(ctx,&quot;one&quot;)
+go reqTask(ctx,&quot;two&quot;)
+go reqTask(ctx,&quot;three&quot;)
+
+time.Sleep(3*time.Second)
+cancle()
+time.Sleep(3*time.Second)
+
+func reqTask(ctx context.Context,name string)  {
+	for  {
+		select {
+		case &lt;-ctx.Done():
+			fmt.Println(&quot;stop&quot;,name)
+			return
+		default:
+			fmt.Println(&quot;send request: &quot;,name)
+			time.Sleep(time.Second)
+		}
+
+	}
+
+</code></pre>
+<p><code>cancle()</code>终止所有的子协程</p>
+<p><code>context.Context</code>是一个接口</p>
+<pre><code class="language-go">type Context interface {
+  Deadline() (deadline time.Time, ok bool)
+  Done() &lt;-chan struct{}
+  Err() error
+  Value(key interface{}) interface{}
+}
+</code></pre>
+<p><code>WithCancel()</code>返回<code>context.Context</code>接口</p>
+<p><code>func WithCancel(parent Context) (ctx Context, cancel CancelFunc)</code></p>
+<pre><code class="language-go">// 返回的是 parent的副本newCancleCtx
+func WithCancel(parent Context) (ctx Context, cancel CancelFunc) {
+	if parent == nil {
+		panic(&quot;cannot create context from nil parent&quot;)
+	}
+	c := newCancelCtx(parent)
+    // propagateCancel 是结束子context
+	propagateCancel(parent, &amp;c)
+	return &amp;c, func() { c.cancel(true, Canceled) }
+}
+//  *ctx 本身是 cancleCtx 故而是地址传递
+type cancelCtx struct {
+	Context
+
+	mu       sync.Mutex            // protects following fields
+	done     chan struct{}         // created lazily, closed by first cancel call
+	children map[canceler]struct{} // set to nil by the first cancel call
+	err      error                 // set to non-nil by the first cancel call
+}
+</code></pre>
+<h3 id="contextwithvalue">Context.WithValue</h3>
+<p>往子协程中传递参数</p>
+<p>其中key应该自定义 避免内置数据类型</p>
+<p><code>func WithValue(parent Context, key, val interface{}) Context</code></p>
+<pre><code class="language-go">	type favKey string
+	f := func(ctx context.Context, k favKey) {
+		if v := ctx.Value(k); v != nil {
+			fmt.Println(&quot;found value &quot;, v)
+			return
+		}
+		fmt.Println(&quot;not found key &quot;, k)
+	}
+
+	k := favKey(&quot;language&quot;)
+	ctx = context.WithValue(context.Background(), k, &quot;Go&quot;)
+	f(ctx, k)
+	f(ctx, favKey(&quot;color&quot;))
+</code></pre>
+<ul>
+<li><code>WithValue()</code>创建基于<code>ctx</code>的子 context 携带值 options</li>
+<li>子协程使用<code>ctx.Value(key)</code> 获取传递的值</li>
+</ul>
+<h3 id="常用-api">常用 API</h3>
+<p><code>WithTimeout()</code>  设置超时时间（子协程最长执行时间）</p>
+<pre><code class="language-go">func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
+</code></pre>
+<ul>
+<li>可能使得子协程在 cancle()函数之前结束</li>
+<li>可使用 <code>ctx.Err()</code> 获取子协程退出原因</li>
+</ul>
+<p><code>WithDeadline</code> 设置控制子协程的最长推出时间</p>
+<pre><code class="language-go">func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Golang fmt包]]></title>
         <id>https://flyingchase.github.io/post/golang-fmt-bao/</id>
@@ -2269,158 +2430,6 @@ func main(){
 </code></pre>
 <h4 id="7-位非-~">7. 位非( ~ )</h4>
 <p>对操作数的每一位进行操作，1 变成 0，0 变成 1。</p>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[String 总结]]></title>
-        <id>https://flyingchase.github.io/post/string-zong-jie/</id>
-        <link href="https://flyingchase.github.io/post/string-zong-jie/">
-        </link>
-        <updated>2021-08-20T07:31:38.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="string">String</h2>
-<pre><code class="language-java">// 1. 基本操作
-    charAt(),substring()
-    ch = st.toCharArray(); // 字符串转换为字符数组.
-// 2. 比较
-    if(!this.name.equals(s1.name)){
-         return this.name.compareTo(s1.name);
-    }
-// 3.StringBuilder比较
-	s1.toString().equals(s2.toString())
-
-</code></pre>
-<ul>
-<li>
-<p><strong>替换/循环移动</strong></p>
-<ul>
-<li>使用 charAt(index)和 subSrting(index)（index 和后直到字符串结尾的整个子串）循环移动子串</li>
-</ul>
-</li>
-<li>
-<p><strong>split</strong></p>
-<ul>
-<li>String[] line =  str.split(“ ”) //以空格划分</li>
-<li>Sting s =line[1].split(“\\.”)  // 以.划分</li>
-</ul>
-</li>
-<li>
-<p><strong>子串后缀链接</strong></p>
-<ul>
-<li>
-<pre><code class="language-java">String temp  =&quot;&quot;;
-// 从后往前遍历 sting 
-for(int i=domains.leng-1;i&gt;=0;i--) {
-    // 保证子串不断增长
-    temp = domains[i] + (temp.equals(&quot;&quot;)?temp:&quot;.&quot;+temp);
-}
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p><strong>遍历中使用subString获得后续子串</strong></p>
-<ul>
-<li>
-<pre><code class="language-java">for (String cd : cpdomains) {
-	// ues indexOf 确定''划分的位置下标
-    int i = cd.indexOf(' ');
-    // ues subString 获得空格前的数值 Integer.valueOf 转化
-    int n = Integer.valueOf(cd.substring(0, i));
-    
-    String s = cd.substring(i + 1);
-    for (i = 0; i &lt; s.length(); ++i) {
-        if (s.charAt(i) == '.') {
-            // 获得'.'划分的子缀 正向遍历不丢失后续信息
-            String d = s.substring(i + 1);
-            count.put(d, count.getOrDefault(d, 0) + n);
-        }
-    }
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p><strong>筛选：</strong></p>
-<ul>
-<li>LC811</li>
-</ul>
-</li>
-</ul>
-<h3 id="tips">Tips</h3>
-<h4 id="替换字符">替换字符</h4>
-<h5 id="思路">思路</h5>
-<ul>
-<li>
-<p>使用 <code>HashSet</code>保存替换的字典集  Arrays.asList(‘...’)作为参数 保存为 private static final 类型</p>
-<pre><code class="language-java">private static final HashSet&lt;Character&gt; vowels = new HashSet&lt;&gt;(
-        Arrays.asList('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'));
-</code></pre>
-</li>
-<li>
-<p>使用 <code>s.split(“ ”)</code>删除空格字符</p>
-</li>
-<li>
-<p>使用 <code>StringBuilder</code>作为append的新字符串 最后 toString返回</p>
-</li>
-</ul>
-<h5 id="codes">Codes</h5>
-<pre><code class="language-java">private static final HashSet&lt;Character&gt; vowels = new HashSet&lt;&gt;(
-        Arrays.asList('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'));
-
-public String toGoatLatin(String S) {
-    if (S == null || S.length() == 0) {
-        return &quot;&quot;;
-    }
-
-    StringBuilder sb = new StringBuilder();
-    StringBuilder suffix = new StringBuilder(&quot;a&quot;);
-
-    for (String w : S.split(&quot; &quot;)) {
-        // 保证前导“ ”在非第一个字符前出现
-        if (sb.length() != 0) {
-            sb.append(&quot; &quot;);
-        }
-		// 暂存 w 的首字符 判断是否是元音
-        char fChar = w.charAt(0);
-        if (vowels.contains(fChar)) {
-            sb.append(w);
-        } else {
-            // 使用 subString 链接除首字符外的字符串
-            sb.append(w.substring(1));
-            // 再将暂存的首字符追加
-            sb.append(fChar);
-        }
-		// 连续追加
-        sb.append(&quot;ma&quot;).append(suffix);
-		// 保证后缀a 随字符的下标增加
-        suffix.append(&quot;a&quot;);
-    }
-    // System.out.println(&quot;sb.toString() = &quot; + sb.toString());
-    return sb.toString();
-}
-</code></pre>
-<ul>
-<li></li>
-</ul>
-<h3 id="sb">sb</h3>
-<ul>
-<li>
-<p><strong>连续追加</strong></p>
-<ul>
-<li><code>Sb.append(“aa”).append(“string”)</code></li>
-</ul>
-</li>
-<li>
-<p><strong>构建二维 string</strong></p>
-<ul>
-<li>
-<pre><code class="language-java">StringBuffer[] sb = new StringBuffer[len];
-for (int i = 0; i &lt; sb.length; i++) sb[i] = new StringBuffer();
-</code></pre>
 </li>
 </ul>
 </li>
