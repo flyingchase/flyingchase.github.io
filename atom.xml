@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-10-01T03:56:11.522Z</updated>
+    <updated>2021-10-02T10:08:30.576Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,186 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[Neovim 配置]]></title>
+        <id>https://flyingchase.github.io/post/neovim-pei-zhi/</id>
+        <link href="https://flyingchase.github.io/post/neovim-pei-zhi/">
+        </link>
+        <updated>2021-10-02T10:08:13.000Z</updated>
+        <content type="html"><![CDATA[<p>neovim 配置</p>
+<h2 id="前言">前言</h2>
+<p>最近纠正完自己的指法后重新捡起了 vim</p>
+<p>考虑到自己的需求和刷题的要求，在 idea 和 goland 中均配置了 <code>.ideavimrc</code></p>
+<p>选择 neovim 配置 go 的开发环境</p>
+<p>个人向配置，因此略过相关依赖的安装教程，大量参考其他配置</p>
+<h2 id="安装">安装</h2>
+<h3 id="检查">检查</h3>
+<p>nvim 中输入<code>:checkhealth</code>检查依赖完成度</p>
+<h3 id="插件管理器">插件管理器</h3>
+<p><code>vim-plug</code> 注意安装的位置</p>
+<pre><code class="language-shell">call plug#begin()
+
+call plug#end()
+</code></pre>
+<ul>
+<li>安装插件：<code>:PlugInstall</code></li>
+<li>更新插件：<code>:PlugUpdate</code></li>
+<li>删除插件：<code>:PlugClean</code> （首先在 <code>init.vim</code> 中，注释掉该插件，然后打开 Nvim， 使用 <code>:PlugClean</code> 命令清除该插件）</li>
+<li>查看插件状态：<code>:PlugStatus</code></li>
+<li>升级 vim-plug：<code>:PlugUpgrade</code></li>
+</ul>
+<h2 id="插件">插件</h2>
+<h3 id="vim-airline">vim-airline</h3>
+<p>底部状态栏</p>
+<p>底部状态栏的主题美化需要配合<code>vim-arilene-themes</code>插件</p>
+<p>状态栏主题：<code>let g:airline_theme='themeName'</code></p>
+<h3 id="nerdtree">nerdtree</h3>
+<p>文件管理器</p>
+<pre><code class="language-shell">&quot;==============================================================================
+&quot; 项目管理 nerdtree 设置
+
+nnoremap &lt;leader&gt;v :NERDTreeFind&lt;cr&gt;
+highlight NERDTreeFile ctermfg=14
+nnoremap &lt;leader&gt;g :NERDTreeToggle&lt;cr&gt;
+</code></pre>
+<p><code>leader+v/g</code> 找到当前文件所在的目录和打开侧边栏目录</p>
+<p><code>gi/gs</code> 目录树中以分割视图打开文件</p>
+<h3 id="cocnvim">coc.nvim</h3>
+<p>代码补全插件</p>
+<p>默认路径在<code>~/.config/nvim/coc-settings.json</code> 配置文件添加 golang 相关配置</p>
+<pre><code class="language-json">{
+    &quot;languageserver&quot;: {
+        &quot;golang&quot;: {
+            &quot;command&quot;: &quot;gopls&quot;,
+            &quot;rootPatterns&quot;: [
+                &quot;go.mod&quot;
+            ],
+            &quot;filetypes&quot;: [
+                &quot;go&quot;
+            ]
+        }
+    },
+    &quot;suggest.noselect&quot;: false,
+    &quot;coc.preferences.diagnostic.displayByAle&quot;: true,
+    &quot;suggest.floatEnable&quot;: true
+}
+</code></pre>
+<p>使用<code>ctr+n/p</code>上下移动 回车选择补全代码</p>
+<p>在<code>init.vim</code> 可选配置</p>
+<pre><code class="language-shell">&quot;==============================================================================
+&quot; coc.nvim 配置
+&quot; Remap keys for gotos
+&quot; nmap &lt;silent&gt; gd &lt;Plug&gt;(coc-definition)
+nmap &lt;silent&gt; gy &lt;Plug&gt;(coc-type-definition)
+nmap &lt;silent&gt; gm &lt;Plug&gt;(coc-implementation)
+nmap &lt;silent&gt; gr &lt;Plug&gt;(coc-references)
+inoremap &lt;expr&gt; &lt;cr&gt; pumvisible() ? &quot;\&lt;C-y&gt;&quot; : &quot;\&lt;C-g&gt;u\&lt;CR&gt;&quot;
+
+nnoremap &lt;silent&gt; K :call &lt;SID&gt;show_documentation()&lt;CR&gt;
+function! s:show_documentation()
+  if (index(['vim','help'], &amp;filetype) &gt;= 0)
+    execute 'h '.expand('&lt;cword&gt;')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+&quot;==============================================================================
+</code></pre>
+<h3 id="ale-代码错误插件">ale 代码错误插件</h3>
+<p>在 <code>coc-settings.json</code>中关闭 coc的错误处理 <code>&quot;coc.preferences.diagnostic.displayByAle&quot;: true</code></p>
+<p>在<code>init.vim</code>配置</p>
+<pre><code class="language-shell">&quot;==============================================================================
+&quot; ale 错误处理配置
+let g:ale_set_highlights = 1
+let g:ale_set_quickfix = 1
+&quot;自定义error和warning图标
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚡'
+&quot;在vim自带的状态栏中整合ale
+let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+&quot;显示Linter名称,出错或警告等相关信息
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+&quot;打开文件时不进行检查
+let g:ale_lint_on_enter = 1
+
+&quot;普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+nmap sp &lt;Plug&gt;(ale_previous_wrap)
+nmap sn &lt;Plug&gt;(ale_next_wrap)
+&quot;&lt;Leader&gt;d查看错误或警告的详细信息
+nmap &lt;Leader&gt;d :ALEDetail&lt;CR&gt;
+let g:ale_linters = {
+    \ 'go': ['golint', 'go vet', 'go fmt'],
+    \ }
+&quot;==============================================================================
+</code></pre>
+<p>使用<code>sn/sp</code>在错误之间跳转</p>
+<h3 id="查找-fzf">查找 fzf</h3>
+<p>与本地内 fzf 联动</p>
+<pre><code class="language-shell">Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
+</code></pre>
+<p>在<code>init.vim</code>配置</p>
+<pre><code class="language-shell">map &lt;leader&gt;f :Files&lt;CR&gt;
+map &lt;leader&gt;b :Buffers&lt;CR&gt;
+let g:fzf_action = { 'ctrl-e': 'edit' }
+&quot; 用 leader+ag 搜索当前 cursor 下单词 
+nnoremap &lt;silent&gt; &lt;Leader&gt;ag :Ag &lt;C-R&gt;&lt;C-W&gt;&lt;CR&gt;
+</code></pre>
+<p>直接<code>leader+ag</code> 搜索当前光标下的单词</p>
+<p><code>leader+f</code> 搜索项目内文件</p>
+<p><code>leader+b</code>搜索 buffer 列表切换 <code>ctrl+n/p</code>选择</p>
+<p>全局项目搜索：<code>:Ag</code> 在项目中查找</p>
+<h3 id="others">others</h3>
+<table>
+<thead>
+<tr>
+<th>插件</th>
+<th>作用</th>
+<th>快捷键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vim-commentary</code></td>
+<td>注释插件</td>
+<td><code>gcc/gc</code>注释当前行/所选代码块</td>
+</tr>
+<tr>
+<td><code>vim-easymotion</code></td>
+<td>快速移动光标</td>
+<td><code>ss</code> nmap 下 ss+目标单词的 2 个字母两次 跳转到显示区域内的首目标单词</td>
+</tr>
+<tr>
+<td><code>vim-surround</code></td>
+<td>CRUD{[(“‘</td>
+<td><code>di/da/ci/ca/yi/ya+*</code></td>
+</tr>
+<tr>
+<td><code>vim-auto-pairs</code></td>
+<td>成对括号</td>
+<td></td>
+</tr>
+<tr>
+<td><code>vim-ultisnips+vim-snippets</code></td>
+<td>代码块生成</td>
+<td><code>forr+tab</code> 即可<code>for range</code></td>
+</tr>
+<tr>
+<td><code>tagbar</code></td>
+<td>ctag</td>
+<td><code>leader+t</code>显示 tag</td>
+</tr>
+</tbody>
+</table>
+<h2 id="总结">总结</h2>
+<p>不建议直接 copy 巨佬们的配置</p>
+<p>尽量了解每个插件的作用和快捷键，避免插件之间的快捷键冲突，在使用中记忆快捷键。</p>
+<p>将 IDE 于<code>vim</code>配合使用，项目开发还是 Goland 香。</p>
+<h2 id="reference">Reference</h2>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Golang context 包]]></title>
         <id>https://flyingchase.github.io/post/golang-context-bao/</id>
@@ -2375,64 +2555,6 @@ func main(){
 <ul>
 <li>使用 new 创建原先的代码类并传入方法</li>
 <li>使用<code>assertEquals</code>等进行测试</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[位移运算]]></title>
-        <id>https://flyingchase.github.io/post/wei-yi-yun-suan/</id>
-        <link href="https://flyingchase.github.io/post/wei-yi-yun-suan/">
-        </link>
-        <updated>2021-08-21T06:40:45.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="01-位移运算">01 位移运算</h3>
-<ul>
-<li>
-<p>左移 扩大</p>
-<ul>
-<li>
-<p><code>1&gt;&gt;4</code> 即1 * 2 * 2 * 2 * 2 = 16 左移 4 位即pow（2,4）</p>
-</li>
-<li>
-<p>Java提供的位运算符有：左移( <code>&lt;&lt;</code> )、右移( <code>&gt;&gt;</code> ) 、无符号右移( <code>&gt;&gt;&gt;</code> ) 、位与( <code>&amp;</code> ) 、位或( <code>|</code> )、位非( <code>~</code> )、位异或( <code>^</code> )，除了位非( <code>~</code> )是一元操作符外，其它的都是二元操作符。</p>
-<h4 id="1-左移">1. 左移( &lt;&lt; )</h4>
-<p>a &lt;&lt; b 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向左方向移动 b 位，符号位不变，低位空出来的位补数值 0。</p>
-<pre><code class="language-shell">a &lt;&lt; b = a * (2 ^ b)
-</code></pre>
-<h4 id="2-右移">2. 右移( &gt;&gt; )</h4>
-<p><strong>a &gt;&gt; b</strong> 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向右方向移动 b 位，符号位不变，高位空出来的位补数值 0。</p>
-<pre><code>a &gt;&gt; b = a / ( 2 ^ b )
-</code></pre>
-<h4 id="3-无符号右移">3. 无符号右移( &gt;&gt;&gt; )</h4>
-<p>无符号右移运算符&gt;&gt;&gt;和右移运算符&gt;&gt;是一样的，只不过右移时左边是补上符号位，而无符号右移运算符是补上0，也就是说，对于正数移位来说等同于：&gt;&gt;，负数通过此移位运算符能移位成正数。</p>
-<h4 id="4-位与">4. 位与( &amp; )</h4>
-<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值都是 1，则结果值相应的 bit 就是 1，否则为 0.</p>
-<pre><code class="language-java">0 &amp; 0 = 0,
-
-0 &amp; 1 = 0,
-
-1 &amp; 1 = 1
-</code></pre>
-<h4 id="5-位或">5. 位或( | )</h4>
-<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值只要 1 个为 1，则结果值相应的 bit 就是 1，否则为 0。</p>
-<pre><code class="language-java">0 | 0 = 0,
-
-0 | 1 = 1,
-
-1 | 1 = 1
-</code></pre>
-<h4 id="6-位异或">6. 位异或( ^ )</h4>
-<p>两个操作数进行异或时，对于同一位上，如果数值相同则为 0，数值不同则为 1。</p>
-<pre><code class="language-java">1 ^ 0 = 1,
-
-1 ^ 1 = 0,
-
-0 ^ 0 = 0;
-</code></pre>
-<h4 id="7-位非-~">7. 位非( ~ )</h4>
-<p>对操作数的每一位进行操作，1 变成 0，0 变成 1。</p>
-</li>
-</ul>
-</li>
 </ul>
 ]]></content>
     </entry>
