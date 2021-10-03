@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>位移运算 | flyingchase</title>
+<title>【Golang 数据结构】实现动态扩容链表 | flyingchase</title>
 <meta name="description" content="记录成长的脚印">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,71 +80,150 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">位移运算</h2>
+          <h2 class="post-title">【Golang 数据结构】实现动态扩容链表</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-08-21</span>
+            <span><i class="icon-calendar-outline"></i> 2021-10-03</span>
             
           </div>
           <div class="post-content">
-            <h3 id="01-位移运算">01 位移运算</h3>
-<ul>
-<li>
-<p>左移 扩大</p>
-<ul>
-<li>
-<p><code>1&gt;&gt;4</code> 即1 * 2 * 2 * 2 * 2 = 16 左移 4 位即pow（2,4）</p>
-</li>
-<li>
-<p>Java提供的位运算符有：左移( <code>&lt;&lt;</code> )、右移( <code>&gt;&gt;</code> ) 、无符号右移( <code>&gt;&gt;&gt;</code> ) 、位与( <code>&amp;</code> ) 、位或( <code>|</code> )、位非( <code>~</code> )、位异或( <code>^</code> )，除了位非( <code>~</code> )是一元操作符外，其它的都是二元操作符。</p>
-<h4 id="1-左移">1. 左移( &lt;&lt; )</h4>
-<p>a &lt;&lt; b 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向左方向移动 b 位，符号位不变，低位空出来的位补数值 0。</p>
-<pre><code class="language-shell">a &lt;&lt; b = a * (2 ^ b)
+            <pre><code class="language-go">
+import (
+	&quot;errors&quot;
+	&quot;fmt&quot;
+)
+
+const DefaultCapacity = 16
+
+// capacity最大值
+const CapacityThreshold = 1024
+
+type Array struct {
+	data     []interface{}
+	capacity int
+	size     int
+}
+
+func New(capacity int) *Array {
+	if capacity == 0 {
+		return nil
+
+	}
+	return &amp;Array{
+		capacity: capacity,
+		data:     make([]interface{}, capacity, capacity),
+		size:     0,
+	}
+}
+func Default() *Array {
+	return New(DefaultCapacity)
+}
+
+// insert element 注意扩容
+func (arr *Array) Add(index int, val interface{}) error {
+	err := arr.checkIndex(index)
+	if err != nil {
+		return err
+	}
+	//	扩容j
+	if arr.size &gt;= arr.capacity {
+		if arr.capacity &gt;= CapacityThreshold {
+			// 1.25倍扩容 传入的是容量
+			arr.resize(int(float64(arr.capacity) * 1.25))
+		} else {
+			// 2 倍扩容
+			arr.resize(arr.capacity &lt;&lt; 1)
+		}
+	}
+	// 移出待插入的位置
+	copy(arr.data[index+1:], arr.data[index:])
+	arr.data[index] = val
+	arr.size++
+	return nil
+}
+
+// 追加 append
+func (arr *Array) Append(val interface{}) error {
+	// 在数组最后位置追加
+	return arr.Add(arr.size, val)
+}
+
+// 查找
+func (arr *Array) Find(index int) (interface{}, error) {
+	err := arr.checkIndex(index)
+	if err != nil {
+		return nil, err
+	}
+	return arr.data[index], nil
+}
+
+func (arr *Array) checkIndex(index int) error {
+	if index &lt; 0 || index &gt; arr.capacity {
+		return errors.New(&quot;index out of range error&quot;)
+	}
+	return nil
+}
+func (arr *Array) resize(newCap int) {
+	// 创建新的 data 数组再覆盖即可
+	data := make([]interface{}, newCap, newCap)
+	copy(data, arr.data)
+	arr.data = data
+	arr.capacity = newCap
+}
+// 是否包含特定元素 遍历查找
+func (arr *Array)Contains(val interface{}) bool  {
+	if arr.Empty()  {
+		return false
+	}
+	for _,v:=range arr.data {
+		if v==val {
+			return true
+		}
+	}
+	return false
+
+}
+
+func (arr *Array) Empty() bool {
+	return arr.size==0
+}
+// 删除 idnex 的值
+func (arr *Array) Delete (index int) error {
+	err:=arr.checkIndex(index)
+	if err != nil {
+		return err
+	}
+	if arr.data[index]==nil {
+		return nil
+	}
+	// index 下表位置置空并前移数组
+	arr.data[index]=nil
+	copy(arr.data[index:],arr.data[index+1:])
+	// 处理 size 和数组的最后一位
+	arr.data[arr.size-1]=nil
+	arr.size--
+	return nil
+}
+func (arr *Array)Size() int  {
+	return arr.size
+}
+func (arr *Array)PrintData()  {
+	for i:=0;i&lt;arr.capacity;i++ {
+		if arr.data[i]!=nil {
+			fmt.Print(arr.data[i],&quot; &quot;)
+		}
+	}
+	fmt.Println()
+}
 </code></pre>
-<h4 id="2-右移">2. 右移( &gt;&gt; )</h4>
-<p><strong>a &gt;&gt; b</strong> 表示将数值 a 的二进制数值从 0 位算起到第 b - 1 位，整体向右方向移动 b 位，符号位不变，高位空出来的位补数值 0。</p>
-<pre><code>a &gt;&gt; b = a / ( 2 ^ b )
-</code></pre>
-<h4 id="3-无符号右移">3. 无符号右移( &gt;&gt;&gt; )</h4>
-<p>无符号右移运算符&gt;&gt;&gt;和右移运算符&gt;&gt;是一样的，只不过右移时左边是补上符号位，而无符号右移运算符是补上0，也就是说，对于正数移位来说等同于：&gt;&gt;，负数通过此移位运算符能移位成正数。</p>
-<h4 id="4-位与">4. 位与( &amp; )</h4>
-<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值都是 1，则结果值相应的 bit 就是 1，否则为 0.</p>
-<pre><code class="language-java">0 &amp; 0 = 0,
-
-0 &amp; 1 = 0,
-
-1 &amp; 1 = 1
-</code></pre>
-<h4 id="5-位或">5. 位或( | )</h4>
-<p>与运算时，进行运算的两个数，从最低位到最高位，一一对应。如果某 bit 的两个数值对应的值只要 1 个为 1，则结果值相应的 bit 就是 1，否则为 0。</p>
-<pre><code class="language-java">0 | 0 = 0,
-
-0 | 1 = 1,
-
-1 | 1 = 1
-</code></pre>
-<h4 id="6-位异或">6. 位异或( ^ )</h4>
-<p>两个操作数进行异或时，对于同一位上，如果数值相同则为 0，数值不同则为 1。</p>
-<pre><code class="language-java">1 ^ 0 = 1,
-
-1 ^ 1 = 0,
-
-0 ^ 0 = 0;
-</code></pre>
-<h4 id="7-位非-~">7. 位非( ~ )</h4>
-<p>对操作数的每一位进行操作，1 变成 0，0 变成 1。</p>
-</li>
-</ul>
-</li>
-</ul>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://flyingchase.github.io/post/string-zong-jie/">
+            <a class="purple-link" href="https://flyingchase.github.io/post/neovim-pei-zhi/">
               <h3 class="post-title">
-                下一篇：String 总结
+                下一篇：Neovim 配置
               </h3>
             </a>
           </div>

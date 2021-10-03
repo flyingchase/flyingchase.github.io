@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>【Golang 数据结构】实现单链表 | flyingchase</title>
+<meta name="description" content="记录成长的脚印">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1633261557171">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://flyingchase.github.io">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1633261557171" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://flyingchase.github.io">
+        <h1 class="site-title">flyingchase</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">【Golang 数据结构】实现单链表</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-10-03</span>
+            
+          </div>
+          <div class="post-content">
+            <pre><code class="language-go">
+import &quot;fmt&quot;
+
+/*
+实现单链表
+	- append
+	- 结点前后插入
+	- 依值查找
+	- 删除结点
+	- 打印链表值
+*/
+
+type ListNode struct {
+	Val  interface{}
+	Next *ListNode
+}
+type LinkedList struct {
+	head *ListNode
+	size int
+}
+
+// 创建结点
+func newNode(val interface{}) *ListNode {
+	return &amp;ListNode{
+
+		Val:  val,
+		Next: nil,
+	}
+}
+func New() *LinkedList {
+	return &amp;LinkedList{
+		head: nil,
+		size: 0,
+	}
+}
+
+//添加至链尾 并返回生成的结点
+func (lists *LinkedList) PushBack(val interface{}) *ListNode {
+	head := lists.head
+	// 将待插入值转化为 node
+	node := newNode(val)
+	if head == nil {
+		lists.head = node
+	} else {
+		for head.Next != nil {
+			head = head.Next
+		}
+		head.Next = node
+	}
+	lists.size++
+	return node
+}
+
+//结点前插入
+func (lists *LinkedList) PushBefore(p *ListNode, val interface{}) *ListNode {
+	if p == nil || lists.head == nil {
+		return nil
+	}
+	node := newNode(val)
+	// 在头结点之前插入情况
+	if p == lists.head {
+		node.Next = lists.head
+		lists.head = node
+	} else {
+		prev := lists.head
+		// 找到待插入节点的前一个节点
+		for ; prev.Next != p; prev = prev.Next {
+		}
+		node.Next = p
+		prev.Next = node
+	}
+	lists.size++
+	return node
+}
+
+//结点后插入
+func (lists *LinkedList) PushAfter(p *ListNode, val interface{}) *ListNode {
+
+	if p == nil {
+		return nil
+	}
+	node := newNode(val)
+	node.Next = p.Next
+	p.Next = node
+	lists.size++
+	return node
+}
+
+//查找结点
+func (lists *LinkedList) Find(val interface{}) *ListNode {
+	cur := lists.head
+	for cur != nil &amp;&amp; cur.Val != val {
+		cur = cur.Next
+	}
+	return cur
+}
+
+//删除指定结点
+func (lists *LinkedList) Delete(p *ListNode) {
+	if p == nil {
+		return
+	}
+	if p == lists.head {
+		// 待删结点为头结点
+		lists.head = lists.head.Next
+		lists.size--
+	} else {
+		// 非删除头结点时 找到待删结点的 prev 结点
+		prev := lists.head
+		for prev != nil &amp;&amp; prev.Next != p {
+			prev = prev.Next
+		}
+		// 保证找到 而非 prev 走到链尾
+		if prev != nil {
+			prev.Next = p.Next
+			lists.size--
+		}
+	}
+}
+
+//删除指定值结点 调用 find 找到指定值的结点再删除结点即可
+func (lists *LinkedList)DeleteVal(val interface{})  {
+	lists.Delete(lists.Find(val))
+}
+//打印链表值
+func (lists *LinkedList)PrintDara()  {
+	if lists.size==0 {
+		return
+	}
+	for node:=lists.head;node!=nil;node = node.Next {
+		fmt.Print(node.Val,&quot; &quot;)
+	}
+	fmt.Println()
+}
+
+</code></pre>
+<pre><code class="language-go">package doublyLinkedlist
+
+import &quot;fmt&quot;
+
+/*
+实现双向链表
+	- CRUD
+	- 表头和表尾的追加
+*/
+type ListNode struct {
+    Val interface{}
+    prev,next *ListNode
+}
+type LinkedList struct {
+    head *ListNode
+    size int
+}
+
+func New()*LinkedList  {
+   return &amp; LinkedList {
+       head: nil,
+       size: 0,
+   }
+}
+// 插入到表头 区分表头是否空
+func (lists * LinkedList)PushFront(val interface{}) *ListNode  {
+   node:=newNode(val)
+	if lists.head!=nil {
+		lists.head.prev=node
+		node.next=lists.head
+	}
+	lists.head=node
+	lists.size++
+	return node
+}
+
+func newNode(val interface{}) *ListNode{
+	return &amp; ListNode {
+	    Val: val,
+	    prev: nil,
+	    next: nil,
+	}
+}
+
+// 插入数据到链尾
+func (lists * LinkedList) PushBack(val interface{}) *ListNode{
+	//  空表则调用链首插入
+	if lists.head==nil {
+		lists.PushFront(val)
+	}
+	node:=newNode(val)
+	cur:=lists.head
+	for cur.next != nil {
+		cur=cur.next
+	}
+	cur.next=node
+	node.prev=cur
+	lists.size++
+	return node
+}
+//节点后插入数据
+func (lists * LinkedList) PushAfter(p *ListNode, val interface{})  *ListNode {
+
+	if p==nil {
+		return nil
+	}
+	// 找到要插入位置的前后结点
+	next:=p.next
+	node:=newNode(val)
+	// 插入 注意判断 next 为空时next.prev 不存在 无须链接 新插入的 node 即为最后一个节点
+	node.next=next
+	p.next=node
+	node.prev=p
+	if next!=nil {
+		next.prev=node
+	}
+	lists.size++
+	return node
+}
+//结点前插入数据
+func (lists * LinkedList)PushBefore(p *ListNode,val interface{}) *ListNode {
+	if p==nil {
+		return nil
+	}
+	node:=newNode(val)
+	prev:=p.prev
+	// 待插入的链表为空则调用链首插入函数
+	if prev==nil {
+		lists.PushFront(val)
+	}else {
+		// 在指定结点前插入需找到prevNode
+		p.prev=node
+		node.next=p
+		prev.next=node
+		node.prev=prev
+		lists.size++
+	}
+
+	return node
+}
+//删除结点
+func (lists * LinkedList) Delete(p *ListNode)  {
+	if p == nil|| lists.head==nil {
+		return
+	}
+	// 删除结点为头结点则直接跳过即可
+	if p==lists.head {
+		lists.head=p.next
+	}else {
+		//  注意待删结点的 nextNode 为链尾空节点时 无须链接 nextNode.prev=prevNode
+		prevNode,nextNode:=p.prev,p.next
+		prevNode.next=nextNode
+		if nextNode!=nil {
+			nextNode.prev=prevNode
+		}
+	}
+	lists.size--
+
+}
+//依值查找结点
+func (lists * LinkedList)Find(val interface{}) *ListNode  {
+	if lists.head==nil{
+		return nil
+	}
+	cur:=lists.head
+	for cur!=nil&amp;&amp;cur.Val!=val {
+		cur=cur.next
+	}
+	return cur
+}
+//打印链表数据
+func (lists * LinkedList)PrintDara()  {
+	for p:=lists.head;p!=nil;p=p.next {
+		fmt.Print(p.Val,&quot; &quot;)
+	}
+	fmt.Println()
+}
+func (lists * LinkedList)Size() int  {
+	return lists.size
+}
+</code></pre>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dong-tai-kuo-rong-lian-biao/">
+              <h3 class="post-title">
+                下一篇：【Golang 数据结构】实现动态扩容链表
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">记录成长的脚印</div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/flyingchase" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+   | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

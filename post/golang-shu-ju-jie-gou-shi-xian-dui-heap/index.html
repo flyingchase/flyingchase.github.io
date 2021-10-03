@@ -1,10 +1,11 @@
 
+<!DOCTYPE html>
 <html>
   <head>
     
 <meta charset="utf-8" >
 
-<title>flyingchase</title>
+<title>【Golang 数据结构】实现堆 Heap | flyingchase</title>
 <meta name="description" content="记录成长的脚印">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -77,82 +78,123 @@
 
 
       <div class="content-container">
-        
-        
-<section class="post-item">
-    <div class="content">
-      <a href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">
-        <h2 class="post-title">Linux操作命令笔记</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2021-05-03</span>
-        
-      </div>
-    </div>
-    
-  </section>
+        <div class="post-detail">
+          
+          <h2 class="post-title">【Golang 数据结构】实现堆 Heap</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-10-03</span>
+            
+          </div>
+          <div class="post-content">
+            <pre><code class="language-go">
+import (
+	&quot;errors&quot;
+)
 
-<section class="post-item">
-    <div class="content">
-      <a href="https://flyingchase.github.io/post/docker-ji-chu-bi-ji/">
-        <h2 class="post-title">Docker基础笔记</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2021-05-03</span>
-        
-      </div>
-    </div>
-    
-  </section>
+/*
+实现二叉堆
+	- 添加
+	- 删除堆顶
+	- 获取堆顶
+	- 堆化
+*/
 
-<section class="post-item">
-    <div class="content">
-      <a href="https://flyingchase.github.io/post/shua-ti-bi-ji/">
-        <h2 class="post-title">刷题笔记</h2>
-      </a>
-      <div class="post-abstract">
+const DefaultCapacity = 16
+
+type BinaryHeap struct {
+	data     []int
+	size     int
+	capacity int
+}
+
+func Default() *BinaryHeap {
+	return New(DefaultCapacity)
+}
+
+func New(capacity int) *BinaryHeap {
+	return &amp;BinaryHeap{
+		data:     make([]int, capacity),
+		size:     0,
+		capacity: capacity,
+	}
+}
+
+// 添加元素
+//  现将元素添加到堆尾 再自下而上不断比较 (index-1)/2比较 移至合适位置
+func (h *BinaryHeap) Add(val int) bool {
+	if h.size &gt;= h.capacity {
+		return false
+	}
+	// 将 val 加入堆尾 再自下向上调整 不断与 parent=(index-1)/2 比较
+	h.data[h.size] = val
+	h.size++
+	index := h.size - 1
+	parent := (index - 1) / 2
+	for parent &gt;= 0 &amp;&amp; h.data[index] &lt; h.data[parent] {
+		h.data[index], h.data[parent] = h.data[parent], h.data[index]
+		index, parent = parent, (index-1)/2
+	}
+	return true
+}
+
+// 删除堆顶元素
+func (h *BinaryHeap) Remove() error {
+	if h.size &lt;= 0 {
+		return errors.New(&quot;heap is null&quot;)
+	}
+	h.size--
+	if h.size &gt; 0 {
+		h.data[0] = h.data[h.size-1]
+		shiftDown(h, 0, h.size)
+	}
+	return nil
+
+}
+
+func shiftDown(h *BinaryHeap, index int, size int) {
+	left, right := 2*index+1, 2*index+2
+	largest := left
+	for index &lt; size {
+		if right &lt; size &amp;&amp; h.data[right] &lt; h.data[left] {
+			largest = right
+		}
+		if h.data[index] &gt; h.data[largest] {
+			largest = index
+			break
+		}
+		h.data[index],h.data[largest]=h.data[largest],h.data[index]
+		index=largest
+		left=2*index+1
+		right=2*index+2
+	}
+}
+
+// 获取堆顶元素
+
+func (h BinaryHeap)GetTop()int  {
+	if h.size&lt;=0 {
+		panic(&quot;heap is null&quot;)
+	}
+	return h.data[0]
+}
+
+</code></pre>
+
+          </div>
+        </div>
+
         
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dan-lian-biao/">
+              <h3 class="post-title">
+                下一篇：【Golang 数据结构】实现单链表
+              </h3>
+            </a>
+          </div>
+          
       </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2021-05-03</span>
-        
-      </div>
-    </div>
-    
-  </section>
 
-<section class="post-item">
-    <div class="content">
-      <a href="https://flyingchase.github.io/post/xps-7590-hackintosh-hei-ping-guo/">
-        <h2 class="post-title">XPS 7590 Hackintosh黑苹果</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2021-05-03</span>
-        
-      </div>
-    </div>
-    
-  </section>
-
-
-<div class="pagination-container">
-  
-    <a href="https://flyingchase.github.io/page/2/" class="prev"><i class="icon-arrow-ios-back-outline"></i> 上一页</a>
-  
-  
-</div>
-
-
-      </div>
+      
 
       <div class="site-footer">
   <div class="slogan">记录成长的脚印</div>
