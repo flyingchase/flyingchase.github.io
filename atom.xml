@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-10-03T11:46:07.714Z</updated>
+    <updated>2021-10-08T12:06:59.240Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,178 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[【Golang 数据结构】实现 LRU]]></title>
+        <id>https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-lru/</id>
+        <link href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-lru/">
+        </link>
+        <updated>2021-10-08T12:04:23.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-go">package LRU
+
+import &quot;fmt&quot;
+
+// LRU represent Least Recently Used strategy
+// means
+// cap 固定的双向链表
+// 每次插入均在头部,已经存在的元素则更新元素结点并移至头部,不存在则新建结点插入,超容则删掉最后一个结点
+// 每次查询则移动待查元素到头部(更新使用频率) 不存在
+type Node struct {
+	prev, next *Node
+	// 代表当前 LRU 的归属
+	list *LRU
+
+	key   string
+	value interface{}
+}
+type LRU struct {
+	root *Node
+	cap  int
+	len  int
+}
+
+func NewLRU(cap int) *LRU {
+	l := &amp;LRU{
+		root: &amp;Node{},
+		cap:  cap,
+	}
+	l.root.prev = l.root
+	l.root.next = l.root
+	l.root.list = l
+	return l
+}
+
+// Get  获得缓存数据
+// 获取到则将该节点移动至链表头部
+// 为获取到则 nil
+func (l *LRU) Get(key string) interface{} {
+	defer l.debug()
+	n := l.get(key)
+	if n == nil {
+		return nil
+	}
+	return n.value
+}
+
+func (l *LRU) get(key string) *Node {
+	for n := l.root.next; n != l.root; n = n.next {
+		if n.key == key {
+			n.prev.next = n.next
+			n.next.prev = n.prev
+
+			n.next = l.root.next
+			l.root.next.prev = n
+			l.root.next = n
+			n.prev = l.root
+			return n
+		}
+	}
+	return nil
+}
+
+// 将 key 构造为结点插入头部,若存在对应的 key 则更新结点值
+// 缓存满则删掉最后结点(LRU)最少使用
+
+func (l *LRU) Put(key string, value interface{}) {
+	defer l.debug()
+	n := l.get(key)
+	if n != nil {
+		n.value = value
+		return
+	}
+	// 缓存 cap 满
+	// delete the last node and l.len--
+	if l.len == l.cap {
+		last := l.root.prev
+		last.prev.next = l.root
+		l.root.prev = last.prev
+		last.prev = nil
+		last.next = nil
+		last.list = nil
+		l.len--
+	}
+	// construct newNode to insert the head of the list
+	// update the l.len and newNode'list
+	node := &amp;Node{
+		key:   key,
+		value: value,
+	}
+	head := l.root.next
+	head.prev = node
+	node.next = head
+	node.prev = l.root
+	l.root.next = node
+	l.len++
+	node.list = l
+}
+func (l *LRU) debug() {
+	fmt.Println(&quot;lru len: &quot;, l.len)
+
+	fmt.Println(&quot;lru cap: &quot;, l.cap)
+	for n := l.root.next; n != l.root; n = n.next {
+		fmt.Printf(&quot;%s:%v -&gt; &quot;, n.key, n.value)
+	}
+	fmt.Println()
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[gdb 调试 go 程序]]></title>
+        <id>https://flyingchase.github.io/post/gdb-diao-shi-go-cheng-xu/</id>
+        <link href="https://flyingchase.github.io/post/gdb-diao-shi-go-cheng-xu/">
+        </link>
+        <updated>2021-10-08T12:03:47.000Z</updated>
+        <content type="html"><![CDATA[<p>gdb 调试 go</p>
+<h1 id="gdb-调试-go-程序">gdb 调试 go 程序</h1>
+<h2 id="准备">准备</h2>
+<h3 id="安装-gdb">安装 gdb</h3>
+<p><code>brew install gdb</code></p>
+<h3 id="自签">自签</h3>
+<p>注意证书名称和 codesign 内 gdb 的安装位置</p>
+<p><code>codesign -fs gdb /usr/local/bin/gdb</code></p>
+<p>📢：reboot</p>
+<h2 id="调试流程">调试流程</h2>
+<h3 id="编译代码">编译代码</h3>
+<pre><code class="language-shell">go build -o bin/03_q1_slice_cap -gcflags=all=&quot;-N -l&quot; -ldflags='-compressdwarf=false' main.go
+</code></pre>
+<p>最后为代码所在位置</p>
+<h4 id="gdb-调试窗口">GDB 调试窗口</h4>
+<pre><code class="language-shell">gdb -tui ./bin/*cap*
+</code></pre>
+<p>./bin 内文件为 main.go 编译生成</p>
+<img src="/Users/qlzhou/Library/Application Support/typora-user-images/image-20211008200005280.png" alt="image-20211008200005280" style="zoom:50%;" />
+<ul>
+<li>
+<p><code>b main.go:7</code> 在 main.go 第 7 行打断点</p>
+</li>
+<li>
+<p><code>r</code> 执行到断点处</p>
+</li>
+<li>
+<p><code>n</code> 单步执行（函数调用不进入内部）</p>
+</li>
+<li>
+<p><code>info locals</code> 打印当前堆栈变量</p>
+</li>
+</ul>
+<h2 id="常用调试命令">常用调试命令</h2>
+<ul>
+<li><code>b 文件名:行数</code> 打断点</li>
+<li><code>info b</code> 当前的断点情况</li>
+<li><code>r</code> 运行程序知道断点处</li>
+<li><code>c</code> 继续执行到下一个断点</li>
+<li><code>s</code> 单步执行，如果有调用函数则进入函数，注意和 n 的区别</li>
+<li><code>n</code> 单步执行，如果有调用的函数不会进入函数内部</li>
+<li><code>until</code> 退出循环</li>
+<li><code>until:行号</code> 执行到指定行</li>
+<li><code>info locals</code> 当前堆栈的所有变量</li>
+<li><code>info args</code> 打印参数</li>
+<li><code>info goroutines</code> 查看所有的 goroutine 及其 ID</li>
+<li><code>help</code> 帮助</li>
+<li><code>q</code> 退出</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[【Golang 数据结构】实现堆 Heap]]></title>
         <id>https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dui-heap/</id>
@@ -1067,1045 +1239,6 @@ func newError (s string , i int) {
 </li>
 <li>
 <p>使用 vscode Joplin 插件实现 vscode 打开 joplin 编辑 mkdown 文件</p>
-</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Go cheatsheet]]></title>
-        <id>https://flyingchase.github.io/post/go-cheatsheet/</id>
-        <link href="https://flyingchase.github.io/post/go-cheatsheet/">
-        </link>
-        <updated>2021-09-04T15:03:20.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="go-cheatsheet">Go cheatsheet</h1>
-<h2 id="variables">Variables</h2>
-<ul>
-<li>短声明不可在函数外部
-<ul>
-<li>短声明至少一个新变量</li>
-</ul>
-</li>
-<li>常量 const
-<ul>
-<li>可忽略类型 也可指定类型</li>
-</ul>
-</li>
-</ul>
-<p><strong>关键字</strong></p>
-<ol>
-<li><code>break default func interface select</code></li>
-<li><code>case defer go map struct</code></li>
-<li><code>chan else goto package switch</code></li>
-<li><code>const fallthrough if range type</code></li>
-<li><code>continue for import return var</code></li>
-</ol>
-<h3 id="iota">iota</h3>
-<ul>
-<li>
-<p>枚举使用  为 const 常量赋值</p>
-</li>
-<li>
-<p>按照 const 内的行数从 0 递增  同一行的值相等</p>
-</li>
-<li>
-<p>每次遇见 const 重置为 0</p>
-</li>
-</ul>
-<p>rune 是 unit32 别称</p>
-<p>byte 是 unit8 别称</p>
-<h3 id="make-new">make new</h3>
-<h4 id="make">make</h4>
-<ul>
-<li>内建 map slices channel 的内存分配</li>
-<li>返回有初始值的 T类型 非*T 指针</li>
-</ul>
-<h4 id="new">new</h4>
-<ul>
-<li>各种类型的内存分配</li>
-<li>返回指针 指向新分配的类型的零值</li>
-</ul>
-<h2 id="basic-types">Basic types</h2>
-<h3 id="strings">Strings</h3>
-<pre><code class="language-go">// 不会将换行符\n 转化 直接输出换行
-str:=`Multiline
-string`
-</code></pre>
-<ul>
-<li>字符串不可变
-<ul>
-<li>改变需要转化为<code>[]byte</code>类型</li>
-<li>+和切片操作可以更改  <code>s=“c”+s[1:]</code></li>
-</ul>
-</li>
-<li>再强转 string(ch)即可</li>
-<li>可使用<code>+</code>链接</li>
-<li></li>
-</ul>
-<h3 id="numbers">Numbers</h3>
-<pre><code class="language-go">num1:=3
-num2:=3.1
-num3:=3+4i
-num4:=byte('a') // byte 底层为alias unit8 
-
-fmt.Printf(&quot;reflect.TypeOf(num1): %v\n&quot;, reflect.TypeOf(num1))
-fmt.Printf(&quot;reflect.TypeOf(num2): %v\n&quot;, reflect.TypeOf(num2))
-fmt.Printf(&quot;reflect.TypeOf(num3): %v\n&quot;, reflect.TypeOf(num3))
-fmt.Printf(&quot;reflect.TypeOf(num4): %v\n&quot;, reflect.TypeOf(num4))
-
-// reflect.TypeOf(num1): int
-// reflect.TypeOf(num2): float64
-// reflect.TypeOf(num3): complex128
-// reflect.TypeOf(num4): uint8
-</code></pre>
-<h3 id="array">Array</h3>
-<pre><code class="language-go">numbers:=[...]int{1,2,3,4,5} // 忽略数组长度 直接按照后续初始化计长
-for _,num:=range numbers{
-  println(num)
-}
-</code></pre>
-<h3 id="slices">Slices</h3>
-<ul>
-<li><code>var slice []byte</code>
-<ul>
-<li>Slice[ : ：] 第一个默认位置为<code>0</code> 第二个默认位置是 len 第三个位置是容量的最后一个对应数组的下标 则 cap=(最后一位-第一位)
-<ul>
-<li>前闭后开</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>类似结构体 内含有 <em>指针（指向 数组中slice 的开始位置）、len（代表 slice长度）、cap（代表 slice 开始位置到对应数组的最后位置长度）</em>
-<ul>
-<li>append 追加——&gt;指针 会影响slice 指向的数组
-<ul>
-<li>当 slices(cap-len==0) 时slices 分配新的空间 返回新的数组指针 原数组内容不变</li>
-</ul>
-</li>
-<li>len 长度</li>
-<li>cap 容量</li>
-<li>copy 复制到目标 dst 返回复制元素个数</li>
-</ul>
-</li>
-</ul>
-<h3 id="pointers">Pointers</h3>
-<h3 id="map">map</h3>
-<ul>
-<li>字典无序 长度不固定，是引用类型</li>
-<li>len 获取 key 的数量</li>
-<li>不存在 k 对应的 v 返回为 bool</li>
-<li><em>API</em>
-<ul>
-<li>delete 删除 delete(map,key)</li>
-<li>v</li>
-</ul>
-</li>
-</ul>
-<h2 id="flow-control">Flow control</h2>
-<ul>
-<li>if内声明的变量作用域仅在代码块内</li>
-<li>无 while</li>
-<li>Switch 中 case 默认带 break 需要 <code>fallthrough</code></li>
-</ul>
-<h3 id="conditional">Conditional</h3>
-<h4 id="siwtch">siwtch</h4>
-<ul>
-<li>switch中 Expr 与 case 的各个 expr判断必须是同类型的</li>
-<li>switch 无表达式则默认为 <code>true</code></li>
-<li></li>
-</ul>
-<h3 id="goto">Goto</h3>
-<p>与 <code>Here:</code>标签搭配  必须跳转到当前函数内定义的标签</p>
-<ul>
-<li>标签名大小写敏感</li>
-<li></li>
-</ul>
-<h2 id="functions">Functions</h2>
-<ul>
-<li>
-<p>函数可作为参数传递</p>
-<ul>
-<li>成为嵌套函数  在函数中调用其他函数</li>
-</ul>
-<pre><code class="language-go">package main
-
-import &quot;fmt&quot;
-// 首先需要定义函数类型 作为其它函数的传入参数
-type testInt func(int) bool
-// 按照函数类型来编写函数
-func isOdd(integer int) bool {
-   if integer%2 == 0 {
-      return false
-   }
-   return true
-}
-func isEven(integer int) bool {
-   if integer%2 != 0 {
-      return false
-   }
-   return true
-}
-func filter(slice []int, f testInt) []int {
-   var res []int
-   for _, val := range slice {
-      if f(val) {
-         res = append(res, val)
-      }
-   }
-   return res
-}
-func main() {
-   slice := []int{1, 2, 3, 4, 5, 6, 7}
-   fmt.Println(slice)
-   odd := filter(slice, isOdd) // 将函数作为参数传入函数
-   fmt.Println(odd)
-   even := filter(slice, isEven)
-   fmt.Println(even)
-}
-</code></pre>
-<ul>
-<li>将函数作为参数传递要求
-<ul>
-<li>定义函数类型</li>
-<li>要作为参数传递的函数类型与定义的函数类型相同</li>
-</ul>
-</li>
-</ul>
-<h4 id="variadic-functions-可变参数">Variadic Functions 可变参数</h4>
-<ul>
-<li>
-<pre><code class="language-go">func funcName (nums ...int) {  // 不指定参数个数
-    fmpl(nums)
-    for _,num:=rang nums{
-        sum+=num;
-    }
-    fmpl(sum)
-}
-func main() {
-    sum(1,2)
-    sum(1,2,3)
-    nums:=[]int{1,2,3,4}
-    sum(nums...)
-}
-</code></pre>
-</li>
-</ul>
-<h4 id="closures-返回func">Closures 返回func</h4>
-<ul>
-<li>
-<pre><code class="language-go">func intSeq() func() int{    // 函数返回值为函数
-   i:=0
-   return func() int {
-       i++
-       return i
-   }
-}
-func main() {
-   nextIntL:=intSeq()
-   fmt.Println(nextIntL()) // 1
-   fmt.Println(nextIntL()) //2
-   fmt.Println(nextIntL())//3
-   newIntL:=intSeq()
-   fmt.Println(newIntL()) //1 
-}
-</code></pre>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="recursion">Recursion</h4>
-<pre><code class="language-go">func fact (n int) int{
-	if n==0 {
-		return 1
-	}
-	return n* fact(n-1)  
-}
-
-func main(){
-	fmt.Println(fact(7))  
-
-	var fib func(n int) int  // 将函数定义为变量 
-
-	fib=func (n int) int {
-		if n&lt;2 {
-			return n
-		}
-		return fib(n-1)+fib(n-2)
-	}
-	fmt.Println(fib(7))
-}
-</code></pre>
-<h3 id="lambda">Lambda</h3>
-<p><code>arg …int</code>表示函数接受不定数量的变参</p>
-<p>Func myFunc (arg ..int) int{}</p>
-<h3 id="defer">defer</h3>
-<ul>
-<li>函数执行到最后return 后  defer 逆序执行 最后返回值退出</li>
-<li></li>
-</ul>
-<h2 id="packages">Packages</h2>
-<p>两个保留函数 main 和 init</p>
-<ul>
-<li><code>main 函数</code>只能用于<code>package main</code> <code>init函数</code>可用于各个 package</li>
-<li>两者无参数和返回值</li>
-</ul>
-<h3 id="点操作">点操作</h3>
-<p><strong>. “packhageName”：</strong></p>
-<ul>
-<li>点操作含义是调用该包内函数时 可忽略前缀包名
-<ul>
-<li><code>fmt.Println()</code>可简写为<code>Println()</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="别名操作">别名操作</h3>
-<ul>
-<li>将包名在本文件内作为自定义名称</li>
-<li>防止冲突/易于记忆包名</li>
-</ul>
-<h3 id="_操作">_操作</h3>
-<ul>
-<li>导入该包但不直接使用包内函数 调用包内的 <code>init函数</code></li>
-</ul>
-<h2 id="error-control">Error control</h2>
-<p>panic 和 recover 机制</p>
-<h2 id="structs">Structs</h2>
-<ul>
-<li>
-<p>匿名字段可包含对应 struct 的所有内容</p>
-</li>
-<li>
-<p>内置类型 Int 等也可以作为匿名字段</p>
-</li>
-<li>
-<p>内外层有重复的字段 优先访问最外层的字段</p>
-</li>
-</ul>
-<h2 id="methods">Methods</h2>
-<ul>
-<li>
-<p>附属在给定的 struct 上 在函数基础上加上 receiver</p>
-</li>
-<li>
-<p>方法可与在任何自定义的类型、内置类型、struct 上</p>
-<ul>
-<li>type typeName typeLiteral   称 typeName 为自定义类型</li>
-<li>struct 是自定义中的一种</li>
-</ul>
-</li>
-<li>
-<p>继承</p>
-<ul>
-<li>匿名字段的 method 可被继承 包含该匿名字段的 struct 可调用期内的 methods</li>
-</ul>
-</li>
-<li>
-<p>重写 override</p>
-<ul>
-<li>外部 struct 可重写内部 struct 的 methods</li>
-</ul>
-</li>
-</ul>
-<h2 id="interfaces">Interfaces</h2>
-<ul>
-<li>
-<p>interface 可被任意对象实现</p>
-</li>
-<li>
-<p>一个对象可实现多个 interface</p>
-</li>
-<li>
-<p>任意类型都实现了空 interface</p>
-</li>
-<li>
-<p>是一抽象方法的集合</p>
-</li>
-</ul>
-<h4 id="变量存储类型">变量存储类型</h4>
-<ul>
-<li>断言<code>Comma-ok</code>
-<ul>
-<li><code>value,ok:=element(T)</code> ok 是 bool 类型 true 代表是该类型 多在 if-else 使用</li>
-<li><code>switch</code> 使用<code>element.(type)</code> 作为判断和 case</li>
-</ul>
-</li>
-</ul>
-<pre><code class="language-go">type Element interface {
-} // 可作用在任何类型上
-type List[] Element // element 为空接口并将其自定义名称为 List[]
-type Person struct {
-   name string
-   age int
-}
-
-func (p *Person) String() string {
-   return p.name+strconv.Itoa(p.age)
-
-}
-func main() {
-list:=make(List,3)
-list[0] = 1
-list[1] = &quot;hello&quot;
-list[2]=Person{name : &quot;w&quot;,age :100}
-for index,element:=range list {
-   if value, ok := element.(int); ok {
-      fmt.Println(index, value)
-   }else if value, ok := element.(Person); ok {
-      fmt.Println(index,value)
-   }else if value, ok := element.(string); ok {
-
-      fmt.Println(index,value)
-   }else {
-      fmt.Println(index)
-   }
-}
-</code></pre>
-<p>函数赋值给变量 函数内是空接口</p>
-<pre><code class="language-go">whatAmI := func(i interface{}) {  switch t := i.(type) {  case bool:     fmt.Println(&quot;bool&quot;)  case int:     fmt.Println(&quot;int&quot;)  default:     fmt.Println(reflect.TypeOf(t))  }}whatAmI(&quot;1&quot;)whatAmI(true)whatAmI(1)whatAmI(Studnet{})
-</code></pre>
-<h2 id="concurrency">Concurrency</h2>
-<ul>
-<li>通过通信来共享而非通过共享来通信</li>
-<li>goroutine 运行在相同的地址空间</li>
-</ul>
-<h4 id="channel">channel</h4>
-<ul>
-<li>
-<p>channel 必须使用 make 创建并定义发送到 channel 的类型</p>
-</li>
-<li>
-<p>cap 可以读取 channel 的缓存容量</p>
-<ul>
-<li>
-<pre><code class="language-go">ch:=make(chan int) // 定义同时规定发送到 chan 的类型v:=1ch&lt;-v 	// 将 v 发送到 chanw:=&lt;-ch	// 从 ch中读取并赋值给 w
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>默认无缓存chan 接受和发送是阻塞的  除非另外一端准备好</p>
-<ul>
-<li>
-<p><code>value:&lt;-c</code> 读取会被阻塞 直到有数据接受</p>
-</li>
-<li>
-<p><code>ch&lt;-5</code> 发送会被阻塞 直到有被读取</p>
-</li>
-<li>
-<pre><code class="language-go">func sum(a []int, c chan int)  {   total:=0   for _,v:=range a{      total+=v   }   c&lt;-total}func main() {   a:=[...]int {1, 2, 3,4,5,6,7,8,9,0}   c:=make(chan int)   go sum(a[:len(a)/2],c)   go sum(a[len(a)/2:],c)   x,y:=&lt;-c,&lt;-c   fmt.Println(x,y,x+y)}
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>Buffer channel 带缓存的 channel</p>
-<ul>
-<li>
-<p><code>ch；=make(chan type,cap)</code> 在 cap 内的读写是无阻塞的 超过 cap 时候需要等待其他 goroutine 从 channel 中读取元素 释放空间</p>
-</li>
-<li>
-<p><code>for i:=rang c</code> 可以不断读取 channel 直到 channel 被显示关闭</p>
-</li>
-<li>
-<p><code>close</code>关闭 channel 无法发送数据 但可以在消费方通过<code>v,ok:=c;ok</code><em>断言</em>来测试是否关闭 channel</p>
-<ul>
-<li>在生产者方关闭 channle  在消费者方容易产生 panic</li>
-<li>结束 range 循环/无数据需要发送时候关闭 channel 才使用 close显式关闭</li>
-</ul>
-</li>
-<li>
-<pre><code class="language-go">func fibonacc(n int, c chan int)  {   x,y:=1,1   for i:=0;i&lt;n;i++ {      c&lt;-x      x,y=y,x+y   }   close(c)	// 显示关闭 channel}func main() {   c:=make(chan int, 10)   go fibonacc(cap(c),c)   for i:=range c {      fmt.Println(i)   }}
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p>多 channel 下 <em>select</em></p>
-<ul>
-<li>
-<p>select 关键字监听 channel 上的数据流动</p>
-</li>
-<li>
-<p>默认是阻塞的  只有监听的 channel 上数据流动才运行  多个 channel 准备好时select 随机选择执行</p>
-</li>
-<li>
-<p>类似 switch 有 <code>default</code>   可设置超时来退出循环</p>
-</li>
-<li>
-<pre><code class="language-go">func fibonacc(c, quit chan int) {   x, y := 1, 1   for {      select {		// 类似 switch  监听 channel 上的数据流动      case c &lt;- x:         x, y  = y, x+y      case &lt;-quit:         fmt.Println(&quot;quit&quot;)         return      case &lt;-time.After(5*time.Second) // 阻塞超过5 s情况          fmpl(&quot;timeOut&quot;)          break;      }   }}func main() {   c := make(chan int)   quit:=make(chan int)   go func() {      for i := 0; i &lt; 10; i++ {         fmt.Println(&lt;-c)      }      quit&lt;-0   }()   fibonacc(c,quit)}
-</code></pre>
-</li>
-</ul>
-</li>
-<li>
-<p><code>Goexit</code></p>
-<ul>
-<li>退出当前 Goroutine 但defer 仍调用</li>
-</ul>
-</li>
-<li>
-<p><code>Gosched</code></p>
-<ul>
-<li>让出 goRoutine 权限</li>
-</ul>
-</li>
-<li>
-<p><code>NumCPU</code> <code>NumGoroutine</code></p>
-<ul>
-<li>返回 cpu数目</li>
-<li>返回执行和排队的任务总数</li>
-</ul>
-</li>
-<li>
-<p><code>GOMAXPROCS</code></p>
-<ul>
-<li>并行计算的 cpu 核数最大值 返回之前的核数值</li>
-</ul>
-</li>
-</ul>
-<h2 id="references">References</h2>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Go web 基础]]></title>
-        <id>https://flyingchase.github.io/post/go-web-ji-chu/</id>
-        <link href="https://flyingchase.github.io/post/go-web-ji-chu/">
-        </link>
-        <updated>2021-09-04T15:02:30.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="go-web基础">Go Web基础</h1>
-<h2 id="web-概念">web 概念</h2>
-<h3 id="request">Request</h3>
-<p>include post , get , cookie,  url</p>
-<h3 id="response">Response</h3>
-<h3 id="conn">Conn</h3>
-<p>用户的每次请求链接</p>
-<h3 id="handler">Handler</h3>
-<p>处理请求和生成返回信息的处理逻辑</p>
-<h2 id="http-包执行流程">Http 包执行流程</h2>
-<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20210903113614403.png" alt="image-20210903113614403" loading="lazy"></figure>
-<ul>
-<li>创建 Listen Socket 监听窗口</li>
-<li>Listen Socket 接收客户端请求——&gt;client Socket</li>
-<li>Client socket 读取 HTTP请求的协议头 交给对象的 handler 处理 再通过 client socket 写给客户端</li>
-</ul>
-<h4 id="监听端口">监听端口</h4>
-<ul>
-<li><code>ListenAndServe</code><br>
-初始化 serve 对象，调用<code>net.Listen(&quot;tcp&quot;,addr)</code> 底层使用 tcp 协议搭建服务来监听端口</li>
-<li></li>
-</ul>
-<h4 id="接收客户端请求">接收客户端请求</h4>
-<ul>
-<li>
-<p>调用<code>srv.Serve(net.Listener)</code>函数</p>
-</li>
-<li>
-<p>每次请求创建 Conn</p>
-</li>
-</ul>
-<h4 id="分配-handler">分配 Handler</h4>
-<ul>
-<li>conn 解析 request <code>c.readRequest()</code> 获取 handler 即为调用 ListenAndServe 的第二个参数
-<ul>
-<li>为空 nil 则默认<code>handler=DefaultServeMax</code>  为路由器 匹配 url 跳转到对应的 handle 函数</li>
-<li>路由请求规则<code>“/”</code>：
-<ul>
-<li>跳转到 <code>http.HandleFunc(&quot;/&quot;,selfFunc)</code> 中的自定义函数</li>
-<li>DefaultServeMux 调用 ServeHTTP 方法 内部及调用 selfFunc</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h1 id="实战">实战</h1>
-<h2 id="创建-web-server">创建 web server</h2>
-<p>使用 http.ListenAndServer()</p>
-<ul>
-<li>
-<p>第一个参数网络地址</p>
-<ul>
-<li>“” 则为所有网络接口的 80 端口</li>
-</ul>
-</li>
-<li>
-<p>第二个参数 handler</p>
-<ul>
-<li>nil 则为 DefaultServeMux(multipledxer) 看做路由器</li>
-</ul>
-</li>
-</ul>
-<p>使用http.Server</p>
-<ul>
-<li>struct
-<ul>
-<li>Addr 字段表示网络地址</li>
-<li>Handler 字段
-<ul>
-<li>nil defaulSerMux</li>
-</ul>
-</li>
-<li>ListenAndServe() 方法</li>
-</ul>
-</li>
-</ul>
-<pre><code class="language-go">// way One 
-http.ListenAndServe(&quot;localhost:9090&quot;,nil)
-// way Two
-server:=http.Server{Addr: &quot;localhost:8080&quot;,Handler: nil}
-server.ListenAndServe()
-</code></pre>
-<p>以上只能执行 http 而非 https</p>
-<p>需要分别加上：</p>
-<ul>
-<li>http.ListenAndServeTLS()</li>
-<li>Server.ListenAndServeTLS()</li>
-</ul>
-<h4 id="handler-2">Handler</h4>
-<p>是一个 interface 接口</p>
-<ul>
-<li>
-<p>定义了一个方法ServeHTTP()</p>
-<ul>
-<li>HTTPResponseWriter</li>
-<li>指向 Request（struct）的指针</li>
-</ul>
-<pre><code class="language-go">type Handler interface {
-   ServeHTTP(ResponseWriter, *Request)
-}
-</code></pre>
-</li>
-</ul>
-<h4 id="defaultservemux">DefaultServeMux</h4>
-<p>Multiplexer 多路复用器（可被视为路由器） 是 ServerMux 的一个指针变量</p>
-<ul>
-<li>也是一个 Handler</li>
-<li>转发调用其他 handler</li>
-<li>调用 http.Handle 函数实际上调用的是 DefaultServeMux 上的 Hanler 方法</li>
-</ul>
-<p>不指定 server struct 中的 handler 字段值</p>
-<ul>
-<li>可以使用 http.Handle 将某个 Handler 附加到 DefaultServeMux
-<ul>
-<li>http 包有一个 Handle 函数</li>
-<li>ServerMux struct 也有一个 Handle 方法</li>
-</ul>
-</li>
-</ul>
-<h4 id="httphandle">http.Handle</h4>
-<p>func Handle(pattern string, handler Handler)</p>
-<ul>
-<li>
-<p>第二个参数是 handler（注意是<em>指针</em>）</p>
-<pre><code class="language-go">type Handler interface {
- ServeHTTP(ResponseWriter, *Request)
-// 实现 ServerHTTP 方法的类型均可视为 handler
- }
-</code></pre>
-</li>
-</ul>
-<pre><code class="language-go">server := http.Server{
-   Addr: &quot;localhost:1090&quot;,
-   Handler: nil,  // use DefaultServeMux
-}
-http.Handle(&quot;/wo&quot;,&amp;mh)
-server.ListenAndServe()
-</code></pre>
-<h4 id="httphandlefunc">http.HandleFunc</h4>
-<p>Handler函数行为与hanlder 类似 将 f 适配为 handler 使得handler 具有方法 f  类似<em>类型转换</em></p>
-<p>作用即为： Handler 函数转化为 Handler 内部还是调用 http.Handle 函数</p>
-<ul>
-<li>Handler 函数的签名与 ServeHTTP 方法的签名一样，接收：
-<ul>
-<li>一个 http.ResponseWriter</li>
-<li>一个 指向 http.Request 的指针</li>
-</ul>
-</li>
-</ul>
-<pre><code class="language-go">// 第二个参数是 func 但是不要带()  带（）就直接执行了
-http.HandleFunc(&quot;/home&quot;,welcome)
-
-func welcome(w http.ResponseWriter, r *http.Request) {
-   w.Write([]byte(&quot;Home!&quot;))
-}
-</code></pre>
-<p>HandleFunc 源码：</p>
-<pre><code class="language-go">func HandleFunc(pattern string, handler func(ResponseWriter, *Request)) {
-    // 调用 DefaultServeMux 的 HandleFunc
-   DefaultServeMux.HandleFunc(pattern, handler) 
-}
-
-// DefaultServeMux 的 HandleFunc 第二个参数是 Handler函数（不同于 http.Handle 第二个参数是 Handler）
-func (mux *ServeMux) HandleFunc(pattern string, handler func(ResponseWriter, *Request)) {
-	if handler == nil {
-		panic(&quot;http: nil handler&quot;)
-	}
-    // 内部还是调用 http.Handle 函数
-	mux.Handle(pattern, HandlerFunc(handler))
-}
-</code></pre>
-<h2 id="内置-handlers">内置 Handlers</h2>
-<h3 id="notfoundhandler">NotFoundHandler</h3>
-<pre><code class="language-go">// NotFound replies to the request with an HTTP 404 not found error.
-func NotFound(w ResponseWriter, r *Request) { Error(w, &quot;404 page not found&quot;, StatusNotFound) }
-
-// NotFoundHandler returns a simple request handler
-// that replies to each request with a ``404 page not found'' reply.
-func NotFoundHandler() Handler { return HandlerFunc(NotFound) }
-</code></pre>
-<p>给每个请求的响应均为404</p>
-<h3 id="redirecthandler">RedirectHandler</h3>
-<pre><code class="language-go">// Redirect to a fixed URL
-type redirectHandler struct {
-   url  string
-   code int
-}
-
-// The provided code should be in the 3xx range and is usually
-// StatusMovedPermanently, StatusFound or StatusSeeOther.
-func RedirectHandler(url string, code int) Handler {
-	return &amp;redirectHandler{url, code}
-}
-</code></pre>
-<p>将每个请求使用给定的状态码code——&gt;指定的 url 跳转到提供的第一个参数</p>
-<h3 id="stripprefix">StripPrefix</h3>
-<pre><code class="language-go">func StripPrefix(prefix string, h Handler) Handler
-</code></pre>
-<p>从请求的 URL去掉指定的前缀prefix 再调用第二个参数 handler h</p>
-<ul>
-<li>请求的 URL 与前缀 prefix 不符合 404</li>
-<li>h handler 将会在 请求 url 被去除 prefix 后调用 用于接收请求</li>
-</ul>
-<h3 id="timeouthandler">TimeoutHandler</h3>
-<pre><code class="language-go">func TimeoutHandler(h Handler, dt time.Duration, msg string) Handler
-</code></pre>
-<ul>
-<li>time.Duration 表示一段时间 alias int64 的别名</li>
-<li>返回 handler 在指定时间 dt duration 内运行传入的 h
-<ul>
-<li>h 将要被修饰的 handler</li>
-<li>msg 超时则返回 msg 信息表示响应时间过长</li>
-<li>dt 处理 h 的允许时间</li>
-</ul>
-</li>
-</ul>
-<h3 id="fileserver">FileServer</h3>
-<pre><code class="language-go">func FileServer(root FileSystem) Handler
-</code></pre>
-<p>返回 handler 基于 root 文件系统来响应请求  root 是字符串作为根目录</p>
-<pre><code class="language-go">// filestystem 可以自定义  通常委托给 
-type FileSystem interface {
-   Open(name string) (File, error)
-}
-</code></pre>
-<p>eg 使用内置 filehandler 实现 handleFunc</p>
-<pre><code class="language-go">http.HandleFunc(&quot;/&quot;,func(w http.ResponseWriter, r *http.Request) {
-      http.ServeFile(w,r,&quot;wwwroot&quot;+r.URL.Path)
-   })
-   
-http.ListenAndServe(&quot;:9090&quot;,nil)
-http.ListenAndServe(&quot;8080&quot;,http.FileServer(http.Dir(&quot;wwwwroot&quot;)))
-</code></pre>
-<h2 id="请求-request">请求 Request</h2>
-<h3 id="http-请求">HTTP 请求</h3>
-<h3 id="request-2">Request</h3>
-<h3 id="url">URL</h3>
-<p>请求信息的第一行里面的信息</p>
-<p>指向 url&gt;URL类型的指针 url&gt;URL 是一个 struct</p>
-<p>scheme://[userinfo@]host/path[?query][#fragment]通用格式</p>
-<p><em>Query</em></p>
-<ul>
-<li>查询字符串</li>
-</ul>
-<h3 id="header">Header</h3>
-<p><code>map[string]/[]string</code>类型</p>
-<p>设置 key 时候创建空的[]string 作为 value 第一个元素就是新的 header 值</p>
-<p>key 添加元素执行 append 操作</p>
-<h3 id="body">Body</h3>
-<p>io.ReadCloser 接口</p>
-<ul>
-<li>
-<p>reader 接口</p>
-<ul>
-<li>[]byte 返回 byte 的数量 可选的错误</li>
-</ul>
-</li>
-<li>
-<p>closer 接口</p>
-<ul>
-<li>返回可选的错误</li>
-</ul>
-</li>
-</ul>
-<h2 id="upload">UpLoad</h2>
-<h3 id="form-表单">Form 表单</h3>
-<h4 id="表单发送请求">表单发送请求</h4>
-<ul>
-<li>
-<p>html 表单里面的数据以 name-value 对的形式 通过 method 规定post/get请求发送出去</p>
-</li>
-<li>
-<p>数据内容存储在 POST 请求的 Body里面</p>
-<ul>
-<li>
-<p>name-value 对的格式 通过表单的<code>Content Type</code>指定 <code>enctype</code>属性</p>
-</li>
-<li>
-<p>entry 属性默认值 <code>application/x-www-form-urlcoded</code></p>
-</li>
-<li>
-<p>enrty 属性设置为<code>multipart/form-data</code>   (大量数据、上传文件)</p>
-<ul>
-<li>每个 name-value 对转换为 MIME消息 每部分各自有 Content Type 和 Content Disposition</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>method 属性设置 POST 和 GET</p>
-<ul>
-<li>GET 请求没有 Body     数据通过 URL 编码的 name-value 对发送</li>
-</ul>
-</li>
-</ul>
-<h4 id="form-字段">Form 字段</h4>
-<ul>
-<li>
-<p>Request 上的函数允许我们从 URL 或/和 Body 中提取数据，通过这些字段：</p>
-<ul>
-<li>Form  是 url.Values 类型——&gt;type Values map[string][]string 类型</li>
-<li>PostForm</li>
-<li>MultipartForm</li>
-</ul>
-</li>
-<li>
-<p>Form 里面的数据是 key-value 对</p>
-<ul>
-<li>每个 key 对应一个切片 可以有多个值</li>
-</ul>
-</li>
-<li>
-<p>通常的做法是：</p>
-<ul>
-<li>调用 ParseForm 或 ParseMultipartForm 来解析 Request</li>
-<li>相应的访问 Form、PostForm 或 MultipartForm 字段</li>
-</ul>
-</li>
-<li>
-<pre><code class="language-go">func main() {
-	server:=http.Server {
-		Addr : &quot;localhost:8080&quot;,
-	}
-	http.HandleFunc(&quot;/process&quot;, func(w http.ResponseWriter,r *http.Request){
-		r.ParseForm() // 解析 request
-
-		fmt.Fprintln(w,r.Form)
-	})
-	server.ListenAndServe()
-}
-
-// index.html 输出 是一个 map[string][]string
-// map[first_name:[wo] last_name:[456] uploaded:[Go Web.md]]
-</code></pre>
-</li>
-</ul>
-<h4 id="postform-字段">PostForm 字段</h4>
-<p>只读取表单的 key-value 对 不需读取 url 的 kv 对  使用 PostForm 字段</p>
-<p>当 url 和 form 中均有 key对应的 Value 时候 Form 字段显示所有的 values 表单在前 url 在后</p>
-<pre><code class="language-html">map[first_name:[D] firtst_name:[Nick] last_name:[as]]  // D 为表单 Nick 为 url
-</code></pre>
-<ul>
-<li>只支持<code>&quot;application/x-www-form-urlencoded&quot;</code></li>
-</ul>
-<pre><code class="language-go">fmt.Fprintln(w,r.PostForm)  // 使用 PostForm字段
-// map[first_name:[qw] last_name:[q]]   只显示表单输入的 key对应的 values
-</code></pre>
-<h4 id="multipartform-字段">MultipartForm 字段</h4>
-<ul>
-<li>首先调用<code>ParseMultipartForm</code> 方法
-<ul>
-<li>该方法会在必要时调用 <code>ParseForm</code>方法
-<ul>
-<li>参数是需要读取数据的长度 字节数</li>
-<li>MultipartForm 只包含<em>表单</em>的 key-value 对</li>
-<li>返回类型是一个 struct 而不是 map。这个 struct 里有两个 map：
-<ul>
-<li>key 是 string，value 是 []string</li>
-<li>空的（key 是 string，value 是文件）</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<pre><code class="language-go">func main() {
-   server:=http.Server {
-      Addr : &quot;localhost:8080&quot;,
-   }
-   http.HandleFunc(&quot;/process&quot;, func(w http.ResponseWriter,r *http.Request){
-      r.ParseMultipartForm(1024) // 解析 request  使用 ParseMultipartForm 解析 需要传入长度（字节数）
-
-      fmt.Fprintln(w,r.MultipartForm) 
-   })
-   server.ListenAndServe()
-}
-// index 输出  struct 两个 map 第一个有数据第二个是空的
-&amp;{map[first_name:[12] last_name:[12]] map[]}
-</code></pre>
-<h4 id="formvaluepostformvalue-字段">FormValue&amp;PostFormValue 字段</h4>
-<p>FormValue 方法会返回 Form 字段中指定 key 对应的<em>第一个 value</em></p>
-<ul>
-<li>无需调用 ParseForm 或 ParseMultipartForm</li>
-</ul>
-<p>PostFormValue 方法只能读取 PostForm</p>
-<ul>
-<li>FormValue 和 PostFormValue 都会调用 ParseMultipartForm 方法</li>
-<li>表单的 <code>enctype</code> 设为 multipart/form-data，无法通过 FormValue 获得想要的值。</li>
-</ul>
-<h4 id="文件-files">文件 Files</h4>
-<ul>
-<li>
-<p>调用 <code>ParseMultipartForm</code> 方法</p>
-</li>
-<li>
-<p>从 <code>File</code>字段获得 FileHeader 调用 Open 方法获得文件</p>
-</li>
-<li>
-<p>使用<code>ioutil.ReadAll</code>函数将文件内容读取到 []byte中</p>
-<pre><code class="language-go">func process(w http.ResponseWriter, r *http.Request) {
-   r.ParseMultipartForm(1024) // 最大传递字节
-   fileHead := r.MultipartForm.File[&quot;uploaded&quot;][0] // 读取指定 body 内容
-   file, err := fileHead.Open()
-   if err == nil {
-      data, err := ioutil.ReadAll(file)
-      if err == nil {
-         fmt.Fprintln(w, string(data))
-      }
-   }
-}
-
-func main() {
-   server := http.Server{
-      Addr: &quot;localhost:8080&quot;,
-   }
-   http.HandleFunc(&quot;/process&quot;, process)
-   server.ListenAndServe()
-}
-</code></pre>
-</li>
-</ul>
-<p><em>FormFile</em></p>
-<ul>
-<li>返回对应 Key的第一个文件
-<ul>
-<li>返回指定 Key 的第一个 Value</li>
-</ul>
-</li>
-</ul>
-<h4 id="post-json">POST Json</h4>
-<h4 id="multipartreader">MultipartReader</h4>
-<pre><code class="language-go">func (r *Request) MultipartReader() (*multipart.Reader, error)
-</code></pre>
-<pre><code class="language-go">type ResponseWriter interface {   Header() Header   Write([]byte) (int, error)   WriteHeader(statusCode int)}// 是一个接口 response 实现了其内部的所有函数 所以 ResponseWriter 可视为 response 的指针
-</code></pre>
-<h3 id="responsewrite">ResponseWrite</h3>
-<h3 id="内置-response">内置 Response</h3>
-<ul>
-<li>NotFound 函数，包装一个 404 状态码和一个额外的信息</li>
-<li>ServeFile 函数，从文件系统提供文件，返回给请求者</li>
-<li>ServeContent 函数，它可以把实现了 io.ReadSeeker 接口的任何东西里面的内容返回给请求者</li>
-<li>还可以处理 Range 请求（范围请求），如果只请求了资源的一部分内容，那么 ServeContent 就可以如此响应。而 ServeFile 或 io.Copy 则不行。</li>
-<li>Redirect 函数，告诉客户端重定向到另一个 URL</li>
-</ul>
-<pre><code class="language-go">func process(w http.ResponseWriter, r *http.Request) {   r.ParseMultipartForm(1024)                      // 最大传递字节   fileHead := r.MultipartForm.File[&quot;uploaded&quot;][0] // 读取指定 body 内容   file, err := fileHead.Open()   if err == nil {      data, err := ioutil.ReadAll(file)      if err == nil {         fmt.Fprintln(w, string(data))      }   }}func writeExample(w http.ResponseWriter, r *http.Request) {   str := `&lt;html&gt;&lt;head&gt;&lt;title&gt;Go Web&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;h1&gt;Hello World&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;`   w.Write([]byte(str))}func writeHeaderExampl(w http.ResponseWriter, r *http.Request) {   w.WriteHeader(501)   fmt.Fprintln(w, &quot;No such service, try next door&quot;)}func main() {   server := http.Server{      Addr: &quot;localhost:8080&quot;,   }   http.HandleFunc(&quot;/write&quot;, writeHeaderExampl)   http.HandleFunc(&quot;/redirect&quot;, headerEXample)   http.HandleFunc(&quot;/json&quot;, jsonExample)   server.ListenAndServe()}func headerEXample(w http.ResponseWriter, r *http.Request) {   w.Header().Set(&quot;Location&quot;, &quot;http://google.com&quot;)   w.WriteHeader(302)}type Post struct {   User    string   Threads []string}func jsonExample(w http.ResponseWriter, r *http.Request) {   w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)   post := &amp;Post{      User : &quot;wlzhou&quot;,      Threads: []string {&quot;first&quot;,&quot;second&quot;,&quot;third&quot;},   }   json,_:=json.Marshal(post)   w.Write(json)}
-</code></pre>
-<h2 id="模板">模板</h2>
-<p>Web 模板即为 HTML 页面（预先设置好的）</p>
-<p><code>text/template</code> <code>html/template</code>模板库</p>
-<h3 id="模板引擎">模板引擎</h3>
-<p>合并模板和上下文数据产生 HTML</p>
-<ul>
-<li>生成 HTML 写入<code>ResponseWriter</code> 再加入 HTTP响应返回给客户端</li>
-<li><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/IG3Raz.png" alt="IG3Raz" loading="lazy"></li>
-</ul>
-<p><em>ParseFiles</em></p>
-<ul>
-<li>解析模板文件 创建解析好的模板 struct</li>
-<li>是 template struct 上的 ParseFiles 上的方法调用</li>
-</ul>
-<p>创建新的模板 名称为文件名</p>
-<pre><code class="language-go"> t, _ := template.ParseFiles(&quot;tmpl.html&quot;)
-</code></pre>
-<p><em>ParseGlob</em></p>
-<ul>
-<li>
-<p>模式匹配  根目录下匹配</p>
-<pre><code class="language-go"> t, _ := template.ParseGlob(&quot;*.html&quot;)
-</code></pre>
-</li>
-</ul>
-<p><em>Parse</em></p>
-<ul>
-<li>上述两个函数均会调用</li>
-</ul>
-<h3 id="action">Action</h3>
-<p>模板中嵌入的命令 两组花括号之间{{}}</p>
-<p>条件 迭代 设置 包含 定义</p>
-<h3 id="参数-管道-变量">参数、管道、变量</h3>
-<p><em>参数：</em></p>
-<ul>
-<li>模板中的值
-<ul>
-<li>bool 整数 string struct key 变量 方法</li>
-</ul>
-</li>
-</ul>
-<p><em>管道：</em></p>
-<p>Unix 管道类似</p>
-<ul>
-<li>把参数输出发送到下一个参数</li>
-<li>|隔开</li>
-</ul>
-<h3 id="函数">函数</h3>
-<p>内置函数有：</p>
-<p>​	define template block html js urlquery</p>
-<p>index print len with</p>
-<p>自定义函数：</p>
-<pre><code class="language-go">template.Funcs(funcMap FuncMap) *Templatetype FuncMap map[string]interface{}
-</code></pre>
-<h3 id="模板组合">模板组合</h3>
-<h2 id="路由">路由</h2>
-<p>Controller</p>
-<ul>
-<li>Main() 设置类工作</li>
-<li>Controller：
-<ul>
-<li>静态资源</li>
-<li>不同的请求发送给不同的 controller 处理</li>
-</ul>
-</li>
-</ul>
-<h3 id="路由参数">路由参数</h3>
-<ul>
-<li>
-<p>静态路由：</p>
-<ul>
-<li>一个路径对应一个页面
-<ul>
-<li>/home /index</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>带参路由：</p>
-<ul>
-<li>依据路由参数 创建出一族不同的页面
-<ul>
-<li>/companies/123</li>
-<li>/companies/homeAbout</li>
-</ul>
-</li>
-</ul>
 </li>
 </ul>
 ]]></content>

@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Mac配置指南 | flyingchase</title>
+<title>【Golang 数据结构】实现 LRU | flyingchase</title>
 <meta name="description" content="记录成长的脚印">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,53 +80,128 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Mac配置指南</h2>
+          <h2 class="post-title">【Golang 数据结构】实现 LRU</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-05-03</span>
+            <span><i class="icon-calendar-outline"></i> 2021-10-08</span>
             
           </div>
           <div class="post-content">
-            <h2 id="前言">前言</h2>
-<p>升级Big sur时替换硬盘使用Time Machine只恢复一月前备份,故将配置流程记录</p>
-<p>教训:</p>
-<ul>
-<li>做好多处备份, 机械和固态多个备份, 在升级和较多本地内容变动时加强备份频率;</li>
-<li>少折腾多干活, 黑苹果不要追求太完美, 现有的版本能稳定运行即可, 多刷题多学习, 不要花时间过于折腾;</li>
-</ul>
-<h2 id="系统设置">系统设置</h2>
-<h4 id="触控板">触控板</h4>
-<p>Bettertouch</p>
-<h2 id="开发工具">开发工具</h2>
-<h4 id="idea系列">IDEA系列</h4>
-<h5 id="自动补全">自动补全</h5>
-<p><strong>快速输出</strong></p>
-<p>List.sout——&gt;System.out.println(list);</p>
-<p><strong>定义局部变量</strong></p>
-<p>new ArrayList&lt;&gt;().var;</p>
-<p><strong>判断空与否</strong></p>
-<p>List.null——&gt;if(List==null)</p>
-<p>List.notnull——&gt;if(List!=null)</p>
-<p><strong>快速取反:</strong></p>
-<p>​	输入 .not 可以让布尔值快速取反，再输入 .if 可快速生成 if 判断语句块。</p>
-<p>![2021-05-1311.47.57](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.47.57.gif)</p>
-<p><strong>快速遍历集合:</strong></p>
-<p>collection.for/.forr/.fori</p>
-<p>![2021-05-1311.51.59](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.51.59.gif)</p>
-<p><strong>快速返回:</strong></p>
-<p>Object.return——&gt;return Object;</p>
-<h5 id="重构生成">重构/生成</h5>
-<p>快速生成类的构造器和get set等常见方法</p>
-<p>重写toString/hashCode/equal等常见方法</p>
-<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/ry6AzG.png" alt="ry6AzG" loading="lazy"></figure>
+            <pre><code class="language-go">package LRU
+
+import &quot;fmt&quot;
+
+// LRU represent Least Recently Used strategy
+// means
+// cap 固定的双向链表
+// 每次插入均在头部,已经存在的元素则更新元素结点并移至头部,不存在则新建结点插入,超容则删掉最后一个结点
+// 每次查询则移动待查元素到头部(更新使用频率) 不存在
+type Node struct {
+	prev, next *Node
+	// 代表当前 LRU 的归属
+	list *LRU
+
+	key   string
+	value interface{}
+}
+type LRU struct {
+	root *Node
+	cap  int
+	len  int
+}
+
+func NewLRU(cap int) *LRU {
+	l := &amp;LRU{
+		root: &amp;Node{},
+		cap:  cap,
+	}
+	l.root.prev = l.root
+	l.root.next = l.root
+	l.root.list = l
+	return l
+}
+
+// Get  获得缓存数据
+// 获取到则将该节点移动至链表头部
+// 为获取到则 nil
+func (l *LRU) Get(key string) interface{} {
+	defer l.debug()
+	n := l.get(key)
+	if n == nil {
+		return nil
+	}
+	return n.value
+}
+
+func (l *LRU) get(key string) *Node {
+	for n := l.root.next; n != l.root; n = n.next {
+		if n.key == key {
+			n.prev.next = n.next
+			n.next.prev = n.prev
+
+			n.next = l.root.next
+			l.root.next.prev = n
+			l.root.next = n
+			n.prev = l.root
+			return n
+		}
+	}
+	return nil
+}
+
+// 将 key 构造为结点插入头部,若存在对应的 key 则更新结点值
+// 缓存满则删掉最后结点(LRU)最少使用
+
+func (l *LRU) Put(key string, value interface{}) {
+	defer l.debug()
+	n := l.get(key)
+	if n != nil {
+		n.value = value
+		return
+	}
+	// 缓存 cap 满
+	// delete the last node and l.len--
+	if l.len == l.cap {
+		last := l.root.prev
+		last.prev.next = l.root
+		l.root.prev = last.prev
+		last.prev = nil
+		last.next = nil
+		last.list = nil
+		l.len--
+	}
+	// construct newNode to insert the head of the list
+	// update the l.len and newNode'list
+	node := &amp;Node{
+		key:   key,
+		value: value,
+	}
+	head := l.root.next
+	head.prev = node
+	node.next = head
+	node.prev = l.root
+	l.root.next = node
+	l.len++
+	node.list = l
+}
+func (l *LRU) debug() {
+	fmt.Println(&quot;lru len: &quot;, l.len)
+
+	fmt.Println(&quot;lru cap: &quot;, l.cap)
+	for n := l.root.next; n != l.root; n = n.next {
+		fmt.Printf(&quot;%s:%v -&gt; &quot;, n.key, n.value)
+	}
+	fmt.Println()
+}
+</code></pre>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">
+            <a class="purple-link" href="https://flyingchase.github.io/post/gdb-diao-shi-go-cheng-xu/">
               <h3 class="post-title">
-                下一篇：Linux操作命令笔记
+                下一篇：gdb 调试 go 程序
               </h3>
             </a>
           </div>

@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Mac配置指南 | flyingchase</title>
+<title>gdb 调试 go 程序 | flyingchase</title>
 <meta name="description" content="记录成长的脚印">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,53 +80,70 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Mac配置指南</h2>
+          <h2 class="post-title">gdb 调试 go 程序</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-05-03</span>
+            <span><i class="icon-calendar-outline"></i> 2021-10-08</span>
             
           </div>
           <div class="post-content">
-            <h2 id="前言">前言</h2>
-<p>升级Big sur时替换硬盘使用Time Machine只恢复一月前备份,故将配置流程记录</p>
-<p>教训:</p>
+            <p>gdb 调试 go</p>
+<h1 id="gdb-调试-go-程序">gdb 调试 go 程序</h1>
+<h2 id="准备">准备</h2>
+<h3 id="安装-gdb">安装 gdb</h3>
+<p><code>brew install gdb</code></p>
+<h3 id="自签">自签</h3>
+<p>注意证书名称和 codesign 内 gdb 的安装位置</p>
+<p><code>codesign -fs gdb /usr/local/bin/gdb</code></p>
+<p>📢：reboot</p>
+<h2 id="调试流程">调试流程</h2>
+<h3 id="编译代码">编译代码</h3>
+<pre><code class="language-shell">go build -o bin/03_q1_slice_cap -gcflags=all=&quot;-N -l&quot; -ldflags='-compressdwarf=false' main.go
+</code></pre>
+<p>最后为代码所在位置</p>
+<h4 id="gdb-调试窗口">GDB 调试窗口</h4>
+<pre><code class="language-shell">gdb -tui ./bin/*cap*
+</code></pre>
+<p>./bin 内文件为 main.go 编译生成</p>
+<img src="/Users/qlzhou/Library/Application Support/typora-user-images/image-20211008200005280.png" alt="image-20211008200005280" style="zoom:50%;" />
 <ul>
-<li>做好多处备份, 机械和固态多个备份, 在升级和较多本地内容变动时加强备份频率;</li>
-<li>少折腾多干活, 黑苹果不要追求太完美, 现有的版本能稳定运行即可, 多刷题多学习, 不要花时间过于折腾;</li>
+<li>
+<p><code>b main.go:7</code> 在 main.go 第 7 行打断点</p>
+</li>
+<li>
+<p><code>r</code> 执行到断点处</p>
+</li>
+<li>
+<p><code>n</code> 单步执行（函数调用不进入内部）</p>
+</li>
+<li>
+<p><code>info locals</code> 打印当前堆栈变量</p>
+</li>
 </ul>
-<h2 id="系统设置">系统设置</h2>
-<h4 id="触控板">触控板</h4>
-<p>Bettertouch</p>
-<h2 id="开发工具">开发工具</h2>
-<h4 id="idea系列">IDEA系列</h4>
-<h5 id="自动补全">自动补全</h5>
-<p><strong>快速输出</strong></p>
-<p>List.sout——&gt;System.out.println(list);</p>
-<p><strong>定义局部变量</strong></p>
-<p>new ArrayList&lt;&gt;().var;</p>
-<p><strong>判断空与否</strong></p>
-<p>List.null——&gt;if(List==null)</p>
-<p>List.notnull——&gt;if(List!=null)</p>
-<p><strong>快速取反:</strong></p>
-<p>​	输入 .not 可以让布尔值快速取反，再输入 .if 可快速生成 if 判断语句块。</p>
-<p>![2021-05-1311.47.57](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.47.57.gif)</p>
-<p><strong>快速遍历集合:</strong></p>
-<p>collection.for/.forr/.fori</p>
-<p>![2021-05-1311.51.59](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.51.59.gif)</p>
-<p><strong>快速返回:</strong></p>
-<p>Object.return——&gt;return Object;</p>
-<h5 id="重构生成">重构/生成</h5>
-<p>快速生成类的构造器和get set等常见方法</p>
-<p>重写toString/hashCode/equal等常见方法</p>
-<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/ry6AzG.png" alt="ry6AzG" loading="lazy"></figure>
+<h2 id="常用调试命令">常用调试命令</h2>
+<ul>
+<li><code>b 文件名:行数</code> 打断点</li>
+<li><code>info b</code> 当前的断点情况</li>
+<li><code>r</code> 运行程序知道断点处</li>
+<li><code>c</code> 继续执行到下一个断点</li>
+<li><code>s</code> 单步执行，如果有调用函数则进入函数，注意和 n 的区别</li>
+<li><code>n</code> 单步执行，如果有调用的函数不会进入函数内部</li>
+<li><code>until</code> 退出循环</li>
+<li><code>until:行号</code> 执行到指定行</li>
+<li><code>info locals</code> 当前堆栈的所有变量</li>
+<li><code>info args</code> 打印参数</li>
+<li><code>info goroutines</code> 查看所有的 goroutine 及其 ID</li>
+<li><code>help</code> 帮助</li>
+<li><code>q</code> 退出</li>
+</ul>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://flyingchase.github.io/post/linux-cao-zuo-ming-ling-bi-ji/">
+            <a class="purple-link" href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dui-heap/">
               <h3 class="post-title">
-                下一篇：Linux操作命令笔记
+                下一篇：【Golang 数据结构】实现堆 Heap
               </h3>
             </a>
           </div>
