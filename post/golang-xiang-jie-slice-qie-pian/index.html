@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>Git常见问题汇总 | flyingchase</title>
+<title>【Golang 详解】slice 切片 | flyingchase</title>
 <meta name="description" content="一两黄金一两风">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,69 +80,88 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Git常见问题汇总</h2>
+          <h2 class="post-title">【Golang 详解】slice 切片</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2021-06-28</span>
+            <span><i class="icon-calendar-outline"></i> 2021-10-17</span>
             
           </div>
           <div class="post-content">
-            <blockquote>
-<p>整理收集于互联网</p>
-</blockquote>
-<h3 id="1修改提交信息">1.修改提交信息</h3>
-<p>重写<code>commit</code></p>
-<pre><code class="language-shell">git commit --amend -m &quot;new message&quot;
+            <h2 id="slice">slice</h2>
+<p>在切片的 index 位置插入元素</p>
+<pre><code class="language-go">copy(res[index+1:],res[index：])	// 将 slice 从 index 位置后移，空出 index 位置
+res[index]=value
 </code></pre>
-<h3 id="2添加文件到最后一次提交">2.添加文件到最后一次提交</h3>
-<p><code>git push</code> 后新增文件到最后一次提交</p>
-<pre><code class="language-shell">git add &lt;file_name&gt;git commit --amend HEAD~1
+<h4 id="底层">底层</h4>
+<pre><code class="language-go">type slice struct {
+// 指针指向底层的数组
+    array unsafe.Pointer
+	// 当前切片所使用的长度
+    len   int
+    // 底层数组的长度
+	cap   int
+}
 </code></pre>
-<h3 id="3撤消提交">3.撤消提交</h3>
-<p>如果要撤消最近一次提交但保留更改，可执行以下操作：</p>
-<pre><code class="language-shell">git reset --soft HEAD~1
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/qv8Q5C.png" alt="qv8Q5C" style="zoom:50%;" />
+<p>在复制切片时，底层的数组也被复制，导致在新的复制生成的切片发生扩容前，其内部的 <code>array unsafe.Pointer</code> 与原切片的 array 指针指向的是同一底层数组，此时对newSlice 的修改会影响oldSlice——&gt;发生扩容后则不会</p>
+<p><strong>扩容算法：</strong></p>
+<ul>
+<li>
+<p>所需最小 MinCap&gt;2*oldCap newCap=Mincap</p>
+</li>
+<li>
+<p>原 slice 长度 len&lt;1024则两倍扩容</p>
+</li>
+<li>
+<p>原 slice 长度len&gt;1024 则 1.25 倍扩容</p>
+</li>
+<li>
+<p>最后进行内存对齐</p>
+</li>
+</ul>
+<pre><code class="language-go">    // 扩容算法
+	newcap := old.cap
+	doublecap := newcap + newcap
+	if cap &gt; doublecap {
+		newcap = cap
+	} else {
+		if old.len &lt; 1024 {
+			newcap = doublecap
+		} else {
+			// Check 0 &lt; newcap to detect overflow
+			// and prevent an infinite loop.
+			for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
+				newcap += newcap / 4
+			}
+			// Set newcap to the requested cap when
+			// the newcap calculation overflowed.
+			if newcap &lt;= 0 {
+				newcap = cap
+			}
+		}
+	}
 </code></pre>
-<p>如果要撤消提交和更改，可执行以下操作：——&gt;丢弃更改</p>
-<pre><code class="language-shell">git reset --hard HEAD~1
-</code></pre>
-<p>如果要撤消所有的本地更改，则可以重置为分支的原始版本：</p>
-<pre><code class="language-shell">git reset --hard origin/&lt;branch_name&gt;
-</code></pre>
-<p>如果要撤消提交而不修改现有历史记录，则可以使用 git revert，此命令通过创建新的提交来撤消提交。</p>
-<pre><code class="language-shell">git revert HEAD
-</code></pre>
-<p>撤消已经推送到远程分支的合并提交的安全方法是使用 git revert 命令：</p>
-<pre><code class="language-shell">git revert -m 1 &lt;commit_id&gt;
-</code></pre>
-<p>commit_id 是要还原的合并提交 id。</p>
-<p>注意要点：</p>
-<ol>
-<li>可以撤消任意数量的提交。例如：<code>git reset HEAD~3</code>（返回 HEAD 之前的 3 个提交)；<code>git reset --hard &lt;commit_id&gt;</code>（返回特定的提交）。</li>
-<li>如果尚未推送提交，并且你不想引入糟糕的提交到远程分支，可以使用 git reset。</li>
-<li>使用 git revert 还原已经推送到远程分支的合并提交。</li>
-<li>使用 git log 查看提交历史。</li>
-</ol>
-<pre><code class="language-bash"># 删除 untracked files 
-git clean -f
- 
-# 连 untracked 的目录也一起删掉
-git clean -fd
- 
-# 连 gitignore 的untrack 文件/目录也一起删掉 （慎用，一般这个是用来删掉编译出来的 .o之类的文件用的）
-git clean -xfd
- 
-# 在用上述 git clean 前，墙裂建议加上 -n 参数来先看看会删掉哪些文件，防止重要文件被误删
-git clean -nxfd
-git clean -nf
-git clean -nfd
-</code></pre>
-<h3 id="4-git命令显示中文路径">4. Git命令显示中文路径</h3>
-<pre><code class="language-shell">git config --global core.quotePath false
-</code></pre>
-<h3 id="5-指定文件的历史修改记录">5. 指定文件的历史修改记录</h3>
-<pre><code class="language-shell">git log --follow -p 文件名
-</code></pre>
-<h3 id="6-指定提交的修改记录">6. 指定提交的修改记录</h3>
-<pre><code class="language-shell"># 查看commit提交修改的文件git show --stat &lt;commit的代号&gt;#查看commit提交修改的文件及内容git show &lt;commit的代号&gt;
+<p><strong>Tips:</strong></p>
+<ul>
+<li>打印<code>%p</code>可以输出 slice 指向的底层数组的地址</li>
+<li>创建 slice 时候使用<code>mallocgc</code>函数分配内存，如果创建的 size==0则返回固定的 slice 的底层数组地址
+<ul>
+<li>使用 <code>s:=make([]int,0)</code>和<code>s:=[]int{}</code> 创建则 len==0 默认地址</li>
+<li>使用<code>var s []int</code> 则底层数组指针为 nil</li>
+</ul>
+</li>
+</ul>
+<h3 id="逆序slice">逆序slice</h3>
+<pre><code class="language-go">// 辅助空间
+resTrue:=make([] int,len(res))
+for index:=range res {
+    resTrue[index]=res[len(res) - 1-index]
+}
+
+// 原地逆序
+
+for i:=0;i&lt;len(res)&gt;&gt;1; i++{
+    res[i],res[len(res) - 1-i]=res[len(res) - 1-i],res[i]
+}
 </code></pre>
 
           </div>
@@ -150,9 +169,9 @@ git clean -nfd
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://flyingchase.github.io/post/java-ji-he/">
+            <a class="purple-link" href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-lru/">
               <h3 class="post-title">
-                下一篇：Java-集合
+                下一篇：【Golang 数据结构】实现 LRU
               </h3>
             </a>
           </div>
