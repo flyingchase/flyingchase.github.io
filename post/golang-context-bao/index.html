@@ -5,14 +5,14 @@
     
 <meta charset="utf-8" >
 
-<title>Golang context 包 | flyingchase</title>
+<title>Golang context 总结 | flyingchase</title>
 <meta name="description" content="一两黄金一两风">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1634473436508">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1635255480844">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://flyingchase.github.io">
-        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1634473436508" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1635255480844" alt="" width="32px" height="32px">
       </a>
       <a href="https://flyingchase.github.io">
         <h1 class="site-title">flyingchase</h1>
@@ -80,14 +80,13 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">Golang context 包</h2>
+          <h2 class="post-title">Golang context 总结</h2>
           <div class="post-info post-detail-info">
             <span><i class="icon-calendar-outline"></i> 2021-10-01</span>
             
           </div>
           <div class="post-content">
-            <p>context 包</p>
-<h1 id="context包">context包</h1>
+            <h1 id="context包">context包</h1>
 <p>控制并发的方式：</p>
 <p>​	<code>WaitGroup</code> <code>Context</code></p>
 <p><strong>waitGroup</strong></p>
@@ -239,6 +238,72 @@ type cancelCtx struct {
 <p><code>WithDeadline</code> 设置控制子协程的最长推出时间</p>
 <pre><code class="language-go">func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)
 </code></pre>
+<p><strong>函数签名：</strong></p>
+<pre><code class="language-go">// 创建一个带有新的 Done channel 的 context，并且返回一个取消的方法
+func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
+// 创建一个具有截止时间的 context
+// 截止时间是 d 和 parent(如果有截止时间的话) 的截止时间中更早的那一个
+// 当 parent 执行完毕，或 cancel 被调用 或者 截止时间到了的时候，这个 context done 掉
+func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)
+// 其实就是调用的 WithDeadline
+func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
+type CancelFunc
+type Context
+	// 一般用于创建 root context，这个 context 永远也不会被取消，或者是 done
+    func Background() Context
+	// 底层和 Background 一致，但是含义不同，当不清楚用什么的时候或者是还没准备好的时候可以用它
+    func TODO() Context
+	// 为 context 附加值
+	// key 应该具有可比性，一般不应该是 string int 这种默认类型，应该自己创建一个类型
+	// 避免出现冲突，一般 key 不应该导出，如果要导出的话应该是一个接口或者是指针
+    func WithValue(parent Context, key, val interface{}) Context
+</code></pre>
+<h2 id="使用场景">使用场景</h2>
+<h3 id="超时控制">超时控制</h3>
+<h3 id="错误取消">错误取消</h3>
+<p>eg:</p>
+<p>​	main 并发调用f1 f2 当f1 错误返回 f2 处于阻塞，报错误 context被取消</p>
+<pre><code class="language-go">func f1(ctx context.Context) error {
+	select {
+	case &lt;-ctx.Done():
+		return fmt.Errorf(&quot;f1: %w&quot;, ctx.Err())
+	case &lt;-time.After(time.Millisecond):
+		return fmt.Errorf(&quot;f1 err in 1ms&quot;)
+	}
+}
+func f2(ctx context.Context) error {
+	select {
+	case &lt;-ctx.Done():
+		return fmt.Errorf(&quot;f2 : %w&quot;, ctx.Err())
+	case &lt;-time.After(time.Hour):
+		return nil
+	}
+}
+func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		if err := f1(ctx); err != nil {
+			fmt.Println(err)
+			cancel()
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		if err := f2(ctx); err != nil {
+			fmt.Println(err)
+			cancel()
+		}
+	}()
+	wg.Wait()
+}
+</code></pre>
+<p>类似<code>errgroup</code></p>
+<h3 id="传递共享数据">传递共享数据</h3>
+<h3 id="防止-goroutine-泄露">防止 goroutine 泄露</h3>
 
           </div>
         </div>
