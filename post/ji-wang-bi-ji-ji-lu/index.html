@@ -1,22 +1,92 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://flyingchase.github.io</id>
-    <title>flyingchase</title>
-    <updated>2021-10-31T13:55:38.747Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://flyingchase.github.io"/>
-    <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
-    <subtitle>一两黄金一两风</subtitle>
-    <logo>https://flyingchase.github.io/images/avatar.png</logo>
-    <icon>https://flyingchase.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2021, flyingchase</rights>
-    <entry>
-        <title type="html"><![CDATA[计网笔记记录]]></title>
-        <id>https://flyingchase.github.io/post/ji-wang-bi-ji-ji-lu/</id>
-        <link href="https://flyingchase.github.io/post/ji-wang-bi-ji-ji-lu/">
-        </link>
-        <updated>2021-10-31T13:54:35.000Z</updated>
-        <content type="html"><![CDATA[<p>收集于互联网，侵删</p>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>计网笔记记录 | flyingchase</title>
+<meta name="description" content="一两黄金一两风">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1635688525282">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://flyingchase.github.io">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1635688525282" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://flyingchase.github.io">
+        <h1 class="site-title">flyingchase</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">计网笔记记录</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-10-31</span>
+            
+          </div>
+          <div class="post-content">
+            <p>收集于互联网，侵删</p>
 <h1 id="计网八股文">计网八股文</h1>
 <h2 id="osi-参考模型">OSI 参考模型</h2>
 <p>OSI 从上到下分为 7 层：</p>
@@ -744,1307 +814,62 @@ DATA frame。头部进行压缩，使用<a href="https://www.jianshu.com/p/f44b9
 <li>服务器<strong>返回响应</strong></li>
 <li><em>浏览器*<em>接受响应，显示页面，渲染页面*</em></em>*</li>
 </ol>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[【Golang】堆栈与逃逸分析]]></title>
-        <id>https://flyingchase.github.io/post/golang-dui-zhan-yu-tao-yi-fen-xi/</id>
-        <link href="https://flyingchase.github.io/post/golang-dui-zhan-yu-tao-yi-fen-xi/">
-        </link>
-        <updated>2021-10-26T13:37:16.000Z</updated>
-        <content type="html"><![CDATA[<p>``# Go 的堆栈与逃逸分析</p>
-<h2 id="堆栈">堆栈</h2>
-<p>计算机中堆栈的区别</p>
-<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/UvOwW0.png" alt="UvOwW0" style="zoom:34%;" />
-<ol>
-<li>栈归 OS 分配和创建，堆由程序员使用语言来申请创建与释放</li>
-<li>栈存储函数参数、返回值 、局部变量、函数调用时的临时上下文；堆存放全局变量
-<ol>
-<li>局部、占空间确定的数据放置在<code>Stack</code>上；否则放在<code>堆</code>上（动态内存分配）</li>
-</ol>
-</li>
-<li>栈的访问比堆快</li>
-<li>每个<strong>线程</strong>分配一个<strong>栈</strong>，每个<strong>进程</strong>分配一个<strong>堆</strong>；
-<ol>
-<li>stack 是线程独占的，heap 是线程共用的</li>
-</ol>
-</li>
-<li>栈创建时大小确定，超过数据存储则<code>stack overflow</code>，heap 大小可以动态增加</li>
-<li>栈由高地址向低地址增长，堆由低地址向高地址增长</li>
-</ol>
-<h2 id="go-的堆栈">Go 的堆栈</h2>
-<p>变量存储在 heap 还是 stack 由编译器决定</p>
-<ul>
-<li>无法证明函数返回后变量是否被引用则必须在 heap 上分配，避免指针悬空</li>
-<li>局部变量过大也会分配在 heap 上</li>
-<li>变量具有地址，作为堆分配的候选，逃逸分析确定其生存周期不会超过函数返回，就被分配在栈上</li>
-</ul>
-<p><code>go tool compile</code>命令查看汇编判断存储位置</p>
-<p>示例：</p>
-<pre><code class="language-go">package main
-import &quot;fmt&quot;
-func main() {
-	var a [1]int
-	c := a[:]
-	fmt.Println(c)
-}
-</code></pre>
-<p><code>go tool compile -m heapAndStackAnalyse.go</code>显示</p>
-<pre><code class="language-shell">heapAndStackAnalyse.go:8:13: inlining call to fmt.Println
-heapAndStackAnalyse.go:6:6: moved to heap: a
-heapAndStackAnalyse.go:8:13: c escapes to heap
-heapAndStackAnalyse.go:8:13: []interface {}{...} does not escape
-&lt;autogenerated&gt;:1: .this does not escape
-</code></pre>
-<h3 id="go-逃逸分析">Go 逃逸分析</h3>
-<p>Go 中的变量存储分配由编译器决定；生命周期延长则会分配到<code>heap</code>发生逃逸</p>
-<p>**定义：**编译器通过分析自动判断变量的生命周期是否被延长，判断过程即为逃逸分析</p>
-<p>上述代码<code>fmt.Println(c)</code> 发现调用<code>fmt</code>包的<code>Println</code>函数 ，扩展了生命周期使得 c <code>escape to heap</code></p>
-<p>改为 <code>Println(c)</code>则不会发生逃逸</p>
-<h2 id="go-的调用栈">Go 的调用栈</h2>
-<p>了解 Go 调试时追踪堆栈的跟踪信息和识别传递的参数</p>
-<p>示例：</p>
-<pre><code class="language-go">package main
-import &quot;runtime/debug&quot;
 
-func main() {
-	slice := make([]string, 2, 4)
-	Example(slice, &quot;hello&quot;, 10)
-}
-func Example(slice []string, str string, i int) {
-	debug.PrintStack()
-}
-</code></pre>
-<p>Go 中程序的启动使用 goroutine 下述第一行表明，goroutineID=1；</p>
-<p>后续为不同层次的调用</p>
-<ul>
-<li>最深层调用最先打印，最后打印最浅调用。</li>
-</ul>
-<pre><code class="language-shell">goroutine 1 [running]:
-runtime/debug.Stack(0xc000046778, 0xc000070f78, 0x1004685)
-        /usr/local/Cellar/go/1.16.6/libexec/src/runtime/debug/stack.go:24 +0x9f
-runtime/debug.PrintStack()
-        /usr/local/Cellar/go/1.16.6/libexec/src/runtime/debug/stack.go:16 +0x25
-main.Example(...)
-        //...go:11
-main.main()
-        //....go:7 +0x25
-</code></pre>
-<h2 id="总结">总结</h2>
-<ol>
-<li>在方法内把<strong>局部变量指针返回</strong>逃逸
-<ul>
-<li>局部变量本应该在栈上分配、回收，但是返回时被外部引用则生命周期大于栈</li>
-</ul>
-</li>
-<li><strong>发送指针、带指针值到 channel</strong> 逃逸
-<ul>
-<li>编译时无法判断 goroutine 会在 channel 接收数据，则声明周期无法断定</li>
-</ul>
-</li>
-<li><strong>切片存储指针/带指针的值</strong> 逃逸
-<ul>
-<li><code>[]*string</code>导致切片的内容逃逸，可能其背后的数组在栈上分配，但引用的值一定在heap 上</li>
-</ul>
-</li>
-<li><strong>slice 底层的数组被重新分配</strong> 逃逸
-<ul>
-<li>slice 初始化时候会在栈上被分配，当其扩充时会在 heap 上分配，<code>append</code>时可能超出容量 cap</li>
-</ul>
-</li>
-<li><strong>在 interface{}类型上调用方法</strong> 逃逸
-<ul>
-<li>interface{}上的方法调用都是动态的，方法的实现只有在运行时知道</li>
-</ul>
-</li>
-</ol>
-<p>``</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[【Golang 详解】slice 切片]]></title>
-        <id>https://flyingchase.github.io/post/golang-xiang-jie-slice-qie-pian/</id>
-        <link href="https://flyingchase.github.io/post/golang-xiang-jie-slice-qie-pian/">
-        </link>
-        <updated>2021-10-17T12:19:11.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="slice">slice</h2>
-<p>在切片的 index 位置插入元素</p>
-<pre><code class="language-go">copy(res[index+1:],res[index：])	// 将 slice 从 index 位置后移，空出 index 位置
-res[index]=value
-</code></pre>
-<h4 id="底层">底层</h4>
-<pre><code class="language-go">type slice struct {
-// 指针指向底层的数组
-    array unsafe.Pointer
-	// 当前切片所使用的长度
-    len   int
-    // 底层数组的长度
-	cap   int
-}
-</code></pre>
-<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/qv8Q5C.png" alt="qv8Q5C" style="zoom:50%;" />
-<p>在复制切片时，底层的数组也被复制，导致在新的复制生成的切片发生扩容前，其内部的 <code>array unsafe.Pointer</code> 与原切片的 array 指针指向的是同一底层数组，此时对newSlice 的修改会影响oldSlice——&gt;发生扩容后则不会</p>
-<p><strong>扩容算法：</strong></p>
-<ul>
-<li>
-<p>所需最小 MinCap&gt;2*oldCap newCap=Mincap</p>
-</li>
-<li>
-<p>原 slice 长度 len&lt;1024则两倍扩容</p>
-</li>
-<li>
-<p>原 slice 长度len&gt;1024 则 1.25 倍扩容</p>
-</li>
-<li>
-<p>最后进行内存对齐</p>
-</li>
-</ul>
-<pre><code class="language-go">    // 扩容算法
-	newcap := old.cap
-	doublecap := newcap + newcap
-	if cap &gt; doublecap {
-		newcap = cap
-	} else {
-		if old.len &lt; 1024 {
-			newcap = doublecap
-		} else {
-			// Check 0 &lt; newcap to detect overflow
-			// and prevent an infinite loop.
-			for 0 &lt; newcap &amp;&amp; newcap &lt; cap {
-				newcap += newcap / 4
-			}
-			// Set newcap to the requested cap when
-			// the newcap calculation overflowed.
-			if newcap &lt;= 0 {
-				newcap = cap
-			}
-		}
-	}
-</code></pre>
-<p><strong>Tips:</strong></p>
-<ul>
-<li>打印<code>%p</code>可以输出 slice 指向的底层数组的地址</li>
-<li>创建 slice 时候使用<code>mallocgc</code>函数分配内存，如果创建的 size==0则返回固定的 slice 的底层数组地址
-<ul>
-<li>使用 <code>s:=make([]int,0)</code>和<code>s:=[]int{}</code> 创建则 len==0 默认地址</li>
-<li>使用<code>var s []int</code> 则底层数组指针为 nil</li>
-</ul>
-</li>
-</ul>
-<h3 id="逆序slice">逆序slice</h3>
-<pre><code class="language-go">// 辅助空间
-resTrue:=make([] int,len(res))
-for index:=range res {
-    resTrue[index]=res[len(res) - 1-index]
-}
-
-// 原地逆序
-
-for i:=0;i&lt;len(res)&gt;&gt;1; i++{
-    res[i],res[len(res) - 1-i]=res[len(res) - 1-i],res[i]
-}
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[【Golang 数据结构】实现 LRU]]></title>
-        <id>https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-lru/</id>
-        <link href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-lru/">
-        </link>
-        <updated>2021-10-08T12:04:23.000Z</updated>
-        <content type="html"><![CDATA[<pre><code class="language-go">package LRU
-
-import &quot;fmt&quot;
-
-// LRU represent Least Recently Used strategy
-// means
-// cap 固定的双向链表
-// 每次插入均在头部,已经存在的元素则更新元素结点并移至头部,不存在则新建结点插入,超容则删掉最后一个结点
-// 每次查询则移动待查元素到头部(更新使用频率) 不存在
-type Node struct {
-	prev, next *Node
-	// 代表当前 LRU 的归属
-	list *LRU
-
-	key   string
-	value interface{}
-}
-type LRU struct {
-	root *Node
-	cap  int
-	len  int
-}
-
-func NewLRU(cap int) *LRU {
-	l := &amp;LRU{
-		root: &amp;Node{},
-		cap:  cap,
-	}
-	l.root.prev = l.root
-	l.root.next = l.root
-	l.root.list = l
-	return l
-}
-
-// Get  获得缓存数据
-// 获取到则将该节点移动至链表头部
-// 为获取到则 nil
-func (l *LRU) Get(key string) interface{} {
-	defer l.debug()
-	n := l.get(key)
-	if n == nil {
-		return nil
-	}
-	return n.value
-}
-
-func (l *LRU) get(key string) *Node {
-	for n := l.root.next; n != l.root; n = n.next {
-		if n.key == key {
-			n.prev.next = n.next
-			n.next.prev = n.prev
-
-			n.next = l.root.next
-			l.root.next.prev = n
-			l.root.next = n
-			n.prev = l.root
-			return n
-		}
-	}
-	return nil
-}
-
-// 将 key 构造为结点插入头部,若存在对应的 key 则更新结点值
-// 缓存满则删掉最后结点(LRU)最少使用
-
-func (l *LRU) Put(key string, value interface{}) {
-	defer l.debug()
-	n := l.get(key)
-	if n != nil {
-		n.value = value
-		return
-	}
-	// 缓存 cap 满
-	// delete the last node and l.len--
-	if l.len == l.cap {
-		last := l.root.prev
-		last.prev.next = l.root
-		l.root.prev = last.prev
-		last.prev = nil
-		last.next = nil
-		last.list = nil
-		l.len--
-	}
-	// construct newNode to insert the head of the list
-	// update the l.len and newNode'list
-	node := &amp;Node{
-		key:   key,
-		value: value,
-	}
-	head := l.root.next
-	head.prev = node
-	node.next = head
-	node.prev = l.root
-	l.root.next = node
-	l.len++
-	node.list = l
-}
-func (l *LRU) debug() {
-	fmt.Println(&quot;lru len: &quot;, l.len)
-
-	fmt.Println(&quot;lru cap: &quot;, l.cap)
-	for n := l.root.next; n != l.root; n = n.next {
-		fmt.Printf(&quot;%s:%v -&gt; &quot;, n.key, n.value)
-	}
-	fmt.Println()
-}
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[gdb 调试 go 程序]]></title>
-        <id>https://flyingchase.github.io/post/gdb-diao-shi-go-cheng-xu/</id>
-        <link href="https://flyingchase.github.io/post/gdb-diao-shi-go-cheng-xu/">
-        </link>
-        <updated>2021-10-08T12:03:47.000Z</updated>
-        <content type="html"><![CDATA[<p>gdb 调试 go</p>
-<h1 id="gdb-调试-go-程序">gdb 调试 go 程序</h1>
-<h2 id="准备">准备</h2>
-<h3 id="安装-gdb">安装 gdb</h3>
-<p><code>brew install gdb</code></p>
-<h3 id="自签">自签</h3>
-<p>注意证书名称和 codesign 内 gdb 的安装位置</p>
-<p><code>codesign -fs gdb /usr/local/bin/gdb</code></p>
-<p>📢：reboot</p>
-<h2 id="调试流程">调试流程</h2>
-<h3 id="编译代码">编译代码</h3>
-<pre><code class="language-shell">go build -o bin/03_q1_slice_cap -gcflags=all=&quot;-N -l&quot; -ldflags='-compressdwarf=false' main.go
-</code></pre>
-<p>最后为代码所在位置</p>
-<h4 id="gdb-调试窗口">GDB 调试窗口</h4>
-<pre><code class="language-shell">gdb -tui ./bin/*cap*
-</code></pre>
-<p>./bin 内文件为 main.go 编译生成</p>
-<img src="/Users/qlzhou/Library/Application Support/typora-user-images/image-20211008200005280.png" alt="image-20211008200005280" style="zoom:50%;" />
-<ul>
-<li>
-<p><code>b main.go:7</code> 在 main.go 第 7 行打断点</p>
-</li>
-<li>
-<p><code>r</code> 执行到断点处</p>
-</li>
-<li>
-<p><code>n</code> 单步执行（函数调用不进入内部）</p>
-</li>
-<li>
-<p><code>info locals</code> 打印当前堆栈变量</p>
-</li>
-</ul>
-<h2 id="常用调试命令">常用调试命令</h2>
-<ul>
-<li><code>b 文件名:行数</code> 打断点</li>
-<li><code>info b</code> 当前的断点情况</li>
-<li><code>r</code> 运行程序知道断点处</li>
-<li><code>c</code> 继续执行到下一个断点</li>
-<li><code>s</code> 单步执行，如果有调用函数则进入函数，注意和 n 的区别</li>
-<li><code>n</code> 单步执行，如果有调用的函数不会进入函数内部</li>
-<li><code>until</code> 退出循环</li>
-<li><code>until:行号</code> 执行到指定行</li>
-<li><code>info locals</code> 当前堆栈的所有变量</li>
-<li><code>info args</code> 打印参数</li>
-<li><code>info goroutines</code> 查看所有的 goroutine 及其 ID</li>
-<li><code>help</code> 帮助</li>
-<li><code>q</code> 退出</li>
-</ul>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[【Golang 数据结构】实现堆 Heap]]></title>
-        <id>https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dui-heap/</id>
-        <link href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dui-heap/">
-        </link>
-        <updated>2021-10-03T11:45:21.000Z</updated>
-        <content type="html"><![CDATA[<pre><code class="language-go">
-import (
-	&quot;errors&quot;
-)
-
-/*
-实现二叉堆
-	- 添加
-	- 删除堆顶
-	- 获取堆顶
-	- 堆化
-*/
-
-const DefaultCapacity = 16
-
-type BinaryHeap struct {
-	data     []int
-	size     int
-	capacity int
-}
-
-func Default() *BinaryHeap {
-	return New(DefaultCapacity)
-}
-
-func New(capacity int) *BinaryHeap {
-	return &amp;BinaryHeap{
-		data:     make([]int, capacity),
-		size:     0,
-		capacity: capacity,
-	}
-}
-
-// 添加元素
-//  现将元素添加到堆尾 再自下而上不断比较 (index-1)/2比较 移至合适位置
-func (h *BinaryHeap) Add(val int) bool {
-	if h.size &gt;= h.capacity {
-		return false
-	}
-	// 将 val 加入堆尾 再自下向上调整 不断与 parent=(index-1)/2 比较
-	h.data[h.size] = val
-	h.size++
-	index := h.size - 1
-	parent := (index - 1) / 2
-	for parent &gt;= 0 &amp;&amp; h.data[index] &lt; h.data[parent] {
-		h.data[index], h.data[parent] = h.data[parent], h.data[index]
-		index, parent = parent, (index-1)/2
-	}
-	return true
-}
-
-// 删除堆顶元素
-func (h *BinaryHeap) Remove() error {
-	if h.size &lt;= 0 {
-		return errors.New(&quot;heap is null&quot;)
-	}
-	h.size--
-	if h.size &gt; 0 {
-		h.data[0] = h.data[h.size-1]
-		shiftDown(h, 0, h.size)
-	}
-	return nil
-
-}
-
-func shiftDown(h *BinaryHeap, index int, size int) {
-	left, right := 2*index+1, 2*index+2
-	largest := left
-	for index &lt; size {
-		if right &lt; size &amp;&amp; h.data[right] &lt; h.data[left] {
-			largest = right
-		}
-		if h.data[index] &gt; h.data[largest] {
-			largest = index
-			break
-		}
-		h.data[index],h.data[largest]=h.data[largest],h.data[index]
-		index=largest
-		left=2*index+1
-		right=2*index+2
-	}
-}
-
-// 获取堆顶元素
-
-func (h BinaryHeap)GetTop()int  {
-	if h.size&lt;=0 {
-		panic(&quot;heap is null&quot;)
-	}
-	return h.data[0]
-}
-
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[【Golang 数据结构】实现单链表]]></title>
-        <id>https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dan-lian-biao/</id>
-        <link href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dan-lian-biao/">
-        </link>
-        <updated>2021-10-03T11:44:01.000Z</updated>
-        <content type="html"><![CDATA[<pre><code class="language-go">
-import &quot;fmt&quot;
-
-/*
-实现单链表
-	- append
-	- 结点前后插入
-	- 依值查找
-	- 删除结点
-	- 打印链表值
-*/
-
-type ListNode struct {
-	Val  interface{}
-	Next *ListNode
-}
-type LinkedList struct {
-	head *ListNode
-	size int
-}
-
-// 创建结点
-func newNode(val interface{}) *ListNode {
-	return &amp;ListNode{
-
-		Val:  val,
-		Next: nil,
-	}
-}
-func New() *LinkedList {
-	return &amp;LinkedList{
-		head: nil,
-		size: 0,
-	}
-}
-
-//添加至链尾 并返回生成的结点
-func (lists *LinkedList) PushBack(val interface{}) *ListNode {
-	head := lists.head
-	// 将待插入值转化为 node
-	node := newNode(val)
-	if head == nil {
-		lists.head = node
-	} else {
-		for head.Next != nil {
-			head = head.Next
-		}
-		head.Next = node
-	}
-	lists.size++
-	return node
-}
-
-//结点前插入
-func (lists *LinkedList) PushBefore(p *ListNode, val interface{}) *ListNode {
-	if p == nil || lists.head == nil {
-		return nil
-	}
-	node := newNode(val)
-	// 在头结点之前插入情况
-	if p == lists.head {
-		node.Next = lists.head
-		lists.head = node
-	} else {
-		prev := lists.head
-		// 找到待插入节点的前一个节点
-		for ; prev.Next != p; prev = prev.Next {
-		}
-		node.Next = p
-		prev.Next = node
-	}
-	lists.size++
-	return node
-}
-
-//结点后插入
-func (lists *LinkedList) PushAfter(p *ListNode, val interface{}) *ListNode {
-
-	if p == nil {
-		return nil
-	}
-	node := newNode(val)
-	node.Next = p.Next
-	p.Next = node
-	lists.size++
-	return node
-}
-
-//查找结点
-func (lists *LinkedList) Find(val interface{}) *ListNode {
-	cur := lists.head
-	for cur != nil &amp;&amp; cur.Val != val {
-		cur = cur.Next
-	}
-	return cur
-}
-
-//删除指定结点
-func (lists *LinkedList) Delete(p *ListNode) {
-	if p == nil {
-		return
-	}
-	if p == lists.head {
-		// 待删结点为头结点
-		lists.head = lists.head.Next
-		lists.size--
-	} else {
-		// 非删除头结点时 找到待删结点的 prev 结点
-		prev := lists.head
-		for prev != nil &amp;&amp; prev.Next != p {
-			prev = prev.Next
-		}
-		// 保证找到 而非 prev 走到链尾
-		if prev != nil {
-			prev.Next = p.Next
-			lists.size--
-		}
-	}
-}
-
-//删除指定值结点 调用 find 找到指定值的结点再删除结点即可
-func (lists *LinkedList)DeleteVal(val interface{})  {
-	lists.Delete(lists.Find(val))
-}
-//打印链表值
-func (lists *LinkedList)PrintDara()  {
-	if lists.size==0 {
-		return
-	}
-	for node:=lists.head;node!=nil;node = node.Next {
-		fmt.Print(node.Val,&quot; &quot;)
-	}
-	fmt.Println()
-}
-
-</code></pre>
-<pre><code class="language-go">package doublyLinkedlist
-
-import &quot;fmt&quot;
-
-/*
-实现双向链表
-	- CRUD
-	- 表头和表尾的追加
-*/
-type ListNode struct {
-    Val interface{}
-    prev,next *ListNode
-}
-type LinkedList struct {
-    head *ListNode
-    size int
-}
-
-func New()*LinkedList  {
-   return &amp; LinkedList {
-       head: nil,
-       size: 0,
-   }
-}
-// 插入到表头 区分表头是否空
-func (lists * LinkedList)PushFront(val interface{}) *ListNode  {
-   node:=newNode(val)
-	if lists.head!=nil {
-		lists.head.prev=node
-		node.next=lists.head
-	}
-	lists.head=node
-	lists.size++
-	return node
-}
-
-func newNode(val interface{}) *ListNode{
-	return &amp; ListNode {
-	    Val: val,
-	    prev: nil,
-	    next: nil,
-	}
-}
-
-// 插入数据到链尾
-func (lists * LinkedList) PushBack(val interface{}) *ListNode{
-	//  空表则调用链首插入
-	if lists.head==nil {
-		lists.PushFront(val)
-	}
-	node:=newNode(val)
-	cur:=lists.head
-	for cur.next != nil {
-		cur=cur.next
-	}
-	cur.next=node
-	node.prev=cur
-	lists.size++
-	return node
-}
-//节点后插入数据
-func (lists * LinkedList) PushAfter(p *ListNode, val interface{})  *ListNode {
-
-	if p==nil {
-		return nil
-	}
-	// 找到要插入位置的前后结点
-	next:=p.next
-	node:=newNode(val)
-	// 插入 注意判断 next 为空时next.prev 不存在 无须链接 新插入的 node 即为最后一个节点
-	node.next=next
-	p.next=node
-	node.prev=p
-	if next!=nil {
-		next.prev=node
-	}
-	lists.size++
-	return node
-}
-//结点前插入数据
-func (lists * LinkedList)PushBefore(p *ListNode,val interface{}) *ListNode {
-	if p==nil {
-		return nil
-	}
-	node:=newNode(val)
-	prev:=p.prev
-	// 待插入的链表为空则调用链首插入函数
-	if prev==nil {
-		lists.PushFront(val)
-	}else {
-		// 在指定结点前插入需找到prevNode
-		p.prev=node
-		node.next=p
-		prev.next=node
-		node.prev=prev
-		lists.size++
-	}
-
-	return node
-}
-//删除结点
-func (lists * LinkedList) Delete(p *ListNode)  {
-	if p == nil|| lists.head==nil {
-		return
-	}
-	// 删除结点为头结点则直接跳过即可
-	if p==lists.head {
-		lists.head=p.next
-	}else {
-		//  注意待删结点的 nextNode 为链尾空节点时 无须链接 nextNode.prev=prevNode
-		prevNode,nextNode:=p.prev,p.next
-		prevNode.next=nextNode
-		if nextNode!=nil {
-			nextNode.prev=prevNode
-		}
-	}
-	lists.size--
-
-}
-//依值查找结点
-func (lists * LinkedList)Find(val interface{}) *ListNode  {
-	if lists.head==nil{
-		return nil
-	}
-	cur:=lists.head
-	for cur!=nil&amp;&amp;cur.Val!=val {
-		cur=cur.next
-	}
-	return cur
-}
-//打印链表数据
-func (lists * LinkedList)PrintDara()  {
-	for p:=lists.head;p!=nil;p=p.next {
-		fmt.Print(p.Val,&quot; &quot;)
-	}
-	fmt.Println()
-}
-func (lists * LinkedList)Size() int  {
-	return lists.size
-}
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[【Golang 数据结构】实现动态扩容数组]]></title>
-        <id>https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dong-tai-kuo-rong-lian-biao/</id>
-        <link href="https://flyingchase.github.io/post/golang-shu-ju-jie-gou-shi-xian-dong-tai-kuo-rong-lian-biao/">
-        </link>
-        <updated>2021-10-03T11:42:19.000Z</updated>
-        <content type="html"><![CDATA[<pre><code class="language-go">
-import (
-	&quot;errors&quot;
-	&quot;fmt&quot;
-)
-
-const DefaultCapacity = 16
-
-// capacity最大值
-const CapacityThreshold = 1024
-
-type Array struct {
-	data     []interface{}
-	capacity int
-	size     int
-}
-
-func New(capacity int) *Array {
-	if capacity == 0 {
-		return nil
-
-	}
-	return &amp;Array{
-		capacity: capacity,
-		data:     make([]interface{}, capacity, capacity),
-		size:     0,
-	}
-}
-func Default() *Array {
-	return New(DefaultCapacity)
-}
-
-// insert element 注意扩容
-func (arr *Array) Add(index int, val interface{}) error {
-	err := arr.checkIndex(index)
-	if err != nil {
-		return err
-	}
-	//	扩容j
-	if arr.size &gt;= arr.capacity {
-		if arr.capacity &gt;= CapacityThreshold {
-			// 1.25倍扩容 传入的是容量
-			arr.resize(int(float64(arr.capacity) * 1.25))
-		} else {
-			// 2 倍扩容
-			arr.resize(arr.capacity &lt;&lt; 1)
-		}
-	}
-	// 移出待插入的位置
-	copy(arr.data[index+1:], arr.data[index:])
-	arr.data[index] = val
-	arr.size++
-	return nil
-}
-
-// 追加 append
-func (arr *Array) Append(val interface{}) error {
-	// 在数组最后位置追加
-	return arr.Add(arr.size, val)
-}
-
-// 查找
-func (arr *Array) Find(index int) (interface{}, error) {
-	err := arr.checkIndex(index)
-	if err != nil {
-		return nil, err
-	}
-	return arr.data[index], nil
-}
-
-func (arr *Array) checkIndex(index int) error {
-	if index &lt; 0 || index &gt; arr.capacity {
-		return errors.New(&quot;index out of range error&quot;)
-	}
-	return nil
-}
-func (arr *Array) resize(newCap int) {
-	// 创建新的 data 数组再覆盖即可
-	data := make([]interface{}, newCap, newCap)
-	copy(data, arr.data)
-	arr.data = data
-	arr.capacity = newCap
-}
-// 是否包含特定元素 遍历查找
-func (arr *Array)Contains(val interface{}) bool  {
-	if arr.Empty()  {
-		return false
-	}
-	for _,v:=range arr.data {
-		if v==val {
-			return true
-		}
-	}
-	return false
-
-}
-
-func (arr *Array) Empty() bool {
-	return arr.size==0
-}
-// 删除 idnex 的值
-func (arr *Array) Delete (index int) error {
-	err:=arr.checkIndex(index)
-	if err != nil {
-		return err
-	}
-	if arr.data[index]==nil {
-		return nil
-	}
-	// index 下表位置置空并前移数组
-	arr.data[index]=nil
-	copy(arr.data[index:],arr.data[index+1:])
-	// 处理 size 和数组的最后一位
-	arr.data[arr.size-1]=nil
-	arr.size--
-	return nil
-}
-func (arr *Array)Size() int  {
-	return arr.size
-}
-func (arr *Array)PrintData()  {
-	for i:=0;i&lt;arr.capacity;i++ {
-		if arr.data[i]!=nil {
-			fmt.Print(arr.data[i],&quot; &quot;)
-		}
-	}
-	fmt.Println()
-}
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Neovim 配置]]></title>
-        <id>https://flyingchase.github.io/post/neovim-pei-zhi/</id>
-        <link href="https://flyingchase.github.io/post/neovim-pei-zhi/">
-        </link>
-        <updated>2021-10-02T10:08:13.000Z</updated>
-        <content type="html"><![CDATA[<p>neovim 配置</p>
-<h2 id="前言">前言</h2>
-<p>最近纠正完自己的指法后重新捡起了 vim</p>
-<p>考虑到自己的需求和刷题的要求，在 idea 和 goland 中均配置了 <code>.ideavimrc</code></p>
-<p>选择 neovim 配置 go 的开发环境</p>
-<p>个人向配置，因此略过相关依赖的安装教程，大量参考其他配置</p>
-<h2 id="安装">安装</h2>
-<h3 id="检查">检查</h3>
-<p>nvim 中输入<code>:checkhealth</code>检查依赖完成度</p>
-<h3 id="插件管理器">插件管理器</h3>
-<p><code>vim-plug</code> 注意安装的位置</p>
-<pre><code class="language-shell">call plug#begin()
-
-call plug#end()
-</code></pre>
-<ul>
-<li>安装插件：<code>:PlugInstall</code></li>
-<li>更新插件：<code>:PlugUpdate</code></li>
-<li>删除插件：<code>:PlugClean</code> （首先在 <code>init.vim</code> 中，注释掉该插件，然后打开 Nvim， 使用 <code>:PlugClean</code> 命令清除该插件）</li>
-<li>查看插件状态：<code>:PlugStatus</code></li>
-<li>升级 vim-plug：<code>:PlugUpgrade</code></li>
-</ul>
-<h2 id="插件">插件</h2>
-<h3 id="vim-airline">vim-airline</h3>
-<p>底部状态栏</p>
-<p>底部状态栏的主题美化需要配合<code>vim-arilene-themes</code>插件</p>
-<p>状态栏主题：<code>let g:airline_theme='themeName'</code></p>
-<h3 id="nerdtree">nerdtree</h3>
-<p>文件管理器</p>
-<pre><code class="language-shell">&quot;==============================================================================
-&quot; 项目管理 nerdtree 设置
-
-nnoremap &lt;leader&gt;v :NERDTreeFind&lt;cr&gt;
-highlight NERDTreeFile ctermfg=14
-nnoremap &lt;leader&gt;g :NERDTreeToggle&lt;cr&gt;
-</code></pre>
-<p><code>leader+v/g</code> 找到当前文件所在的目录和打开侧边栏目录</p>
-<p><code>gi/gs</code> 目录树中以分割视图打开文件</p>
-<h3 id="cocnvim">coc.nvim</h3>
-<p>代码补全插件</p>
-<p>默认路径在<code>~/.config/nvim/coc-settings.json</code> 配置文件添加 golang 相关配置</p>
-<pre><code class="language-json">{
-    &quot;languageserver&quot;: {
-        &quot;golang&quot;: {
-            &quot;command&quot;: &quot;gopls&quot;,
-            &quot;rootPatterns&quot;: [
-                &quot;go.mod&quot;
-            ],
-            &quot;filetypes&quot;: [
-                &quot;go&quot;
-            ]
-        }
-    },
-    &quot;suggest.noselect&quot;: false,
-    &quot;coc.preferences.diagnostic.displayByAle&quot;: true,
-    &quot;suggest.floatEnable&quot;: true
-}
-</code></pre>
-<p>使用<code>ctr+n/p</code>上下移动 回车选择补全代码</p>
-<p>在<code>init.vim</code> 可选配置</p>
-<pre><code class="language-shell">&quot;==============================================================================
-&quot; coc.nvim 配置
-&quot; Remap keys for gotos
-&quot; nmap &lt;silent&gt; gd &lt;Plug&gt;(coc-definition)
-nmap &lt;silent&gt; gy &lt;Plug&gt;(coc-type-definition)
-nmap &lt;silent&gt; gm &lt;Plug&gt;(coc-implementation)
-nmap &lt;silent&gt; gr &lt;Plug&gt;(coc-references)
-inoremap &lt;expr&gt; &lt;cr&gt; pumvisible() ? &quot;\&lt;C-y&gt;&quot; : &quot;\&lt;C-g&gt;u\&lt;CR&gt;&quot;
-
-nnoremap &lt;silent&gt; K :call &lt;SID&gt;show_documentation()&lt;CR&gt;
-function! s:show_documentation()
-  if (index(['vim','help'], &amp;filetype) &gt;= 0)
-    execute 'h '.expand('&lt;cword&gt;')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-&quot;==============================================================================
-</code></pre>
-<h3 id="ale-代码错误插件">ale 代码错误插件</h3>
-<p>在 <code>coc-settings.json</code>中关闭 coc的错误处理 <code>&quot;coc.preferences.diagnostic.displayByAle&quot;: true</code></p>
-<p>在<code>init.vim</code>配置</p>
-<pre><code class="language-shell">&quot;==============================================================================
-&quot; ale 错误处理配置
-let g:ale_set_highlights = 1
-let g:ale_set_quickfix = 1
-&quot;自定义error和warning图标
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '⚡'
-&quot;在vim自带的状态栏中整合ale
-let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-&quot;显示Linter名称,出错或警告等相关信息
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-&quot;打开文件时不进行检查
-let g:ale_lint_on_enter = 1
-
-&quot;普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-nmap sp &lt;Plug&gt;(ale_previous_wrap)
-nmap sn &lt;Plug&gt;(ale_next_wrap)
-&quot;&lt;Leader&gt;d查看错误或警告的详细信息
-nmap &lt;Leader&gt;d :ALEDetail&lt;CR&gt;
-let g:ale_linters = {
-    \ 'go': ['golint', 'go vet', 'go fmt'],
-    \ }
-&quot;==============================================================================
-</code></pre>
-<p>使用<code>sn/sp</code>在错误之间跳转</p>
-<h3 id="查找-fzf">查找 fzf</h3>
-<p>与本地内 fzf 联动</p>
-<pre><code class="language-shell">Plug '/usr/local/opt/fzf'
-Plug 'junegunn/fzf.vim'
-</code></pre>
-<p>在<code>init.vim</code>配置</p>
-<pre><code class="language-shell">map &lt;leader&gt;f :Files&lt;CR&gt;
-map &lt;leader&gt;b :Buffers&lt;CR&gt;
-let g:fzf_action = { 'ctrl-e': 'edit' }
-&quot; 用 leader+ag 搜索当前 cursor 下单词 
-nnoremap &lt;silent&gt; &lt;Leader&gt;ag :Ag &lt;C-R&gt;&lt;C-W&gt;&lt;CR&gt;
-</code></pre>
-<p>直接<code>leader+ag</code> 搜索当前光标下的单词</p>
-<p><code>leader+f</code> 搜索项目内文件</p>
-<p><code>leader+b</code>搜索 buffer 列表切换 <code>ctrl+n/p</code>选择</p>
-<p>全局项目搜索：<code>:Ag</code> 在项目中查找</p>
-<h3 id="others">others</h3>
-<table>
-<thead>
-<tr>
-<th>插件</th>
-<th>作用</th>
-<th>快捷键</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>vim-commentary</code></td>
-<td>注释插件</td>
-<td><code>gcc/gc</code>注释当前行/所选代码块</td>
-</tr>
-<tr>
-<td><code>vim-easymotion</code></td>
-<td>快速移动光标</td>
-<td><code>ss</code> nmap 下 ss+目标单词的 2 个字母两次 跳转到显示区域内的首目标单词</td>
-</tr>
-<tr>
-<td><code>vim-surround</code></td>
-<td>CRUD{[(“‘</td>
-<td><code>di/da/ci/ca/yi/ya+*</code></td>
-</tr>
-<tr>
-<td><code>vim-auto-pairs</code></td>
-<td>成对括号</td>
-<td></td>
-</tr>
-<tr>
-<td><code>vim-ultisnips+vim-snippets</code></td>
-<td>代码块生成</td>
-<td><code>forr+tab</code> 即可<code>for range</code></td>
-</tr>
-<tr>
-<td><code>tagbar</code></td>
-<td>ctag</td>
-<td><code>leader+t</code>显示 tag</td>
-</tr>
-</tbody>
-</table>
-<h2 id="总结">总结</h2>
-<p>不建议直接 copy 巨佬们的配置</p>
-<p>尽量了解每个插件的作用和快捷键，避免插件之间的快捷键冲突，在使用中记忆快捷键。</p>
-<p>将 IDE 于<code>vim</code>配合使用，项目开发还是 Goland 香。</p>
-<h2 id="reference">Reference</h2>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Golang context 总结]]></title>
-        <id>https://flyingchase.github.io/post/golang-context-bao/</id>
-        <link href="https://flyingchase.github.io/post/golang-context-bao/">
-        </link>
-        <updated>2021-10-01T03:55:53.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="context包">context包</h1>
-<p>控制并发的方式：</p>
-<p>​	<code>WaitGroup</code> <code>Context</code></p>
-<p><strong>waitGroup</strong></p>
-<ul>
-<li>并发启动多个子协程，等待所有的 goroutine 完成任务 <code>wg.Wait()</code>等待所有的子协程完成后再执行后续代码</li>
-<li>无法主动通知子协程的退出</li>
-</ul>
-<p>使用<code>channel</code>和<code>select</code>通知 goroutine 的处理</p>
-<p>子协程使用 for 循环定时轮询，<code>stop</code>信道有值（可读）则退出</p>
-<pre><code class="language-go">select {
-    case &lt;-stop :
-    	...
-    	return
-	default :
-    	...
-  
-}
-</code></pre>
-<p>背景：</p>
-<p>​	网络请求Request 需要开启 goroutine 需要去跟踪 goroutine 的方案 从而进行控制	即 goroutine 的上下文</p>
-<h2 id="context"><strong>Context</strong></h2>
-<ul>
-<li>通知子协程退出（正常和超时）</li>
-<li>传递必要参数</li>
-</ul>
-<p><strong>使用原则：</strong></p>
-<ul>
-<li>以参数形式传递 Context 且位于入口请求和出口请求链路的每个函数的首位</li>
-<li>函数方法传递 Context 不可传递 nil ——&gt;tarce 追踪时断掉</li>
-<li>Context 线程安全</li>
-<li>Context 可传递给任意个数的 goroutine 子协程受根 context 控制</li>
-</ul>
-<h3 id="控制单协程">控制单协程</h3>
-<p>将 chan stop 转化为 Context 追踪 goroutine</p>
-<pre><code class="language-go">	// Background 返回空的 Context 作为整个 context 树的根节点
-// WithCanclel(parent) 创建可取消的子 context 作为参数传递给 goroutine 进行跟踪
-	ctx,cancel:=context.WithCancel(context.Background())
-
-	go func(ctx context.Context) {
-		for  {
-			select {
-                // Done()判断接收到值则结束
-			case &lt;-ctx.Done():
-				fmt.Println(&quot;quit &quot;)
-				return
-			default:
-				fmt.Println(&quot;goroutine is under control&quot;)
-				time.Sleep(2*time.Second)
-			}
-		}
-	}(ctx)
-	time.Sleep(10*time.Second)
-	fmt.Println(&quot;it is time to tell ctx stop control&quot;)
-
-	cancel()
-	time.Sleep(5*time.Second)
-</code></pre>
-<ul>
-<li><code>context.Backgroud()</code>创建根 Context 作为顶层的 Context</li>
-<li><code>context.WithCancle(parent)</code> 创建可取消的子 Context 返回函数 <code>cancel</code></li>
-<li>子协程中使用<code>select</code>调用<code>&lt;-ctx.Done()</code> 判断是否需要退出</li>
-<li>主协程使用<code>cancle()</code>函数通知子协程退出</li>
-</ul>
-<h3 id="控制多协程">控制多协程</h3>
-<pre><code class="language-go">ctx,cancle:=context.WithCancel(context.Background())
-go reqTask(ctx,&quot;one&quot;)
-go reqTask(ctx,&quot;two&quot;)
-go reqTask(ctx,&quot;three&quot;)
-
-time.Sleep(3*time.Second)
-cancle()
-time.Sleep(3*time.Second)
-
-func reqTask(ctx context.Context,name string)  {
-	for  {
-		select {
-		case &lt;-ctx.Done():
-			fmt.Println(&quot;stop&quot;,name)
-			return
-		default:
-			fmt.Println(&quot;send request: &quot;,name)
-			time.Sleep(time.Second)
-		}
-
-	}
-
-</code></pre>
-<p><code>cancle()</code>终止所有的子协程</p>
-<p><code>context.Context</code>是一个接口</p>
-<pre><code class="language-go">type Context interface {
-  Deadline() (deadline time.Time, ok bool)
-  Done() &lt;-chan struct{}
-  Err() error
-  Value(key interface{}) interface{}
-}
-</code></pre>
-<p><code>WithCancel()</code>返回<code>context.Context</code>接口</p>
-<p><code>func WithCancel(parent Context) (ctx Context, cancel CancelFunc)</code></p>
-<pre><code class="language-go">// 返回的是 parent的副本newCancleCtx
-func WithCancel(parent Context) (ctx Context, cancel CancelFunc) {
-	if parent == nil {
-		panic(&quot;cannot create context from nil parent&quot;)
-	}
-	c := newCancelCtx(parent)
-    // propagateCancel 是结束子context
-	propagateCancel(parent, &amp;c)
-	return &amp;c, func() { c.cancel(true, Canceled) }
-}
-//  *ctx 本身是 cancleCtx 故而是地址传递
-type cancelCtx struct {
-	Context
-
-	mu       sync.Mutex            // protects following fields
-	done     chan struct{}         // created lazily, closed by first cancel call
-	children map[canceler]struct{} // set to nil by the first cancel call
-	err      error                 // set to non-nil by the first cancel call
-}
-</code></pre>
-<h3 id="contextwithvalue">Context.WithValue</h3>
-<p>往子协程中传递参数</p>
-<p>其中key应该自定义 避免内置数据类型</p>
-<p><code>func WithValue(parent Context, key, val interface{}) Context</code></p>
-<pre><code class="language-go">	type favKey string
-	f := func(ctx context.Context, k favKey) {
-		if v := ctx.Value(k); v != nil {
-			fmt.Println(&quot;found value &quot;, v)
-			return
-		}
-		fmt.Println(&quot;not found key &quot;, k)
-	}
-
-	k := favKey(&quot;language&quot;)
-	ctx = context.WithValue(context.Background(), k, &quot;Go&quot;)
-	f(ctx, k)
-	f(ctx, favKey(&quot;color&quot;))
-</code></pre>
-<ul>
-<li><code>WithValue()</code>创建基于<code>ctx</code>的子 context 携带值 options</li>
-<li>子协程使用<code>ctx.Value(key)</code> 获取传递的值</li>
-</ul>
-<h3 id="常用-api">常用 API</h3>
-<p><code>WithTimeout()</code>  设置超时时间（子协程最长执行时间）</p>
-<pre><code class="language-go">func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
-</code></pre>
-<ul>
-<li>可能使得子协程在 cancle()函数之前结束</li>
-<li>可使用 <code>ctx.Err()</code> 获取子协程退出原因</li>
-</ul>
-<p><code>WithDeadline</code> 设置控制子协程的最长推出时间</p>
-<pre><code class="language-go">func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)
-</code></pre>
-<p><strong>函数签名：</strong></p>
-<pre><code class="language-go">// 创建一个带有新的 Done channel 的 context，并且返回一个取消的方法
-func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
-// 创建一个具有截止时间的 context
-// 截止时间是 d 和 parent(如果有截止时间的话) 的截止时间中更早的那一个
-// 当 parent 执行完毕，或 cancel 被调用 或者 截止时间到了的时候，这个 context done 掉
-func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)
-// 其实就是调用的 WithDeadline
-func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
-type CancelFunc
-type Context
-	// 一般用于创建 root context，这个 context 永远也不会被取消，或者是 done
-    func Background() Context
-	// 底层和 Background 一致，但是含义不同，当不清楚用什么的时候或者是还没准备好的时候可以用它
-    func TODO() Context
-	// 为 context 附加值
-	// key 应该具有可比性，一般不应该是 string int 这种默认类型，应该自己创建一个类型
-	// 避免出现冲突，一般 key 不应该导出，如果要导出的话应该是一个接口或者是指针
-    func WithValue(parent Context, key, val interface{}) Context
-</code></pre>
-<h2 id="使用场景">使用场景</h2>
-<h3 id="超时控制">超时控制</h3>
-<h3 id="错误取消">错误取消</h3>
-<p>eg:</p>
-<p>​	main 并发调用f1 f2 当f1 错误返回 f2 处于阻塞，报错误 context被取消</p>
-<pre><code class="language-go">func f1(ctx context.Context) error {
-	select {
-	case &lt;-ctx.Done():
-		return fmt.Errorf(&quot;f1: %w&quot;, ctx.Err())
-	case &lt;-time.After(time.Millisecond):
-		return fmt.Errorf(&quot;f1 err in 1ms&quot;)
-	}
-}
-func f2(ctx context.Context) error {
-	select {
-	case &lt;-ctx.Done():
-		return fmt.Errorf(&quot;f2 : %w&quot;, ctx.Err())
-	case &lt;-time.After(time.Hour):
-		return nil
-	}
-}
-func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() {
-		defer wg.Done()
-		if err := f1(ctx); err != nil {
-			fmt.Println(err)
-			cancel()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		if err := f2(ctx); err != nil {
-			fmt.Println(err)
-			cancel()
-		}
-	}()
-	wg.Wait()
-}
-</code></pre>
-<p>类似<code>errgroup</code></p>
-<h3 id="传递共享数据">传递共享数据</h3>
-<h3 id="防止-goroutine-泄露">防止 goroutine 泄露</h3>
-]]></content>
-    </entry>
-</feed>
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/golang-dui-zhan-yu-tao-yi-fen-xi/">
+              <h3 class="post-title">
+                下一篇：【Golang】堆栈与逃逸分析
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">一两黄金一两风</div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/flyingchase" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+   | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
