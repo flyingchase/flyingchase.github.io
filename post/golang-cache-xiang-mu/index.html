@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>[Golang Cache 项目] | flyingchase</title>
+<meta name="description" content="一两黄金一两风">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1637729984440">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://flyingchase.github.io">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1637729984440" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://flyingchase.github.io">
+        <h1 class="site-title">flyingchase</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">[Golang Cache 项目]</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2021-11-24</span>
+            
+          </div>
+          <div class="post-content">
+            <h2 id="geecache概述">GeeCache概述</h2>
+<p>模仿<code>goroupcache</code>，考虑：</p>
+<ul>
+<li>资源控制、淘汰策略、并发、分布式节点通信</li>
+<li>缓存更新、缓存淘汰之前是否允许改变</li>
+</ul>
+<p><strong>特性：</strong></p>
+<ul>
+<li>单机缓存和基于 HTTP 的分布式缓存</li>
+<li>最近最少访问(Least Recently Used, LRU) 缓存策略</li>
+<li>使用 Go 锁机制防止缓存击穿</li>
+<li>使用一致性哈希选择节点，实现负载均衡</li>
+<li>使用 protobuf 优化节点间二进制通信</li>
+</ul>
+<h2 id="常见缓存淘汰算法">常见缓存淘汰算法</h2>
+<h4 id="fifo">FIFO</h4>
+<p>创建队列，新增记录添加到队尾，内存不够时淘汰队首</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>早入队的数据若被常访问，导致频繁被添加缓存又被淘汰——&gt;缓存命中率低</li>
+</ul>
+<h3 id="lfu">LFU</h3>
+<p>淘汰缓存汇总的访问访问频率最低的记录，维护按照访问次数排序的队列</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>维护每个记录的访问次数消耗内存高</li>
+<li>LFU 算法手历史数据影响大</li>
+</ul>
+<h3 id="lru">LRU</h3>
+<p>最近最少使用策略</p>
+<h2 id="lru-2">LRU</h2>
+<h3 id="核心数据结构">核心数据结构</h3>
+<img src="/Users/qlzhou/Library/Application Support/typora-user-images/image-20211021223546014.png" alt="image-20211021223546014" style="zoom:30%;" />
+<ol>
+<li>map 存储字典映射，按key查找value 复杂度 O(1)</li>
+<li>双向链表实现队列，将移动到队尾的复杂度是 O(1)，在队尾新增记录和删除记录的复杂度均为 O(1)</li>
+</ol>
+<h4 id="结构体">结构体</h4>
+<p>包含字典和双向链表的结构体 Cache</p>
+<pre><code class="language-go">type (
+	Cache struct {
+		// 允许使用的最大内存
+		maxBytes int64
+		// 当前使用的内存
+		nbytes int64
+		ll     *list.List
+		cache  map[string]*list.Element
+		// 某条记录删除时候的回调函数 可为 nil
+		OnEvicted func(key string, value Value)
+	}
+	entrty struct {
+		key   string
+		value Value
+	}
+	// 值实现 Len() 方法则均可视为 value
+	Value interface {
+		Len() int
+	}
+)
+</code></pre>
+<h4 id="get-移至队首">Get 移至队首</h4>
+<ol>
+<li>
+<p>map 查找 <code>c.cache[key]</code></p>
+</li>
+<li>
+<p>调用<code>c.ll.MoveToFront(ele)</code>将所得封装为 entry <code>kv:=ele.Value.(*Entry)</code>，返回<code>kv.value</code></p>
+</li>
+</ol>
+<h4 id="removeoldest-删除队尾和缓存-map">RemoveOldest 删除队尾和缓存 map</h4>
+<ol>
+<li>取出队尾<code>ele:=c.kll.Back()</code></li>
+<li>存在则删除<code>c.ll.Remove(ele)</code> <code>delete(c.cache,kv.key)</code></li>
+<li>更新使用内存<code>c.nbytes-=int64(len(kv.key))+int64(kv.value.Len())</code> nbytes 前移偏移量为 kv 的大小（key+value.Len()）</li>
+<li>回调函数非空则使用回调函数</li>
+</ol>
+<h4 id="add更新-新增-越界">Add（更新、新增、越界）</h4>
+<ol>
+<li>
+<p>添加节点已存在——&gt;更新结点</p>
+<ul>
+<li>缓存map存在则移至队首再更新结点值，</li>
+<li>使用内存偏移量同步更新<code>c.nbytes+=int64(value.Len())-int64(kv.value.Len())</code> 多使用新加入结点的 value 比原 value 大的部分</li>
+</ul>
+</li>
+<li>
+<p>添加节点不存在——新增结点</p>
+<ul>
+<li>移至队首<code>ele:=c.ll.MoveToFront(&amp;entry{key,value})</code></li>
+<li>新增缓存<code>c.cache[key]=ele</code></li>
+<li>更新已使用内存<code>c.nbytes+=int64(len(key))+int64(value.Len())</code></li>
+</ul>
+</li>
+<li>
+<p>判定新增结点是否超容</p>
+<p><code>for c.maxBytes!=0&amp;&amp;c.maxBytes&lt;c.nBytes{ c.RemoveOldest()}</code> 越界则移出队尾</p>
+</li>
+</ol>
+<h2 id="00-概述">00-概述</h2>
+<ul>
+<li>实现<code>LRU</code>缓存的并发控制</li>
+<li>实现 Cache的核心数据结构<code>Group</code>，当缓存不存在时使用回调函数</li>
+</ul>
+<h2 id="01-并发-lru-读写">01-并发 lru 读写</h2>
+<h3 id="11-byteview-缓存值只读">1.1 ByteView 缓存值只读</h3>
+<ol>
+<li><code>b []byte</code>存储真实的缓存值，支持任意数据类型存储(byte)</li>
+<li>实现<code>Len()</code>方法，支持 lru 的缓存对象的 <code>Value</code>接口</li>
+<li><code>ByteSlice()</code>返回缓存 b 的复制，防止外部程序修改缓存</li>
+</ol>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/mhrcGo.png" alt="mhrcGo" style="zoom:50%;" />
+<h3 id="12-cache-并发">1.2 Cache 并发</h3>
+<ol>
+<li>实例化<code>lru</code>，封装<code>get</code>和<code>add</code>方法，添加互斥锁<code>Mutex</code></li>
+</ol>
+<pre><code class="language-go"> type cache struct {
+     lru        *lru.Cache
+     mu         sync.Mutex
+     cacheBytes int64
+ }
+</code></pre>
+<ol start="2">
+<li><code>add</code>方法使用 <strong>延迟初始化（lazy initialization）</strong> 在判读<code>c.lru==nil</code>后再创建实例，使得对象的创建会延迟至第一次使用该对象时，提高程序性能，减少内存要求</li>
+</ol>
+<h2 id="02-主体-group">02 主体 Group</h2>
+<h3 id="21-逻辑">2.1 逻辑</h3>
+<p>与用户之间的交互，<strong>控制缓存值的存储和获取</strong></p>
+<pre><code>                            是
+接收 key --&gt; 检查是否被缓存 -----&gt; 返回缓存值 ⑴
+                |  否                         是
+                |-----&gt; 是否应当从远程节点获取 -----&gt; 与远程节点交互 --&gt; 返回缓存值 ⑵
+                            |  否
+                            |-----&gt; 调用`回调函数`，获取值并添加到缓存 --&gt; 返回缓存值 ⑶
+</code></pre>
+<h3 id="22-代码结构">2.2 代码结构</h3>
+<pre><code>step2/
+    |--lru/
+        |--lru.go  // lru 缓存淘汰策略
+    |--byteview.go // 缓存值的抽象与封装
+    |--cache.go    // 并发控制
+    |--geecache.go // 负责与外部交互，控制缓存存储和获取的主流程
+</code></pre>
+<h3 id="23-回调-getter">2.3 回调 Getter</h3>
+<p>对于多种数据源（文件、数据库）缓存不存在时，使用回调函数获得源数据（将如何从源头获取数据交给用户）</p>
+<pre><code class="language-go">type (
+	Getter interface {
+		Get(key string) ([]byte, error)
+	}
+	// GetterFunc 函数类型的参数和返回值与 Getter 接口内的 Get 方法一致
+	GetterFunc func(key string) ([]byte, error)
+)
+// GetterFunc 含有 Get 方法，在方法内调用自身，实现了接口 Getter
+// 通过函数实现 Getter接口的 Get 方法，接口型函数
+// 接口型函数只应用于接口内部之定义一个方法的接口
+func (f GetterFunc) Get(key string)([]byte,error)  {
+	return f(key)
+}
+</code></pre>
+<p>#接口函数</p>
+<p><strong>接口函数：</strong></p>
+<ol>
+<li>将普通的函数类型（类型转换 GetterFunc(test）作为函数参数</li>
+<li>将结构体作为参数</li>
+</ol>
+<p>eg:</p>
+<p>​	GetterFunc 类型的函数作为参数，支持匿名函数、普通函数（类型转换）</p>
+<p>​	实现了 Getter 接口的结构体可作为函数参数</p>
+<p>接口函数使用场景：</p>
+<ol>
+<li>
+<p><code>net/http</code>中的<code>Handler</code>和<code>HandlerFunc</code></p>
+<pre><code class="language-go">type Handler interface {
+	ServeHTTP(ResponseWriter, *Request)
+}
+type HandlerFunc func(ResponseWriter, *Request)
+
+func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+	f(w, r)
+}
+</code></pre>
+</li>
+<li>
+<p><code>http.Handle</code>和<code>http.ListenAndServe</code>的第二个参数即为接口类型<code>Handler</code></p>
+</li>
+<li>
+<p>传入实现<code>Handler</code>接口的结构体则可以托管所有的 HTTP 请求，可扩展为 Web 框架</p>
+</li>
+<li>
+<p><code>Java</code>中 lambda 表达式函数式编程可认为是接口函数</p>
+<ul>
+<li>自定义排序时，需要实现匿名的 Comparator 类，重写 Compare 方法</li>
+</ul>
+<pre><code class="language-java">Collertions.sort(list,new Comparator&lt;Integer&gt;(){
+    @Override
+    public int compare(Integer o1,Integer o2) {
+        return 02-01;
+    }
+});
+</code></pre>
+<ul>
+<li>1.8之后<code>lambda</code> 从匿名对象简化为 lambda 表达式</li>
+</ul>
+<pre><code class="language-java">Collections.sort(list,(Integer o1,Integer o2)-&gt;o2-o1);
+</code></pre>
+</li>
+<li>
+<p>定义<code>Getter</code>接口和回调函数<code>Get(key string)([]byte,error)</code></p>
+</li>
+<li>
+<p>定义函数类型<code>GetterFunc</code>实现<code>Getter</code>接口内的<code>Get</code>方法</p>
+</li>
+<li>
+<p><strong>定义函数类型 F，并实现接口 A 的方法，在方法中调用自身</strong>使得其他函数（参数与返回类型与 F一致）<strong>转化为接口 A</strong></p>
+</li>
+</ol>
+<h4 id="24-group-定义">2.4 Group 定义</h4>
+<h4 id="结构体-2">结构体</h4>
+<pre><code class="language-go">type Group struct {
+	name      string
+	// 缓存未命中时回调函数
+    getter    Getter
+    // 并发缓存
+	mainCache cache
+}
+</code></pre>
+<ol>
+<li>视为缓存的命名空间，每个<code>Group</code>有唯一的<code>name</code></li>
+<li><code>getter Getter</code> 为缓存未命中时的数据回调(callback)</li>
+<li><code>NewGroup</code>用于实例化 Group 并存储在全局变量 <code>groups</code>内</li>
+<li><code>GetGroup</code>获取特定名称的 Group 无写入操作，使用<code>mu.RLock()</code></li>
+</ol>
+<h4 id="get-方法">Get 方法</h4>
+<ol>
+<li><code>mainCache</code> 查找缓存，log 内写入缓存命中</li>
+<li>缓存不存在<code>load</code>——&gt;<code>getLocally</code>（分布式场景下调用<code>getFromPeer</code>从其他节点获取）——&gt;<code>g.getter.Get</code>回调函数获取源数据，通过<code>g.populateCache</code>添加到缓存内</li>
+</ol>
+<pre><code>geecache/
+    |--lru/
+        |--lru.go  // lru 缓存淘汰策略
+    |--byteview.go // 缓存值的抽象与封装
+    |--cache.go    // 并发控制
+    |--geecache.go // 负责与外部交互，控制缓存存储和获取的主流程
+	|--http.go     // 提供被其他节点访问的能力(基于http)
+</code></pre>
+<p>分布式缓存：</p>
+<ol>
+<li>通过<code>HTTP</code>的通信机制实现节点间的通信</li>
+</ol>
+<h2 id="geecache-http-服务端">GeeCache HTTP 服务端</h2>
+<h3 id="httppool-数据结构">HTTPPool 数据结构</h3>
+<p>承载节点间 HTTP 通信的核心数据结构</p>
+<pre><code class="language-go">type HTTPPool struct {
+	self    string
+	basePth string
+}
+
+func NewHTTPPool(self string) *HTTPPool {
+	return &amp;HTTPPool{self: self, basePth: defaultBasePath}
+}
+</code></pre>
+<ol>
+<li><code>HTTPPool</code>内 self 存储主机名/IP 和端口</li>
+<li>basePath 作为节点间通信的前缀，默认<code>/_geecache/</code></li>
+</ol>
+<h3 id="serverhttp-方法">ServerHTTP 方法</h3>
+<ol>
+<li>
+<p>判断前缀是否是<code>basePath</code></p>
+<pre><code class="language-go">if !strings.HasPrefix(r.URL.Path, p.basePth) {
+   panic(&quot;HTTPPool serving unexpected path: &quot; + r.URL.Path)
+}
+</code></pre>
+</li>
+<li>
+<p>约定访问路径格式<code>/basePath/groupName/key</code> 通过<code>groupName</code>获得 group 实例，再使用<code>group.Get(key)</code>获得缓存数据</p>
+</li>
+<li>
+<p><code>w.Write()</code>将缓存值作为<code>httpResponse</code>的<code>body</code>返回</p>
+</li>
+</ol>
+<h2 id="01-概述">01 概述</h2>
+<p>单节点走向分布式节点通信</p>
+<h3 id="11-hash-算法保证-key-存储在同一节点">1.1 hash 算法保证 key 存储在同一节点</h3>
+<p>随机节点获取数据，若不存在从数据源获取数据并缓存；</p>
+<p>再次随机节点获取数据具有不确定性</p>
+<h3 id="12-节点数量变化">1.2 节点数量变化</h3>
+<p><code>缓存雪崩</code>：某节点失效后在收到请求时，均需要从数据源重新获取数据</p>
+<h3 id="13-一致性-hash-算法">1.3 一致性 hash 算法</h3>
+<p>将<code>key</code>映射到2^32空间内，形成环</p>
+<ul>
+<li>
+<p>节点/机器的 hash 值放在环上</p>
+</li>
+<li>
+<p>计算<code>key</code>的哈希值，放置在环上，顺时针找到的第一个节点即为应选择的节点/机器</p>
+</li>
+<li>
+<p><strong>数据倾斜问题</strong></p>
+<ul>
+<li>引入虚拟节点，一个真实结点对应多个虚拟节点</li>
+<li>计算虚拟节点的 hash 值放置在环上</li>
+<li>计算 key的 hash 值在环上顺时针寻找应该选取的虚拟节点</li>
+</ul>
+<p>虚拟节点有效扩充了及诶单的数量解决节点数量较少情况下的数据倾斜问题；</p>
+<p>只需增加<code>map</code>维护真实节点与虚拟节点之间的关系即可</p>
+</li>
+</ul>
+<h2 id="02-语言实现">02 语言实现</h2>
+<h3 id="21-consistenthash">2.1 consistenthash</h3>
+<pre><code class="language-go">type (
+	Hash func(data[]byte) uint32
+	Map struct {
+		hash Hash
+		replicas int
+		keys []int
+		hashMap map[int]string
+	}
+)
+
+func New(replicas int, fn Hash) *Map  {
+	m:=&amp;Map{
+		hash: fn,
+		replicas: replicas,
+		hashMap: make(map[int]string),
+	}
+	if m.hash == nil {
+		m.hash=crc32.ChecksumIEEE
+	}
+	return m
+}
+</code></pre>
+<ol>
+<li>定义函数类型<code>Hash</code> 依赖注入的方式，默认为<code>crc32.ChechsumIEEE</code></li>
+<li>构造函数<code>New()</code>允许自定义虚拟节点和 Hash 函数</li>
+</ol>
+<h3 id="22-add-真实节点机器">2.2 Add 真实节点/机器</h3>
+<ol>
+<li>传入多个真实节点的名称</li>
+<li>对应每个真实节点<code>key</code>，创建<code>m.replicas</code>个虚拟节点，虚拟节点名称为<code>strconv.Itoa(i)+key</code>，通过编号区分；</li>
+<li><code>m.hash()</code>计算虚拟节点的 hash 值——&gt;添加到环上<code>append(m.keys,hash)</code></li>
+<li><code>hashMap</code>添加虚拟和真实节点之间的映射</li>
+<li>环上哈希值排序</li>
+</ol>
+<pre><code class="language-go">func (m *Map) Add(keys ...string) {
+	for _, key := range keys {
+		for i := 0; i &lt; m.replicas; i++ {
+			hash := int(m.hash([]byte(strconv.Itoa(i) + key)))
+			m.keys = append(m.keys, hash)
+			m.hashMap[hash] = key
+		}
+	}
+	sort.Ints(m.keys)
+}
+</code></pre>
+<h3 id="23-选择节点-get-方法">2.3 选择节点 Get 方法</h3>
+<pre><code class="language-go">func (m *Map) Get(key string) string {
+	if len(m.keys) == 0 {
+		return &quot;&quot;
+	}
+	hash := int(m.hash([]byte(key)))
+    // func Search(n int, f func(int)bool) int 
+    // 在[0,n）内二分查找满足 f 条件的最小下标
+	index := sort.Search(len(m.keys), func(i int) bool {
+		return m.keys[i] &gt;= hash
+	})
+	return m.hashMap[m.keys[index%len(m.keys)]]
+}
+</code></pre>
+<ol>
+<li>计算 key 的哈希值<code>hash:=int(m.hash([]byte(key)))</code></li>
+<li>顺时针查找第一个匹配的虚拟节点的下标<code>index</code> ，使用<code>sort.Search(len(环长,fn))</code></li>
+<li>由于 keys为环状，故取余</li>
+<li>在<code>m.keys[]</code>找到对应的哈希值，通过哈希值在 <code>hashMap</code>中的映射得到真实节点</li>
+</ol>
+<ul>
+<li>注册节点 register peers，通过一致性哈希算法选择节点</li>
+<li>实现<code>HTTP</code>客户端与远程节点的服务端通信</li>
+</ul>
+<h2 id="00-概述-2">00 概述</h2>
+<p>对于未被缓存的 key 从远程节点调用</p>
+<pre><code>使用一致性哈希选择节点        是                                    是
+    |-----&gt; 是否是远程节点 -----&gt; HTTP 客户端访问远程节点 --&gt; 成功？-----&gt; 服务端返回返回值
+                    |  否                                    ↓  否
+                    |----------------------------&gt; 回退到本地节点处理。
+</code></pre>
+<h2 id="01-抽象peerpicker">01 抽象PeerPicker</h2>
+<ol>
+<li>抽象接口，对 PeerPicker 的<code>PickPeer()</code>方法参考传入key 选择相应的结点<code>PeerGetter</code></li>
+<li>接口<code>PeerGetter</code> 的<code>Get()</code>方法从<code>group</code>查找缓存值，<code>PeerGetter</code>即为<code>HTTP 客户端</code></li>
+</ol>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://flyingchase.github.io/post/ji-wang-bi-ji-ji-lu/">
+              <h3 class="post-title">
+                下一篇：计网笔记记录
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">一两黄金一两风</div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/flyingchase" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+   | <a class="rss" href="https://flyingchase.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

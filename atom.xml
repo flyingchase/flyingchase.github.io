@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://flyingchase.github.io</id>
     <title>flyingchase</title>
-    <updated>2021-10-31T13:55:38.747Z</updated>
+    <updated>2021-11-24T04:59:54.769Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://flyingchase.github.io"/>
     <link rel="self" href="https://flyingchase.github.io/atom.xml"/>
@@ -10,6 +10,404 @@
     <logo>https://flyingchase.github.io/images/avatar.png</logo>
     <icon>https://flyingchase.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, flyingchase</rights>
+    <entry>
+        <title type="html"><![CDATA[[Golang Cache 项目]]]></title>
+        <id>https://flyingchase.github.io/post/golang-cache-xiang-mu/</id>
+        <link href="https://flyingchase.github.io/post/golang-cache-xiang-mu/">
+        </link>
+        <updated>2021-11-24T04:58:39.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="geecache概述">GeeCache概述</h2>
+<p>模仿<code>goroupcache</code>，考虑：</p>
+<ul>
+<li>资源控制、淘汰策略、并发、分布式节点通信</li>
+<li>缓存更新、缓存淘汰之前是否允许改变</li>
+</ul>
+<p><strong>特性：</strong></p>
+<ul>
+<li>单机缓存和基于 HTTP 的分布式缓存</li>
+<li>最近最少访问(Least Recently Used, LRU) 缓存策略</li>
+<li>使用 Go 锁机制防止缓存击穿</li>
+<li>使用一致性哈希选择节点，实现负载均衡</li>
+<li>使用 protobuf 优化节点间二进制通信</li>
+</ul>
+<h2 id="常见缓存淘汰算法">常见缓存淘汰算法</h2>
+<h4 id="fifo">FIFO</h4>
+<p>创建队列，新增记录添加到队尾，内存不够时淘汰队首</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>早入队的数据若被常访问，导致频繁被添加缓存又被淘汰——&gt;缓存命中率低</li>
+</ul>
+<h3 id="lfu">LFU</h3>
+<p>淘汰缓存汇总的访问访问频率最低的记录，维护按照访问次数排序的队列</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>维护每个记录的访问次数消耗内存高</li>
+<li>LFU 算法手历史数据影响大</li>
+</ul>
+<h3 id="lru">LRU</h3>
+<p>最近最少使用策略</p>
+<h2 id="lru-2">LRU</h2>
+<h3 id="核心数据结构">核心数据结构</h3>
+<img src="/Users/qlzhou/Library/Application Support/typora-user-images/image-20211021223546014.png" alt="image-20211021223546014" style="zoom:30%;" />
+<ol>
+<li>map 存储字典映射，按key查找value 复杂度 O(1)</li>
+<li>双向链表实现队列，将移动到队尾的复杂度是 O(1)，在队尾新增记录和删除记录的复杂度均为 O(1)</li>
+</ol>
+<h4 id="结构体">结构体</h4>
+<p>包含字典和双向链表的结构体 Cache</p>
+<pre><code class="language-go">type (
+	Cache struct {
+		// 允许使用的最大内存
+		maxBytes int64
+		// 当前使用的内存
+		nbytes int64
+		ll     *list.List
+		cache  map[string]*list.Element
+		// 某条记录删除时候的回调函数 可为 nil
+		OnEvicted func(key string, value Value)
+	}
+	entrty struct {
+		key   string
+		value Value
+	}
+	// 值实现 Len() 方法则均可视为 value
+	Value interface {
+		Len() int
+	}
+)
+</code></pre>
+<h4 id="get-移至队首">Get 移至队首</h4>
+<ol>
+<li>
+<p>map 查找 <code>c.cache[key]</code></p>
+</li>
+<li>
+<p>调用<code>c.ll.MoveToFront(ele)</code>将所得封装为 entry <code>kv:=ele.Value.(*Entry)</code>，返回<code>kv.value</code></p>
+</li>
+</ol>
+<h4 id="removeoldest-删除队尾和缓存-map">RemoveOldest 删除队尾和缓存 map</h4>
+<ol>
+<li>取出队尾<code>ele:=c.kll.Back()</code></li>
+<li>存在则删除<code>c.ll.Remove(ele)</code> <code>delete(c.cache,kv.key)</code></li>
+<li>更新使用内存<code>c.nbytes-=int64(len(kv.key))+int64(kv.value.Len())</code> nbytes 前移偏移量为 kv 的大小（key+value.Len()）</li>
+<li>回调函数非空则使用回调函数</li>
+</ol>
+<h4 id="add更新-新增-越界">Add（更新、新增、越界）</h4>
+<ol>
+<li>
+<p>添加节点已存在——&gt;更新结点</p>
+<ul>
+<li>缓存map存在则移至队首再更新结点值，</li>
+<li>使用内存偏移量同步更新<code>c.nbytes+=int64(value.Len())-int64(kv.value.Len())</code> 多使用新加入结点的 value 比原 value 大的部分</li>
+</ul>
+</li>
+<li>
+<p>添加节点不存在——新增结点</p>
+<ul>
+<li>移至队首<code>ele:=c.ll.MoveToFront(&amp;entry{key,value})</code></li>
+<li>新增缓存<code>c.cache[key]=ele</code></li>
+<li>更新已使用内存<code>c.nbytes+=int64(len(key))+int64(value.Len())</code></li>
+</ul>
+</li>
+<li>
+<p>判定新增结点是否超容</p>
+<p><code>for c.maxBytes!=0&amp;&amp;c.maxBytes&lt;c.nBytes{ c.RemoveOldest()}</code> 越界则移出队尾</p>
+</li>
+</ol>
+<h2 id="00-概述">00-概述</h2>
+<ul>
+<li>实现<code>LRU</code>缓存的并发控制</li>
+<li>实现 Cache的核心数据结构<code>Group</code>，当缓存不存在时使用回调函数</li>
+</ul>
+<h2 id="01-并发-lru-读写">01-并发 lru 读写</h2>
+<h3 id="11-byteview-缓存值只读">1.1 ByteView 缓存值只读</h3>
+<ol>
+<li><code>b []byte</code>存储真实的缓存值，支持任意数据类型存储(byte)</li>
+<li>实现<code>Len()</code>方法，支持 lru 的缓存对象的 <code>Value</code>接口</li>
+<li><code>ByteSlice()</code>返回缓存 b 的复制，防止外部程序修改缓存</li>
+</ol>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/mhrcGo.png" alt="mhrcGo" style="zoom:50%;" />
+<h3 id="12-cache-并发">1.2 Cache 并发</h3>
+<ol>
+<li>实例化<code>lru</code>，封装<code>get</code>和<code>add</code>方法，添加互斥锁<code>Mutex</code></li>
+</ol>
+<pre><code class="language-go"> type cache struct {
+     lru        *lru.Cache
+     mu         sync.Mutex
+     cacheBytes int64
+ }
+</code></pre>
+<ol start="2">
+<li><code>add</code>方法使用 <strong>延迟初始化（lazy initialization）</strong> 在判读<code>c.lru==nil</code>后再创建实例，使得对象的创建会延迟至第一次使用该对象时，提高程序性能，减少内存要求</li>
+</ol>
+<h2 id="02-主体-group">02 主体 Group</h2>
+<h3 id="21-逻辑">2.1 逻辑</h3>
+<p>与用户之间的交互，<strong>控制缓存值的存储和获取</strong></p>
+<pre><code>                            是
+接收 key --&gt; 检查是否被缓存 -----&gt; 返回缓存值 ⑴
+                |  否                         是
+                |-----&gt; 是否应当从远程节点获取 -----&gt; 与远程节点交互 --&gt; 返回缓存值 ⑵
+                            |  否
+                            |-----&gt; 调用`回调函数`，获取值并添加到缓存 --&gt; 返回缓存值 ⑶
+</code></pre>
+<h3 id="22-代码结构">2.2 代码结构</h3>
+<pre><code>step2/
+    |--lru/
+        |--lru.go  // lru 缓存淘汰策略
+    |--byteview.go // 缓存值的抽象与封装
+    |--cache.go    // 并发控制
+    |--geecache.go // 负责与外部交互，控制缓存存储和获取的主流程
+</code></pre>
+<h3 id="23-回调-getter">2.3 回调 Getter</h3>
+<p>对于多种数据源（文件、数据库）缓存不存在时，使用回调函数获得源数据（将如何从源头获取数据交给用户）</p>
+<pre><code class="language-go">type (
+	Getter interface {
+		Get(key string) ([]byte, error)
+	}
+	// GetterFunc 函数类型的参数和返回值与 Getter 接口内的 Get 方法一致
+	GetterFunc func(key string) ([]byte, error)
+)
+// GetterFunc 含有 Get 方法，在方法内调用自身，实现了接口 Getter
+// 通过函数实现 Getter接口的 Get 方法，接口型函数
+// 接口型函数只应用于接口内部之定义一个方法的接口
+func (f GetterFunc) Get(key string)([]byte,error)  {
+	return f(key)
+}
+</code></pre>
+<p>#接口函数</p>
+<p><strong>接口函数：</strong></p>
+<ol>
+<li>将普通的函数类型（类型转换 GetterFunc(test）作为函数参数</li>
+<li>将结构体作为参数</li>
+</ol>
+<p>eg:</p>
+<p>​	GetterFunc 类型的函数作为参数，支持匿名函数、普通函数（类型转换）</p>
+<p>​	实现了 Getter 接口的结构体可作为函数参数</p>
+<p>接口函数使用场景：</p>
+<ol>
+<li>
+<p><code>net/http</code>中的<code>Handler</code>和<code>HandlerFunc</code></p>
+<pre><code class="language-go">type Handler interface {
+	ServeHTTP(ResponseWriter, *Request)
+}
+type HandlerFunc func(ResponseWriter, *Request)
+
+func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+	f(w, r)
+}
+</code></pre>
+</li>
+<li>
+<p><code>http.Handle</code>和<code>http.ListenAndServe</code>的第二个参数即为接口类型<code>Handler</code></p>
+</li>
+<li>
+<p>传入实现<code>Handler</code>接口的结构体则可以托管所有的 HTTP 请求，可扩展为 Web 框架</p>
+</li>
+<li>
+<p><code>Java</code>中 lambda 表达式函数式编程可认为是接口函数</p>
+<ul>
+<li>自定义排序时，需要实现匿名的 Comparator 类，重写 Compare 方法</li>
+</ul>
+<pre><code class="language-java">Collertions.sort(list,new Comparator&lt;Integer&gt;(){
+    @Override
+    public int compare(Integer o1,Integer o2) {
+        return 02-01;
+    }
+});
+</code></pre>
+<ul>
+<li>1.8之后<code>lambda</code> 从匿名对象简化为 lambda 表达式</li>
+</ul>
+<pre><code class="language-java">Collections.sort(list,(Integer o1,Integer o2)-&gt;o2-o1);
+</code></pre>
+</li>
+<li>
+<p>定义<code>Getter</code>接口和回调函数<code>Get(key string)([]byte,error)</code></p>
+</li>
+<li>
+<p>定义函数类型<code>GetterFunc</code>实现<code>Getter</code>接口内的<code>Get</code>方法</p>
+</li>
+<li>
+<p><strong>定义函数类型 F，并实现接口 A 的方法，在方法中调用自身</strong>使得其他函数（参数与返回类型与 F一致）<strong>转化为接口 A</strong></p>
+</li>
+</ol>
+<h4 id="24-group-定义">2.4 Group 定义</h4>
+<h4 id="结构体-2">结构体</h4>
+<pre><code class="language-go">type Group struct {
+	name      string
+	// 缓存未命中时回调函数
+    getter    Getter
+    // 并发缓存
+	mainCache cache
+}
+</code></pre>
+<ol>
+<li>视为缓存的命名空间，每个<code>Group</code>有唯一的<code>name</code></li>
+<li><code>getter Getter</code> 为缓存未命中时的数据回调(callback)</li>
+<li><code>NewGroup</code>用于实例化 Group 并存储在全局变量 <code>groups</code>内</li>
+<li><code>GetGroup</code>获取特定名称的 Group 无写入操作，使用<code>mu.RLock()</code></li>
+</ol>
+<h4 id="get-方法">Get 方法</h4>
+<ol>
+<li><code>mainCache</code> 查找缓存，log 内写入缓存命中</li>
+<li>缓存不存在<code>load</code>——&gt;<code>getLocally</code>（分布式场景下调用<code>getFromPeer</code>从其他节点获取）——&gt;<code>g.getter.Get</code>回调函数获取源数据，通过<code>g.populateCache</code>添加到缓存内</li>
+</ol>
+<pre><code>geecache/
+    |--lru/
+        |--lru.go  // lru 缓存淘汰策略
+    |--byteview.go // 缓存值的抽象与封装
+    |--cache.go    // 并发控制
+    |--geecache.go // 负责与外部交互，控制缓存存储和获取的主流程
+	|--http.go     // 提供被其他节点访问的能力(基于http)
+</code></pre>
+<p>分布式缓存：</p>
+<ol>
+<li>通过<code>HTTP</code>的通信机制实现节点间的通信</li>
+</ol>
+<h2 id="geecache-http-服务端">GeeCache HTTP 服务端</h2>
+<h3 id="httppool-数据结构">HTTPPool 数据结构</h3>
+<p>承载节点间 HTTP 通信的核心数据结构</p>
+<pre><code class="language-go">type HTTPPool struct {
+	self    string
+	basePth string
+}
+
+func NewHTTPPool(self string) *HTTPPool {
+	return &amp;HTTPPool{self: self, basePth: defaultBasePath}
+}
+</code></pre>
+<ol>
+<li><code>HTTPPool</code>内 self 存储主机名/IP 和端口</li>
+<li>basePath 作为节点间通信的前缀，默认<code>/_geecache/</code></li>
+</ol>
+<h3 id="serverhttp-方法">ServerHTTP 方法</h3>
+<ol>
+<li>
+<p>判断前缀是否是<code>basePath</code></p>
+<pre><code class="language-go">if !strings.HasPrefix(r.URL.Path, p.basePth) {
+   panic(&quot;HTTPPool serving unexpected path: &quot; + r.URL.Path)
+}
+</code></pre>
+</li>
+<li>
+<p>约定访问路径格式<code>/basePath/groupName/key</code> 通过<code>groupName</code>获得 group 实例，再使用<code>group.Get(key)</code>获得缓存数据</p>
+</li>
+<li>
+<p><code>w.Write()</code>将缓存值作为<code>httpResponse</code>的<code>body</code>返回</p>
+</li>
+</ol>
+<h2 id="01-概述">01 概述</h2>
+<p>单节点走向分布式节点通信</p>
+<h3 id="11-hash-算法保证-key-存储在同一节点">1.1 hash 算法保证 key 存储在同一节点</h3>
+<p>随机节点获取数据，若不存在从数据源获取数据并缓存；</p>
+<p>再次随机节点获取数据具有不确定性</p>
+<h3 id="12-节点数量变化">1.2 节点数量变化</h3>
+<p><code>缓存雪崩</code>：某节点失效后在收到请求时，均需要从数据源重新获取数据</p>
+<h3 id="13-一致性-hash-算法">1.3 一致性 hash 算法</h3>
+<p>将<code>key</code>映射到2^32空间内，形成环</p>
+<ul>
+<li>
+<p>节点/机器的 hash 值放在环上</p>
+</li>
+<li>
+<p>计算<code>key</code>的哈希值，放置在环上，顺时针找到的第一个节点即为应选择的节点/机器</p>
+</li>
+<li>
+<p><strong>数据倾斜问题</strong></p>
+<ul>
+<li>引入虚拟节点，一个真实结点对应多个虚拟节点</li>
+<li>计算虚拟节点的 hash 值放置在环上</li>
+<li>计算 key的 hash 值在环上顺时针寻找应该选取的虚拟节点</li>
+</ul>
+<p>虚拟节点有效扩充了及诶单的数量解决节点数量较少情况下的数据倾斜问题；</p>
+<p>只需增加<code>map</code>维护真实节点与虚拟节点之间的关系即可</p>
+</li>
+</ul>
+<h2 id="02-语言实现">02 语言实现</h2>
+<h3 id="21-consistenthash">2.1 consistenthash</h3>
+<pre><code class="language-go">type (
+	Hash func(data[]byte) uint32
+	Map struct {
+		hash Hash
+		replicas int
+		keys []int
+		hashMap map[int]string
+	}
+)
+
+func New(replicas int, fn Hash) *Map  {
+	m:=&amp;Map{
+		hash: fn,
+		replicas: replicas,
+		hashMap: make(map[int]string),
+	}
+	if m.hash == nil {
+		m.hash=crc32.ChecksumIEEE
+	}
+	return m
+}
+</code></pre>
+<ol>
+<li>定义函数类型<code>Hash</code> 依赖注入的方式，默认为<code>crc32.ChechsumIEEE</code></li>
+<li>构造函数<code>New()</code>允许自定义虚拟节点和 Hash 函数</li>
+</ol>
+<h3 id="22-add-真实节点机器">2.2 Add 真实节点/机器</h3>
+<ol>
+<li>传入多个真实节点的名称</li>
+<li>对应每个真实节点<code>key</code>，创建<code>m.replicas</code>个虚拟节点，虚拟节点名称为<code>strconv.Itoa(i)+key</code>，通过编号区分；</li>
+<li><code>m.hash()</code>计算虚拟节点的 hash 值——&gt;添加到环上<code>append(m.keys,hash)</code></li>
+<li><code>hashMap</code>添加虚拟和真实节点之间的映射</li>
+<li>环上哈希值排序</li>
+</ol>
+<pre><code class="language-go">func (m *Map) Add(keys ...string) {
+	for _, key := range keys {
+		for i := 0; i &lt; m.replicas; i++ {
+			hash := int(m.hash([]byte(strconv.Itoa(i) + key)))
+			m.keys = append(m.keys, hash)
+			m.hashMap[hash] = key
+		}
+	}
+	sort.Ints(m.keys)
+}
+</code></pre>
+<h3 id="23-选择节点-get-方法">2.3 选择节点 Get 方法</h3>
+<pre><code class="language-go">func (m *Map) Get(key string) string {
+	if len(m.keys) == 0 {
+		return &quot;&quot;
+	}
+	hash := int(m.hash([]byte(key)))
+    // func Search(n int, f func(int)bool) int 
+    // 在[0,n）内二分查找满足 f 条件的最小下标
+	index := sort.Search(len(m.keys), func(i int) bool {
+		return m.keys[i] &gt;= hash
+	})
+	return m.hashMap[m.keys[index%len(m.keys)]]
+}
+</code></pre>
+<ol>
+<li>计算 key 的哈希值<code>hash:=int(m.hash([]byte(key)))</code></li>
+<li>顺时针查找第一个匹配的虚拟节点的下标<code>index</code> ，使用<code>sort.Search(len(环长,fn))</code></li>
+<li>由于 keys为环状，故取余</li>
+<li>在<code>m.keys[]</code>找到对应的哈希值，通过哈希值在 <code>hashMap</code>中的映射得到真实节点</li>
+</ol>
+<ul>
+<li>注册节点 register peers，通过一致性哈希算法选择节点</li>
+<li>实现<code>HTTP</code>客户端与远程节点的服务端通信</li>
+</ul>
+<h2 id="00-概述-2">00 概述</h2>
+<p>对于未被缓存的 key 从远程节点调用</p>
+<pre><code>使用一致性哈希选择节点        是                                    是
+    |-----&gt; 是否是远程节点 -----&gt; HTTP 客户端访问远程节点 --&gt; 成功？-----&gt; 服务端返回返回值
+                    |  否                                    ↓  否
+                    |----------------------------&gt; 回退到本地节点处理。
+</code></pre>
+<h2 id="01-抽象peerpicker">01 抽象PeerPicker</h2>
+<ol>
+<li>抽象接口，对 PeerPicker 的<code>PickPeer()</code>方法参考传入key 选择相应的结点<code>PeerGetter</code></li>
+<li>接口<code>PeerGetter</code> 的<code>Get()</code>方法从<code>group</code>查找缓存值，<code>PeerGetter</code>即为<code>HTTP 客户端</code></li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[计网笔记记录]]></title>
         <id>https://flyingchase.github.io/post/ji-wang-bi-ji-ji-lu/</id>
@@ -1819,232 +2217,6 @@ nnoremap &lt;silent&gt; &lt;Leader&gt;ag :Ag &lt;C-R&gt;&lt;C-W&gt;&lt;CR&gt;
 <p>尽量了解每个插件的作用和快捷键，避免插件之间的快捷键冲突，在使用中记忆快捷键。</p>
 <p>将 IDE 于<code>vim</code>配合使用，项目开发还是 Goland 香。</p>
 <h2 id="reference">Reference</h2>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Golang context 总结]]></title>
-        <id>https://flyingchase.github.io/post/golang-context-bao/</id>
-        <link href="https://flyingchase.github.io/post/golang-context-bao/">
-        </link>
-        <updated>2021-10-01T03:55:53.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="context包">context包</h1>
-<p>控制并发的方式：</p>
-<p>​	<code>WaitGroup</code> <code>Context</code></p>
-<p><strong>waitGroup</strong></p>
-<ul>
-<li>并发启动多个子协程，等待所有的 goroutine 完成任务 <code>wg.Wait()</code>等待所有的子协程完成后再执行后续代码</li>
-<li>无法主动通知子协程的退出</li>
-</ul>
-<p>使用<code>channel</code>和<code>select</code>通知 goroutine 的处理</p>
-<p>子协程使用 for 循环定时轮询，<code>stop</code>信道有值（可读）则退出</p>
-<pre><code class="language-go">select {
-    case &lt;-stop :
-    	...
-    	return
-	default :
-    	...
-  
-}
-</code></pre>
-<p>背景：</p>
-<p>​	网络请求Request 需要开启 goroutine 需要去跟踪 goroutine 的方案 从而进行控制	即 goroutine 的上下文</p>
-<h2 id="context"><strong>Context</strong></h2>
-<ul>
-<li>通知子协程退出（正常和超时）</li>
-<li>传递必要参数</li>
-</ul>
-<p><strong>使用原则：</strong></p>
-<ul>
-<li>以参数形式传递 Context 且位于入口请求和出口请求链路的每个函数的首位</li>
-<li>函数方法传递 Context 不可传递 nil ——&gt;tarce 追踪时断掉</li>
-<li>Context 线程安全</li>
-<li>Context 可传递给任意个数的 goroutine 子协程受根 context 控制</li>
-</ul>
-<h3 id="控制单协程">控制单协程</h3>
-<p>将 chan stop 转化为 Context 追踪 goroutine</p>
-<pre><code class="language-go">	// Background 返回空的 Context 作为整个 context 树的根节点
-// WithCanclel(parent) 创建可取消的子 context 作为参数传递给 goroutine 进行跟踪
-	ctx,cancel:=context.WithCancel(context.Background())
-
-	go func(ctx context.Context) {
-		for  {
-			select {
-                // Done()判断接收到值则结束
-			case &lt;-ctx.Done():
-				fmt.Println(&quot;quit &quot;)
-				return
-			default:
-				fmt.Println(&quot;goroutine is under control&quot;)
-				time.Sleep(2*time.Second)
-			}
-		}
-	}(ctx)
-	time.Sleep(10*time.Second)
-	fmt.Println(&quot;it is time to tell ctx stop control&quot;)
-
-	cancel()
-	time.Sleep(5*time.Second)
-</code></pre>
-<ul>
-<li><code>context.Backgroud()</code>创建根 Context 作为顶层的 Context</li>
-<li><code>context.WithCancle(parent)</code> 创建可取消的子 Context 返回函数 <code>cancel</code></li>
-<li>子协程中使用<code>select</code>调用<code>&lt;-ctx.Done()</code> 判断是否需要退出</li>
-<li>主协程使用<code>cancle()</code>函数通知子协程退出</li>
-</ul>
-<h3 id="控制多协程">控制多协程</h3>
-<pre><code class="language-go">ctx,cancle:=context.WithCancel(context.Background())
-go reqTask(ctx,&quot;one&quot;)
-go reqTask(ctx,&quot;two&quot;)
-go reqTask(ctx,&quot;three&quot;)
-
-time.Sleep(3*time.Second)
-cancle()
-time.Sleep(3*time.Second)
-
-func reqTask(ctx context.Context,name string)  {
-	for  {
-		select {
-		case &lt;-ctx.Done():
-			fmt.Println(&quot;stop&quot;,name)
-			return
-		default:
-			fmt.Println(&quot;send request: &quot;,name)
-			time.Sleep(time.Second)
-		}
-
-	}
-
-</code></pre>
-<p><code>cancle()</code>终止所有的子协程</p>
-<p><code>context.Context</code>是一个接口</p>
-<pre><code class="language-go">type Context interface {
-  Deadline() (deadline time.Time, ok bool)
-  Done() &lt;-chan struct{}
-  Err() error
-  Value(key interface{}) interface{}
-}
-</code></pre>
-<p><code>WithCancel()</code>返回<code>context.Context</code>接口</p>
-<p><code>func WithCancel(parent Context) (ctx Context, cancel CancelFunc)</code></p>
-<pre><code class="language-go">// 返回的是 parent的副本newCancleCtx
-func WithCancel(parent Context) (ctx Context, cancel CancelFunc) {
-	if parent == nil {
-		panic(&quot;cannot create context from nil parent&quot;)
-	}
-	c := newCancelCtx(parent)
-    // propagateCancel 是结束子context
-	propagateCancel(parent, &amp;c)
-	return &amp;c, func() { c.cancel(true, Canceled) }
-}
-//  *ctx 本身是 cancleCtx 故而是地址传递
-type cancelCtx struct {
-	Context
-
-	mu       sync.Mutex            // protects following fields
-	done     chan struct{}         // created lazily, closed by first cancel call
-	children map[canceler]struct{} // set to nil by the first cancel call
-	err      error                 // set to non-nil by the first cancel call
-}
-</code></pre>
-<h3 id="contextwithvalue">Context.WithValue</h3>
-<p>往子协程中传递参数</p>
-<p>其中key应该自定义 避免内置数据类型</p>
-<p><code>func WithValue(parent Context, key, val interface{}) Context</code></p>
-<pre><code class="language-go">	type favKey string
-	f := func(ctx context.Context, k favKey) {
-		if v := ctx.Value(k); v != nil {
-			fmt.Println(&quot;found value &quot;, v)
-			return
-		}
-		fmt.Println(&quot;not found key &quot;, k)
-	}
-
-	k := favKey(&quot;language&quot;)
-	ctx = context.WithValue(context.Background(), k, &quot;Go&quot;)
-	f(ctx, k)
-	f(ctx, favKey(&quot;color&quot;))
-</code></pre>
-<ul>
-<li><code>WithValue()</code>创建基于<code>ctx</code>的子 context 携带值 options</li>
-<li>子协程使用<code>ctx.Value(key)</code> 获取传递的值</li>
-</ul>
-<h3 id="常用-api">常用 API</h3>
-<p><code>WithTimeout()</code>  设置超时时间（子协程最长执行时间）</p>
-<pre><code class="language-go">func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
-</code></pre>
-<ul>
-<li>可能使得子协程在 cancle()函数之前结束</li>
-<li>可使用 <code>ctx.Err()</code> 获取子协程退出原因</li>
-</ul>
-<p><code>WithDeadline</code> 设置控制子协程的最长推出时间</p>
-<pre><code class="language-go">func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)
-</code></pre>
-<p><strong>函数签名：</strong></p>
-<pre><code class="language-go">// 创建一个带有新的 Done channel 的 context，并且返回一个取消的方法
-func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
-// 创建一个具有截止时间的 context
-// 截止时间是 d 和 parent(如果有截止时间的话) 的截止时间中更早的那一个
-// 当 parent 执行完毕，或 cancel 被调用 或者 截止时间到了的时候，这个 context done 掉
-func WithDeadline(parent Context, d time.Time) (Context, CancelFunc)
-// 其实就是调用的 WithDeadline
-func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
-type CancelFunc
-type Context
-	// 一般用于创建 root context，这个 context 永远也不会被取消，或者是 done
-    func Background() Context
-	// 底层和 Background 一致，但是含义不同，当不清楚用什么的时候或者是还没准备好的时候可以用它
-    func TODO() Context
-	// 为 context 附加值
-	// key 应该具有可比性，一般不应该是 string int 这种默认类型，应该自己创建一个类型
-	// 避免出现冲突，一般 key 不应该导出，如果要导出的话应该是一个接口或者是指针
-    func WithValue(parent Context, key, val interface{}) Context
-</code></pre>
-<h2 id="使用场景">使用场景</h2>
-<h3 id="超时控制">超时控制</h3>
-<h3 id="错误取消">错误取消</h3>
-<p>eg:</p>
-<p>​	main 并发调用f1 f2 当f1 错误返回 f2 处于阻塞，报错误 context被取消</p>
-<pre><code class="language-go">func f1(ctx context.Context) error {
-	select {
-	case &lt;-ctx.Done():
-		return fmt.Errorf(&quot;f1: %w&quot;, ctx.Err())
-	case &lt;-time.After(time.Millisecond):
-		return fmt.Errorf(&quot;f1 err in 1ms&quot;)
-	}
-}
-func f2(ctx context.Context) error {
-	select {
-	case &lt;-ctx.Done():
-		return fmt.Errorf(&quot;f2 : %w&quot;, ctx.Err())
-	case &lt;-time.After(time.Hour):
-		return nil
-	}
-}
-func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() {
-		defer wg.Done()
-		if err := f1(ctx); err != nil {
-			fmt.Println(err)
-			cancel()
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		if err := f2(ctx); err != nil {
-			fmt.Println(err)
-			cancel()
-		}
-	}()
-	wg.Wait()
-}
-</code></pre>
-<p>类似<code>errgroup</code></p>
-<h3 id="传递共享数据">传递共享数据</h3>
-<h3 id="防止-goroutine-泄露">防止 goroutine 泄露</h3>
 ]]></content>
     </entry>
 </feed>
