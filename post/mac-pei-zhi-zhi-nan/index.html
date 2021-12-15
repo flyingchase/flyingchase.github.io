@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1637729984440">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1639538763278">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://flyingchase.github.io">
-        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1637729984440" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1639538763278" alt="" width="32px" height="32px">
       </a>
       <a href="https://flyingchase.github.io">
         <h1 class="site-title">flyingchase</h1>
@@ -86,38 +86,85 @@
             
           </div>
           <div class="post-content">
-            <h2 id="前言">前言</h2>
-<p>升级Big sur时替换硬盘使用Time Machine只恢复一月前备份,故将配置流程记录</p>
+            <h1 id="mac-环境配置">Mac 环境配置</h1>
+<h2 id="前言">前言</h2>
+<p>考虑到手头上 XPS-7590 黑苹果的使用寿命问题，将现有macOS 的开发环境配置进行记录，方便后续重装系统或者更换白苹果。</p>
+<p>系统一览：</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/IrOAnt.png" alt="IrOAnt" style="zoom:50%;" />
 <p>教训:</p>
 <ul>
 <li>做好多处备份, 机械和固态多个备份, 在升级和较多本地内容变动时加强备份频率;</li>
 <li>少折腾多干活, 黑苹果不要追求太完美, 现有的版本能稳定运行即可, 多刷题多学习, 不要花时间过于折腾;</li>
 </ul>
-<h2 id="系统设置">系统设置</h2>
-<h4 id="触控板">触控板</h4>
-<p>Bettertouch</p>
-<h2 id="开发工具">开发工具</h2>
-<h4 id="idea系列">IDEA系列</h4>
-<h5 id="自动补全">自动补全</h5>
-<p><strong>快速输出</strong></p>
-<p>List.sout——&gt;System.out.println(list);</p>
-<p><strong>定义局部变量</strong></p>
-<p>new ArrayList&lt;&gt;().var;</p>
-<p><strong>判断空与否</strong></p>
-<p>List.null——&gt;if(List==null)</p>
-<p>List.notnull——&gt;if(List!=null)</p>
-<p><strong>快速取反:</strong></p>
-<p>​	输入 .not 可以让布尔值快速取反，再输入 .if 可快速生成 if 判断语句块。</p>
-<p>![2021-05-1311.47.57](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.47.57.gif)</p>
-<p><strong>快速遍历集合:</strong></p>
-<p>collection.for/.forr/.fori</p>
-<p>![2021-05-1311.51.59](https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/2021-05-13 11.51.59.gif)</p>
-<p><strong>快速返回:</strong></p>
-<p>Object.return——&gt;return Object;</p>
-<h5 id="重构生成">重构/生成</h5>
-<p>快速生成类的构造器和get set等常见方法</p>
-<p>重写toString/hashCode/equal等常见方法</p>
-<figure data-type="image" tabindex="1"><img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/ry6AzG.png" alt="ry6AzG" loading="lazy"></figure>
+<h2 id="系统">系统</h2>
+<h3 id="系统设置">系统设置</h3>
+<h4 id="常用设置">常用设置</h4>
+<ol>
+<li>
+<p>内建触控板忽视</p>
+<p>辅助功能-指针控制</p>
+</li>
+<li>
+<p>触控板</p>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/image-20211215111738321.png" alt="image-20211215111738321" style="zoom:50%;" />
+</li>
+</ol>
+<img src="https://cdn.jsdelivr.net/gh/flyingchase/Private-Img@master/uPic/5mWWsN.png" alt="5mWWsN" style="zoom:50%;" />
+<ol start="3">
+<li>
+<p>Karabiner 键位控制</p>
+<p>设置<code>Caps Lock</code>单按为<code>Esc</code>，两次配合为<code>Ctrl</code>键位</p>
+</li>
+</ol>
+<h2 id="常用软件说明">常用软件说明</h2>
+<h3 id="概述">概述</h3>
+<h3 id="知识管理系统">知识管理系统</h3>
+<h4 id="typoramd-编辑器">Typora——md 编辑器</h4>
+<h4 id="obsidian笔记管理">Obsidian——笔记管理</h4>
+<h4 id="anki知识复习">Anki——知识复习</h4>
+<h4 id="notionleetcode艾宾浩斯遗忘曲线">Notion——LeetCode艾宾浩斯遗忘曲线</h4>
+<h4 id="ticktick任务管理">ticktick——任务管理</h4>
+<h4 id="reederrss-阅读">Reeder——RSS 阅读</h4>
+<h3 id="娱乐">娱乐</h3>
+<p>lxmusic 作为音乐播放器，INA 作为影音播放器，Downie4 作为视频下载器</p>
+<h3 id="工具">工具</h3>
+<p>NDMdowmload 接管系统下载，</p>
+<p>微信小助手</p>
+<h2 id="开发环境配置">开发环境配置</h2>
+<h3 id="概述-2">概述</h3>
+<p>使用<code>brew</code>作为包管理器，<code>zsh</code>和<code>oh-my-zsh</code>、<code>zinit</code>作为终端环境，<code>kitty</code>和<code>alacritty</code>作为终端 GUI；</p>
+<p>主力开发语言为<code>Golang</code>，使用<code>Goland</code>和<code>neovim</code>作为IDE 和编辑器，其中<code>Goland</code>使用 vim 插件配置<code>.ideavimrc</code>使用vim 快捷键</p>
+<h3 id="brew">brew</h3>
+<p>使用 <code>brew bundle dump</code>备份tap，所安装的命令行工具，–cask 安装的app，App Store 安装的 app</p>
+<pre><code class="language-shell">brew bundle dump --describe --force --file=&quot;~/Documents/github/dotfiles/Brewfile&quot;
+/*
+强制在指定路径下生成 Brewfile 文件（有则覆盖）
+其中 Brewfile 内容类似
+	tap ...
+	brew ...
+	cask ...
+	mas ...
+*/
+</code></pre>
+<p>使用<code>brew bundle</code>恢复备份文件</p>
+<pre><code class="language-shell">/*
+# 1. 安装 brew
+	/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+# 2. 安装 mas（appstore 软件备份、恢复）
+	brew install mas
+*/
+# 3. 批量恢复
+brew bundle --file=&quot;~/Documents/github/dotfiles/Brewfile&quot;
+</code></pre>
+<p>使用<code>Automator</code>定时备份和自动上传 github</p>
+<h3 id="dotfiels">dotfiels</h3>
+<p>使用<code>dotbot</code>管理 dotfiles文件</p>
+<h3 id="终端设置">终端设置</h3>
+<p>采用<code>everforest</code>作为美化主题，p10k 作为终端主题，<code>zinit</code>管理 zsh</p>
+<h3 id="goland">Goland</h3>
+<p>使用教育邮箱免费试用和<code>Eval</code>试用</p>
+<h3 id="pd-虚拟机">PD 虚拟机</h3>
+<p>使用 <a href="https://github.com/lihaoyun6/PD-Runner">PDRuner</a>进行试用，参考<a href="https://www.sainnhe.dev/post/crack-parallels/">sainnhe</a>教程试用</p>
 
           </div>
         </div>

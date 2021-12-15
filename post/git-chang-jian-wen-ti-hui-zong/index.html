@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1637729984440">
+<link rel="shortcut icon" href="https://flyingchase.github.io/favicon.ico?v=1639538763278">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://flyingchase.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://flyingchase.github.io">
-        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1637729984440" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://flyingchase.github.io/images/avatar.png?v=1639538763278" alt="" width="32px" height="32px">
       </a>
       <a href="https://flyingchase.github.io">
         <h1 class="site-title">flyingchase</h1>
@@ -86,7 +86,8 @@
             
           </div>
           <div class="post-content">
-            <blockquote>
+            <h1 id="git常见问题">Git常见问题</h1>
+<blockquote>
 <p>整理收集于互联网</p>
 </blockquote>
 <h3 id="1修改提交信息">1.修改提交信息</h3>
@@ -142,7 +143,28 @@ git clean -nfd
 <pre><code class="language-shell">git log --follow -p 文件名
 </code></pre>
 <h3 id="6-指定提交的修改记录">6. 指定提交的修改记录</h3>
-<pre><code class="language-shell"># 查看commit提交修改的文件git show --stat &lt;commit的代号&gt;#查看commit提交修改的文件及内容git show &lt;commit的代号&gt;
+<pre><code class="language-shell"># 查看commit提交修改的文件
+git show --stat &lt;commit的代号&gt;
+
+#查看commit提交修改的文件及内容
+git show &lt;commit的代号&gt;
+</code></pre>
+<h3 id="7-删除文件重命名文件">7. 删除文件/重命名文件</h3>
+<pre><code class="language-shell">git mv oldName newName
+git commit -m &quot;rename&quot;
+
+git rm -rf waitingFile
+git commit -m &quot;deleteFiles&quot;
+</code></pre>
+<h3 id="8-取消跟踪">8. 取消跟踪</h3>
+<pre><code class="language-shell"># 均会显示在 git st中 通过.ignore 可以不显示
+git rm -r --cached . 　　//不删除本地文件
+git rm -r --f . 　　//删除本地文件
+
+# 对某个文件取消跟踪
+
+git rm --cached readme1.txt    删除readme1.txt的跟踪，并保留在本地。
+git rm --f readme1.txt    删除readme1.txt的跟踪，并且删除本地文件。
 </code></pre>
 
           </div>
